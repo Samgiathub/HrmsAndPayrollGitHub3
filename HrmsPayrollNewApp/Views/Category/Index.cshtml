@@ -1,0 +1,41 @@
+﻿@model IEnumerable<HrmsPayrollNewApp.DataAccessLayer.Data.Category>
+
+@{
+    ViewData["Title"] = "Category List";
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    <!-- Add a link to create a new Category -->
+    @* <div class="mb-3">
+        <a href="@Url.Action("Create", "Category")" class="btn btn-primary">Create New Category</a>
+    </div> *@
+
+    <!-- Display a table of Categorys -->
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Category Name</th>
+                <th>Description</th>                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>@category.CatId</td>
+                    <td>@category.CategoryName</td>
+                    <td>@category.Descriptions</td>
+                    @* <td>                    
+                        <a href="@Url.Action("Details", "Category", new { id = category.CatId })" class="btn btn-info btn-sm">Details</a>
+                        <a href="@Url.Action("Edit", "Category", new { id = category.CatId })" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="@Url.Action("Delete", "Category", new { id = category.CatId })" class="btn btn-danger btn-sm">Delete</a>
+                    </td> *@
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,42 @@
+﻿@model IEnumerable<HrmsPayrollNewApp.DataAccessLayer.Data.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    <!-- Add a link to create a new product -->
+    <div class="mb-3">
+        <a href="@Url.Action("Create", "Products")" class="btn btn-primary">Create New Product</a>
+    </div>
+
+    <!-- Display a table of products -->
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Id</td>
+                    <td>@product.ProductName</td>
+                    <td>@product.Price</td>                    
+                    <td>                        
+                        <a href="@Url.Action("Details", "Products", new { id = product.Id })" class="btn btn-info btn-sm">Details</a>
+                        <a href="@Url.Action("Edit", "Products", new { id = product.Id })" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="@Url.Action("Delete", "Products", new { id = product.Id })" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
