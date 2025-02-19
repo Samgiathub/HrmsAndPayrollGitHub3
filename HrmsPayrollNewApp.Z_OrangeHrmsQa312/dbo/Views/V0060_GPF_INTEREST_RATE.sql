@@ -1,0 +1,7 @@
+﻿
+
+
+CREATE VIEW [dbo].[V0060_GPF_INTEREST_RATE]
+AS
+	SELECT	Cmp_ID,Tran_ID,AD_ID,Effective_Date,CAST(Interest_Rate AS numeric(18,2)) AS Interest_Rate
+	FROM	T0060_GPF_INTEREST_RATE WITH (NOLOCK)

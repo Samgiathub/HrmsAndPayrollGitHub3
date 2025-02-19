@@ -1,0 +1,15 @@
+﻿CREATE TABLE [dbo].[T0150_EMP_Training_INOUT_RECORD] (
+    [Tran_Id]         NUMERIC (18) NOT NULL,
+    [cmp_Id]          NUMERIC (18) NOT NULL,
+    [emp_id]          NUMERIC (18) NOT NULL,
+    [For_date]        DATETIME     NOT NULL,
+    [In_Time]         DATETIME     NULL,
+    [Out_Time]        DATETIME     NULL,
+    [Hours]           VARCHAR (10) CONSTRAINT [DF_T0150_EMP_Training_INOUT_RECORD_Hours] DEFAULT ((0)) NOT NULL,
+    [IP_Address]      VARCHAR (50) NOT NULL,
+    [Training_Apr_Id] NUMERIC (18) NULL,
+    CONSTRAINT [PK_T0150_EMP_Training_INOUT_RECORD] PRIMARY KEY CLUSTERED ([Tran_Id] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0150_EMP_Training_INOUT_RECORD_T0010_COMPANY_MASTER] FOREIGN KEY ([cmp_Id]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0150_EMP_Training_INOUT_RECORD_T0120_HRMS_TRAINING_APPROVAL] FOREIGN KEY ([Training_Apr_Id]) REFERENCES [dbo].[T0120_HRMS_TRAINING_APPROVAL] ([Training_Apr_ID])
+);
+

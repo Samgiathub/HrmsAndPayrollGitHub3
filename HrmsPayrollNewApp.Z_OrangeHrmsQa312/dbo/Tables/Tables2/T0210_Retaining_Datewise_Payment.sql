@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[T0210_Retaining_Datewise_Payment] (
+    [tran_D_id]        NUMERIC (18)    IDENTITY (1, 1) NOT NULL,
+    [tran_id]          NUMERIC (18)    NOT NULL,
+    [cmp_id]           NUMERIC (18)    NOT NULL,
+    [Emp_id]           NUMERIC (18)    NOT NULL,
+    [Ad_id]            NUMERIC (18)    NOT NULL,
+    [Cal_Month]        DATETIME        NULL,
+    [Mon_Start_date]   DATETIME        NULL,
+    [Mon_End_date]     DATETIME        NULL,
+    [Retain_date]      DATETIME        NULL,
+    [Days]             NUMERIC (18, 2) NULL,
+    [Slab_Id]          NUMERIC (18, 2) NULL,
+    [Slab_Per]         NUMERIC (18, 2) NULL,
+    [Mode]             VARCHAR (50)    NULL,
+    [Per_Day_Salary]   NUMERIC (18, 2) NULL,
+    [Retain_Amount]    NUMERIC (18, 2) NULL,
+    [Tot_Amount]       NUMERIC (18, 2) NULL,
+    [remarks]          VARCHAR (500)   NULL,
+    [Modify_Date]      DATETIME        CONSTRAINT [DF_T0210_T0210_Retainin_Datewise_Payment_Modify_Date] DEFAULT (getdate()) NULL,
+    [Tot_Retain_Days]  INT             DEFAULT ((0)) NULL,
+    [Basic_Amount]     NUMERIC (18, 2) NULL,
+    [Month_Day]        INT             NULL,
+    [Emp_Ret_Count]    INT             DEFAULT ((0)) NULL,
+    [MonLock_Trans_Id] INT             NULL
+);
+

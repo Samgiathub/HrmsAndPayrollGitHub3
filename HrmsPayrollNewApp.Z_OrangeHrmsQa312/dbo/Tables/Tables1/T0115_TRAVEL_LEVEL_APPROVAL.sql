@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T0115_TRAVEL_LEVEL_APPROVAL] (
+    [Tran_Id]               NUMERIC (18)    NOT NULL,
+    [Travel_Application_ID] NUMERIC (18)    NULL,
+    [Cmp_ID]                NUMERIC (18)    NOT NULL,
+    [Emp_ID]                NUMERIC (18)    NOT NULL,
+    [S_Emp_ID]              NUMERIC (18)    NULL,
+    [Approval_Date]         DATETIME        NOT NULL,
+    [Approval_Status]       CHAR (1)        NOT NULL,
+    [Approval_Comments]     VARCHAR (250)   NULL,
+    [Login_Id]              NUMERIC (18)    NOT NULL,
+    [Total]                 NUMERIC (18, 2) NOT NULL,
+    [System_date]           DATETIME        NOT NULL,
+    [Rpt_Level]             NUMERIC (18)    NOT NULL,
+    [chk_Adv]               TINYINT         CONSTRAINT [DF_T0115_TRAVEL_LEVEL_APPROVAL_chk_Adv] DEFAULT ((0)) NOT NULL,
+    [chk_Agenda]            TINYINT         CONSTRAINT [DF_T0115_TRAVEL_LEVEL_APPROVAL_chk_Agenda] DEFAULT ((0)) NOT NULL,
+    [Tour_Agenda]           VARCHAR (MAX)   NULL,
+    [IMP_Business_Appoint]  VARCHAR (MAX)   NULL,
+    [KRA_Tour]              VARCHAR (MAX)   NULL,
+    [Attached_Doc_File]     VARCHAR (MAX)   NULL,
+    CONSTRAINT [PK_T0115_TRAVEL_LEVEL_APPROVAL] PRIMARY KEY CLUSTERED ([Tran_Id] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0115_TRAVEL_LEVEL_APPROVAL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0115_TRAVEL_LEVEL_APPROVAL_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID]),
+    CONSTRAINT [FK_T0115_TRAVEL_LEVEL_APPROVAL_T0100_TRAVEL_APPLICATION] FOREIGN KEY ([Travel_Application_ID]) REFERENCES [dbo].[T0100_TRAVEL_APPLICATION] ([Travel_Application_ID])
+);
+

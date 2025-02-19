@@ -1,0 +1,10 @@
+﻿CREATE TABLE [dbo].[T0040_PARAMETER_MASTER] (
+    [Para_Id]     NUMERIC (18)  IDENTITY (1, 1) NOT NULL,
+    [Cmp_Id]      NUMERIC (18)  NOT NULL,
+    [Para_Name]   VARCHAR (100) NOT NULL,
+    [Para_For]    VARCHAR (50)  NULL,
+    [Login_Id]    NUMERIC (18)  NULL,
+    [System_Date] DATETIME      NULL,
+    CONSTRAINT [PK_T0040_PARAMETER_MASTER] PRIMARY KEY CLUSTERED ([Para_Id] ASC)
+);
+

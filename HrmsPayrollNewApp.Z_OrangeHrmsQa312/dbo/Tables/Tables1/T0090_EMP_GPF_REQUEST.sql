@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[T0090_EMP_GPF_REQUEST] (
+    [Tran_ID]        NUMERIC (18)    NOT NULL,
+    [Cmp_ID]         NUMERIC (18)    NOT NULL,
+    [Emp_ID]         NUMERIC (18)    NOT NULL,
+    [AD_ID]          NUMERIC (18)    NOT NULL,
+    [Effective_Date] DATETIME        NOT NULL,
+    [Amount]         NUMERIC (18, 2) NOT NULL,
+    [System_Date]    DATETIME        NULL,
+    CONSTRAINT [PK_T0090_EMP_GPF_REQUEST] PRIMARY KEY NONCLUSTERED ([Tran_ID] ASC) WITH (FILLFACTOR = 80)
+);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_T0090_EMP_GPF_REQUEST]
+    ON [dbo].[T0090_EMP_GPF_REQUEST]([Emp_ID] ASC, [Effective_Date] DESC) WITH (FILLFACTOR = 80);
+

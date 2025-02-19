@@ -1,0 +1,15 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[GET_EMPLOYEE_FOR_TRAINING]    
+AS    
+SELECT     dbo.T0080_EMP_MASTER.Cmp_ID,dbo.T0080_EMP_MASTER.Emp_ID, dbo.T0080_EMP_MASTER.Emp_code, dbo.T0080_EMP_MASTER.Emp_Full_Name,dbo.T0095_INCREMENT.Branch_ID
+FROM         dbo.T0080_EMP_MASTER WITH (NOLOCK) INNER JOIN    
+                      dbo.T0095_INCREMENT  WITH (NOLOCK) ON dbo.T0080_EMP_MASTER.Increment_ID = dbo.T0095_INCREMENT.Increment_ID    
+
+
+
+

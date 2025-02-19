@@ -1,0 +1,19 @@
+﻿CREATE TABLE [dbo].[T0090_HRMS_RESUME_IMMIGRATION] (
+    [Row_ID]             NUMERIC (18)  NOT NULL,
+    [Cmp_ID]             NUMERIC (18)  NOT NULL,
+    [Resume_ID]          NUMERIC (18)  NOT NULL,
+    [Loc_ID]             NUMERIC (18)  NULL,
+    [Imm_Type]           VARCHAR (20)  NULL,
+    [Imm_No]             VARCHAR (20)  NULL,
+    [Imm_Issue_Date]     DATETIME      NULL,
+    [Imm_Issue_Status]   VARCHAR (20)  NULL,
+    [Imm_Date_of_Expiry] DATETIME      NULL,
+    [Imm_Review_Date]    DATETIME      NULL,
+    [Imm_Comments]       VARCHAR (250) NULL,
+    [attach_Documents]   VARCHAR (MAX) NULL,
+    CONSTRAINT [PK_T0090_HRMS_RESUME_IMMIGRATION] PRIMARY KEY CLUSTERED ([Row_ID] ASC, [Resume_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0090_HRMS_RESUME_IMMIGRATION_T0001_LOCATION_MASTER] FOREIGN KEY ([Loc_ID]) REFERENCES [dbo].[T0001_LOCATION_MASTER] ([Loc_ID]),
+    CONSTRAINT [FK_T0090_HRMS_RESUME_IMMIGRATION_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0090_HRMS_RESUME_IMMIGRATION_T0055_Resume_Master] FOREIGN KEY ([Resume_ID]) REFERENCES [dbo].[T0055_Resume_Master] ([Resume_Id])
+);
+

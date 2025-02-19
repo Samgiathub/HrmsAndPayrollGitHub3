@@ -1,0 +1,29 @@
+﻿CREATE TABLE [dbo].[T0140_LOAN_TRANSACTION] (
+    [Loan_Tran_ID]          NUMERIC (18)    NOT NULL,
+    [Cmp_ID]                NUMERIC (18)    NOT NULL,
+    [Loan_ID]               NUMERIC (18)    NOT NULL,
+    [Emp_ID]                NUMERIC (18)    NOT NULL,
+    [For_Date]              DATETIME        NOT NULL,
+    [Loan_Opening]          NUMERIC (22, 2) NOT NULL,
+    [Loan_Issue]            NUMERIC (22, 2) NOT NULL,
+    [Loan_Return]           NUMERIC (22, 2) NOT NULL,
+    [Loan_Closing]          NUMERIC (22, 2) NOT NULL,
+    [Is_Loan_Interest_Flag] NUMERIC (18)    DEFAULT ((0)) NOT NULL,
+    [Subsidy_Amount]        NUMERIC (18, 2) CONSTRAINT [DF_T0140_LOAN_TRANSACTION_Subsidy_Amount] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_T0140_LOAN_TRANSACTION] PRIMARY KEY CLUSTERED ([Loan_Tran_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0140_LOAN_TRANSACTION_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0140_LOAN_TRANSACTION_T0040_LOAN_MASTER] FOREIGN KEY ([Loan_ID]) REFERENCES [dbo].[T0040_LOAN_MASTER] ([Loan_ID]),
+    CONSTRAINT [FK_T0140_LOAN_TRANSACTION_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0140_LOAN_TRANSACTION_10_1058102810__K4_K5_K10_K3_K2_9]
+    ON [dbo].[T0140_LOAN_TRANSACTION]([Emp_ID] ASC, [For_Date] ASC, [Is_Loan_Interest_Flag] ASC, [Loan_ID] ASC, [Cmp_ID] ASC)
+    INCLUDE([Loan_Closing]) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1058102810_3_5_4_10_2]
+    ON [dbo].[T0140_LOAN_TRANSACTION]([Loan_ID], [For_Date], [Emp_ID], [Is_Loan_Interest_Flag], [Cmp_ID]);
+

@@ -1,0 +1,143 @@
+﻿
+---28/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+CREATE PROCEDURE [dbo].[AUTO_COPH_UTILITY_SP]
+@CMP_ID_PASS NUMERIC(18,0) = 0
+--@CC_EMAIL NVARCHAR(MAX) = ''	
+AS
+BEGIN
+
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+
+DECLARE @CMPID AS NUMERIC(18,0)
+DECLARE @EMPID AS NUMERIC(18,0)
+
+DECLARE @COPH_CREDIT_DAYS AS NUMERIC(18,0)
+		SET @COPH_CREDIT_DAYS = 0
+DECLARE @CONSTRAINT AS VARCHAR(MAX)
+DECLARE @FROMDATE AS DATETIME
+DECLARE @TODATE AS DATETIME
+DECLARE @FORDATE AS DATETIME
+if @CMP_ID_PASS =0
+	set @CMP_ID_PASS=Null;
+
+SET @FROMDATE=DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE())-1, 0)--GETDATE()
+SET @TODATE= DATEADD(MONTH, DATEDIFF(MONTH, -1, GETDATE())-1, -1)--DATEADD(DAY, 7, @FROMDATE)
+
+IF OBJECT_ID('tempdb..#Emp_WeekOff') IS NULL
+		BEGIN
+			CREATE TABLE #Emp_WeekOff
+			(
+				Row_ID			NUMERIC,
+				Emp_ID			NUMERIC,
+				For_Date		DATETIME,
+				Weekoff_day		VARCHAR(10),
+				W_Day			numeric(3,1),
+				Is_Cancel		BIT
+			)
+			CREATE CLUSTERED INDEX IX_Emp_WeekOff_EmpID_ForDate ON #Emp_WeekOff(Emp_ID, For_Date)		
+		END
+		
+	IF OBJECT_ID('tempdb..#EMP_HOLIDAY') IS NULL
+		BEGIN
+			CREATE TABLE #EMP_HOLIDAY(EMP_ID NUMERIC, FOR_DATE DATETIME, IS_CANCEL BIT, Is_Half tinyint, Is_P_Comp tinyint, H_DAY numeric(3,1));
+			CREATE UNIQUE CLUSTERED INDEX IX_EMP_HOLIDAY_EMPID_FORDATE ON #EMP_HOLIDAY(EMP_ID, FOR_DATE);
+		END
+		
+IF OBJECT_ID('tempdb..#Emp_WH') IS NULL
+	Begin		
+		Create table #Emp_WH
+		(
+			Emp_ID numeric(18,0),
+			For_Date datetime,			
+			Increment_ID numeric(18,0),
+			EmpTypeID numeric(18,0)
+		)
+End
+IF OBJECT_ID('tempdb..#Emp_SalaryCycle') IS NULL
+	Begin	
+		Create table #Emp_SalaryCycle
+		(
+			Emp_ID numeric(18,0),
+			Month_St_Date datetime,
+			Month_End_Date datetime
+		)
+	End
+	
+DECLARE CUR CURSOR
+FOR 
+	SELECT CMP_ID FROM T0010_COMPANY_MASTER WITH (NOLOCK) WHERE CMP_ID = ISNULL(@CMP_ID_PASS,CMP_ID)
+OPEN CUR
+	FETCH NEXT FROM CUR INTO @CMPID
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		TRUNCATE TABLE #Emp_WH;
+		TRUNCATE TABLE #Emp_SalaryCycle;	
+		set @CONSTRAINT = Null;
+		
+		INSERT	INTO #Emp_SalaryCycle
+		SELECT	MS.Emp_ID,Ms.Month_St_Date,Month_End_Date		
+		FROM	T0200_MONTHLY_SALARY MS WITH (NOLOCK)
+				LEFT JOIN T0100_LEAVE_CF_DETAIL LD WITH (NOLOCK) on LD.Emp_ID=MS.Emp_ID 
+						AND (LD.CF_For_Date between MS.Month_St_Date and MS.Month_End_Date)
+						AND  LD.CF_Type = 'AUTO_COPH'
+		WHERE	MS.Cmp_ID=@CMPID  AND LD.LEAVE_CF_ID IS NULL
+		
+		
+					
+		Declare CurSalDate Cursor
+		for
+			select	 Month_St_Date,Month_End_Date
+			from	#Emp_SalaryCycle 
+			group by Month_St_Date,Month_End_Date
+		Open CurSalDate
+			Fetch next from CurSalDate into @FROMDATE,@TODATE
+			WHILE @@FETCH_STATUS = 0
+				Begin
+				
+					TRUNCATE TABLE #Emp_WeekOff;
+					TRUNCATE TABLE #EMP_HOLIDAY;
+					set @CONSTRAINT=Null;
+					
+					SELECT	 @CONSTRAINT=	COALESCE(@CONSTRAINT + '#', '') +  CAST(EMP_ID AS VARCHAR(MAX))
+					FROM	#Emp_SalaryCycle 
+					WHERE	Month_St_Date = @FROMDATE AND Month_End_Date = @TODATE
+					
+					EXEC SP_GET_HW_ALL @CONSTRAINT=@CONSTRAINT,@CMP_ID=@CMPID, @FROM_DATE=@FROMDATE, @TO_DATE=@TODATE, @All_Weekoff = 1, @Exec_Mode=0
+					
+					
+					INSERT INTO #Emp_WH
+					SELECT	EW.Emp_ID,EW.For_Date,Q_I.Increment_ID,Q_I.Type_ID 
+					FROM	#Emp_WeekOff EW 
+							inner join #EMP_HOLIDAY EH on EW.Emp_ID=EH.EMP_ID and EW.For_Date=EH.FOR_DATE
+							inner join T0080_EMP_MASTER E WITH (NOLOCK) on EW.Emp_ID=E.Emp_ID
+							INNER JOIN (
+										SELECT	I.Increment_ID,I.BRANCH_ID,I.GRD_ID,I.DEPT_ID,I.DESIG_ID,I.TYPE_ID,I.EMP_ID,I.VERTICAL_ID,I.SUBVERTICAL_ID 
+										FROM	DBO.T0095_INCREMENT I WITH (NOLOCK)
+												INNER JOIN ( 
+																SELECT	MAX(INCREMENT_ID) AS INCREMENT_ID , EMP_ID 
+																FROM	DBO.T0095_INCREMENT WITH (NOLOCK)
+																WHERE	INCREMENT_EFFECTIVE_DATE <= @TODATE AND CMP_ID = @CMPID
+																GROUP BY EMP_ID  
+															) QRY ON I.EMP_ID = QRY.EMP_ID	AND I.INCREMENT_ID = QRY.INCREMENT_ID	
+										)Q_I ON E.EMP_ID = Q_I.EMP_ID
+				
+					FETCH NEXT FROM CurSalDate INTO @FROMDATE,@TODATE			
+				End
+		CLOSE CurSalDate
+		DEALLOCATE CurSalDate	
+		
+		if Exists(select 1 from #Emp_WH)
+			Begin
+				EXEC AUTO_CREDIT_COPH_LEAVE @CMP_ID = @CMPID,@COPH_CREDIT_DAYS =@COPH_CREDIT_DAYS  OUTPUT--,@ALPHA_EMP_CODE = '' ,@HOLIDAY_STR = '',@WEEKOFF_STR = '',@SAL_EFFECT_DATE = @SALGENDATE ,@INCREMENT_ID = @INCREMENTID ,@COPH_CREDIT_DAYS =@COPH_CREDIT_DAYS  OUTPUT--,@For_Date=@FORDATE
+			End
+			
+		FETCH NEXT FROM CUR INTO @CMPID
+	END
+CLOSE CUR
+DEALLOCATE CUR
+
+
+END
+

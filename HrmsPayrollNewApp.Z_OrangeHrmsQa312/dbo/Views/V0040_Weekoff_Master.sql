@@ -1,0 +1,16 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0040_Weekoff_Master]
+AS
+SELECT     dbo.T0030_BRANCH_MASTER.Branch_ID, dbo.T0030_BRANCH_MASTER.Branch_Name, dbo.T0040_WEEKOFF_MASTER.System_Date, 
+                      dbo.T0040_WEEKOFF_MASTER.Weekoff_Day, dbo.T0040_WEEKOFF_MASTER.Weekoff_Name, dbo.T0040_WEEKOFF_MASTER.Cmp_ID
+FROM         dbo.T0030_BRANCH_MASTER WITH (NOLOCK) INNER JOIN
+                      dbo.T0040_WEEKOFF_MASTER WITH (NOLOCK)  ON dbo.T0030_BRANCH_MASTER.Branch_ID = dbo.T0040_WEEKOFF_MASTER.Branch_ID
+
+
+
+

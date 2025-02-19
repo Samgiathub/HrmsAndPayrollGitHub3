@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[T9999_AX_Report_Setting] (
+    [AX_ID]       NUMERIC (18) NOT NULL,
+    [AX_TYPE]     VARCHAR (50) NOT NULL,
+    [SP_NAME]     VARCHAR (50) NOT NULL,
+    [PARAMETER]   VARCHAR (50) NULL,
+    [MODIFY_DATE] DATETIME     CONSTRAINT [DF_T9999_AX_Report_Setting_MODIFY_DATE] DEFAULT (getdate()) NOT NULL,
+    [FORMAT]      VARCHAR (10) NULL
+);
+

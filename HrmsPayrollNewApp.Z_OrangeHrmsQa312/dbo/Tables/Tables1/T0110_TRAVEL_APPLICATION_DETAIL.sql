@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[T0110_TRAVEL_APPLICATION_DETAIL] (
+    [Travel_App_Detail_ID] NUMERIC (18)    NOT NULL,
+    [Cmp_ID]               NUMERIC (18)    NOT NULL,
+    [Travel_App_ID]        NUMERIC (18)    NOT NULL,
+    [Place_Of_Visit]       VARCHAR (100)   NOT NULL,
+    [Travel_Purpose]       VARCHAR (200)   NOT NULL,
+    [Instruct_Emp_ID]      NUMERIC (18)    NULL,
+    [Travel_Mode_ID]       NUMERIC (18)    NOT NULL,
+    [From_Date]            DATETIME        NOT NULL,
+    [Period]               NUMERIC (18, 2) NOT NULL,
+    [To_Date]              DATETIME        NOT NULL,
+    [Remarks]              NVARCHAR (500)  NULL,
+    [State_ID]             INT             NULL,
+    [City_ID]              INT             NULL,
+    [Loc_ID]               NUMERIC (18)    DEFAULT (NULL) NULL,
+    [Project_ID]           NUMERIC (18)    DEFAULT (NULL) NULL,
+    [TravelTypeId]         NUMERIC (18)    NULL,
+    [Reason_ID]            INT             NULL,
+    [From_State_id]        INT             NULL,
+    [From_City_id]         INT             NULL,
+    CONSTRAINT [PK_T0110_TRAVEL_APPLICATION_DETAIL] PRIMARY KEY CLUSTERED ([Travel_App_Detail_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0110_TRAVEL_APPLICATION_DETAIL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0110_TRAVEL_APPLICATION_DETAIL_T0080_EMP_MASTER] FOREIGN KEY ([Instruct_Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID]),
+    CONSTRAINT [FK_T0110_TRAVEL_APPLICATION_DETAIL_T0100_TRAVEL_APPLICATION] FOREIGN KEY ([Travel_App_ID]) REFERENCES [dbo].[T0100_TRAVEL_APPLICATION] ([Travel_Application_ID])
+);
+

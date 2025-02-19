@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[tmpDed1] (
+    [Emp_ID]                     NUMERIC (18)    NOT NULL,
+    [For_Date]                   DATETIME        NOT NULL,
+    [Advance]                    NUMERIC (38, 2) NULL,
+    [Advance Miscll Ded]         NUMERIC (38, 2) NULL,
+    [Arrears Deduction]          NUMERIC (38, 2) NULL,
+    [Canteen Amount1]            NUMERIC (38, 2) NULL,
+    [Canteen Payment]            NUMERIC (38, 2) NULL,
+    [Company ESIC Contirbution]  NUMERIC (38, 2) NULL,
+    [Employee ESIC Contirbution] NUMERIC (38, 2) NULL,
+    [Employee PF ]               NUMERIC (38, 2) NULL,
+    [Employee Retention]         NUMERIC (38, 2) NULL,
+    [Extra TDS]                  NUMERIC (38, 2) NULL,
+    [FNF Recovery]               NUMERIC (38, 2) NULL,
+    [FNF Test]                   NUMERIC (38, 2) NULL,
+    [Mess Expense]               NUMERIC (38, 2) NULL,
+    [Mobile Bill Deduction]      NUMERIC (38, 2) NULL,
+    [Night_Shift_Allowance]      NUMERIC (38, 2) NULL,
+    [Other Deduction]            NUMERIC (38, 2) NULL,
+    [Penalty]                    NUMERIC (38, 2) NULL,
+    [TDS]                        NUMERIC (38, 2) NULL,
+    [Tour Deduction]             NUMERIC (38, 2) NULL,
+    [Sal_Generate_Date]          DATETIME        NOT NULL
+);
+

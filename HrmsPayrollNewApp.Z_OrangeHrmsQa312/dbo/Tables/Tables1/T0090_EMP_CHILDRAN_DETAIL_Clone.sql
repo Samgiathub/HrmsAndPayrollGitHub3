@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[T0090_EMP_CHILDRAN_DETAIL_Clone] (
+    [Emp_ID]             NUMERIC (18)    NOT NULL,
+    [Row_ID]             NUMERIC (18)    NOT NULL,
+    [Cmp_ID]             NUMERIC (18)    NOT NULL,
+    [Name]               VARCHAR (100)   NOT NULL,
+    [Gender]             CHAR (1)        NOT NULL,
+    [Date_Of_Birth]      DATETIME        NULL,
+    [C_Age]              NUMERIC (18, 1) NULL,
+    [Relationship]       VARCHAR (50)    NULL,
+    [Is_Resi]            NUMERIC (18, 1) NULL,
+    [Is_Dependant]       TINYINT         NULL,
+    [System_Date]        DATETIME        NOT NULL,
+    [Login_Id]           NUMERIC (18)    NOT NULL,
+    [Image_Path]         VARCHAR (100)   NULL,
+    [OccupationID]       INT             NULL,
+    [HobbyID]            NVARCHAR (500)  NULL,
+    [HobbyName]          NVARCHAR (1000) NULL,
+    [DepCompanyName]     NVARCHAR (200)  NULL,
+    [Standard_ID]        INT             NULL,
+    [Shcool_College]     NVARCHAR (200)  NULL,
+    [ExtraActivity]      NVARCHAR (500)  NULL,
+    [City]               NVARCHAR (200)  NULL,
+    [CDTM]               DATETIME        NULL,
+    [CmpCity]            NVARCHAR (200)  NULL,
+    [Std_Specialization] NVARCHAR (300)  NULL,
+    [DepWorkTime]        NVARCHAR (200)  NULL
+);
+

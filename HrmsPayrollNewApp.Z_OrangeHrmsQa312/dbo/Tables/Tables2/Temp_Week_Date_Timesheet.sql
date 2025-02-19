@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[Temp_Week_Date_Timesheet] (
+    [from_date]           DATETIME      NULL,
+    [To_date]             DATETIME      NULL,
+    [WeekStart_date]      DATE          NULL,
+    [WeekEnd_date]        DATE          NULL,
+    [Monday_date]         DATE          NULL,
+    [tuesday_date]        DATE          NULL,
+    [wednesday_date]      DATE          NULL,
+    [thursday_date]       DATE          NULL,
+    [friday_date]         DATE          NULL,
+    [saturday_date]       DATE          NULL,
+    [sunday_date]         DATE          NULL,
+    [Timesheet_ID]        NUMERIC (18)  NOT NULL,
+    [Timesheet_Detail_ID] NUMERIC (18)  NOT NULL,
+    [Cmp_ID]              NUMERIC (18)  NULL,
+    [Employee_ID]         NUMERIC (18)  NULL,
+    [Timesheet_Period]    VARCHAR (50)  NULL,
+    [Mon]                 VARCHAR (MAX) NULL,
+    [Tue]                 VARCHAR (MAX) NULL,
+    [Wed]                 VARCHAR (MAX) NULL,
+    [Thu]                 VARCHAR (MAX) NULL,
+    [Fri]                 VARCHAR (MAX) NULL,
+    [Sat]                 VARCHAR (MAX) NULL,
+    [Sun]                 VARCHAR (MAX) NULL,
+    [Project_Status_ID]   NUMERIC (18)  NULL
+);
+

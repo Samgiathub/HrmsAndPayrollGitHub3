@@ -1,0 +1,16 @@
+﻿
+
+
+
+
+CREATE FUNCTION DBO.Decrypt (@ENCRYP VARBINARY(8000))
+RETURNS nvarchar(4000)
+AS
+BEGIN
+  DECLARE @res nvarchar(4000)
+  SET @res = DECRYPTBYPASSPHRASE ('ORANGE HRMS',@encryp)
+  RETURN (@res)
+END
+
+
+

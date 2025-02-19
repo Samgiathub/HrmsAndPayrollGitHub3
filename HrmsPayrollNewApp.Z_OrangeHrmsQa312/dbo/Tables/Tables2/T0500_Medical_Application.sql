@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T0500_Medical_Application] (
+    [App_Id]            NUMERIC (18)  IDENTITY (1, 1) NOT NULL,
+    [Cmp_Id]            NUMERIC (18)  NULL,
+    [App_For]           INT           NULL,
+    [App_Date]          DATETIME      NULL,
+    [Emp_Name]          VARCHAR (100) NULL,
+    [Hospital_Name]     VARCHAR (500) NULL,
+    [State_Id]          NUMERIC (18)  NULL,
+    [City]              VARCHAR (100) NULL,
+    [Incident_Id]       INT           NULL,
+    [Incident_Place]    VARCHAR (100) NULL,
+    [Hospital_Address]  VARCHAR (500) NULL,
+    [Date_of_Incident]  DATETIME      NULL,
+    [Time_of_Incident]  VARCHAR (50)  NULL,
+    [Contact_no]        VARCHAR (50)  NULL,
+    [Desc_Details]      VARCHAR (500) NULL,
+    [Dependent_Details] VARCHAR (100) NULL,
+    [Other_Note]        VARCHAR (500) NULL,
+    [Emp_id]            NUMERIC (18)  NULL,
+    [Contact_no2]       VARCHAR (50)  NULL,
+    [Email]             VARCHAR (100) NULL,
+    [Created_by]        NUMERIC (18)  NULL,
+    CONSTRAINT [PK__T0500_Me__E976DD50365797C8] PRIMARY KEY CLUSTERED ([App_Id] ASC) WITH (FILLFACTOR = 95)
+);
+

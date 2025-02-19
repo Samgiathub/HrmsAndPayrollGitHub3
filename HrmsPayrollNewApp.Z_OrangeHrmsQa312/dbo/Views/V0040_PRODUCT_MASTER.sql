@@ -1,0 +1,6 @@
+﻿
+CREATE VIEW [dbo].[V0040_PRODUCT_MASTER]    
+AS    
+SELECT	Product_ID,Cmp_ID,Login_ID,Product_Name,System_Date
+FROM	dbo.T0040_PRODUCT_MASTER WITH (NOLOCK)
+

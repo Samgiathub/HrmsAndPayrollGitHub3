@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[T0115_VEHICLE_APPROVAL_LEVEL] (
+    [Tran_ID]                  INT            IDENTITY (1, 1) NOT NULL,
+    [Vehicle_App_ID]           INT            NOT NULL,
+    [Cmp_ID]                   NUMERIC (18)   NOT NULL,
+    [Emp_ID]                   NUMERIC (18)   NOT NULL,
+    [Vehicle_ID]               INT            NOT NULL,
+    [Manufacture_Year]         INT            NOT NULL,
+    [Max_Limit]                FLOAT (53)     NOT NULL,
+    [Initial_Emp_Contribution] FLOAT (53)     NOT NULL,
+    [Vehicle_Cost]             FLOAT (53)     NOT NULL,
+    [Employee_Share]           FLOAT (53)     NOT NULL,
+    [Attachment]               VARCHAR (5000) NOT NULL,
+    [Vehicle_Appr_Status]      VARCHAR (25)   NOT NULL,
+    [Approval_Date]            DATETIME       NOT NULL,
+    [Approval_Amount]          FLOAT (53)     NOT NULL,
+    [S_Emp_ID]                 NUMERIC (18)   NOT NULL,
+    [Comments]                 VARCHAR (5000) NOT NULL,
+    [Rpt_level]                INT            NOT NULL,
+    [Transaction_By]           INT            NULL,
+    [Transaction_Date]         DATETIME       NULL,
+    [Vehicle_Model]            VARCHAR (500)  DEFAULT ('') NOT NULL,
+    [Vehicle_Manufacture]      VARCHAR (500)  DEFAULT ('') NOT NULL,
+    [Vehicle_Option]           VARCHAR (100)  NULL,
+    CONSTRAINT [PK_T0115_VEHICLE_APPROVAL_LEVEL] PRIMARY KEY CLUSTERED ([Tran_ID] ASC)
+);
+

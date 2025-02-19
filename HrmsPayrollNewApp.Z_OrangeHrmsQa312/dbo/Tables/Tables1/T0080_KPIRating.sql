@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T0080_KPIRating] (
+    [KPI_RatingID]           NUMERIC (18)    NOT NULL,
+    [Cmp_Id]                 NUMERIC (18)    NOT NULL,
+    [KPIPMS_ID]              NUMERIC (18)    NULL,
+    [SubKPIId]               NUMERIC (18)    NULL,
+    [Emp_ID]                 NUMERIC (18)    NULL,
+    [Metric]                 VARCHAR (500)   NULL,
+    [Rating]                 NUMERIC (18)    NULL,
+    [AchievedWeight]         NUMERIC (18, 2) NULL,
+    [Rating_Manager]         NUMERIC (18)    NULL,
+    [Rating_Employee]        NUMERIC (18)    NULL,
+    [Metric_Manager]         VARCHAR (500)   NULL,
+    [Metric_Employee]        VARCHAR (500)   NULL,
+    [AchievedWeight_Manager] NUMERIC (18, 2) NULL,
+    [AchievedWeight_Emp]     NUMERIC (18, 2) NULL,
+    CONSTRAINT [PK_T0080_KPIRating] PRIMARY KEY CLUSTERED ([KPI_RatingID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0080_KPIRating_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_Id]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0080_KPIRating_T0030_HRMS_RATING_MASTER] FOREIGN KEY ([Rating]) REFERENCES [dbo].[T0030_HRMS_RATING_MASTER] ([Rate_ID]),
+    CONSTRAINT [FK_T0080_KPIRating_T0030_HRMS_RATING_MASTER1] FOREIGN KEY ([Rating_Manager]) REFERENCES [dbo].[T0030_HRMS_RATING_MASTER] ([Rate_ID]),
+    CONSTRAINT [FK_T0080_KPIRating_T0030_HRMS_RATING_MASTER2] FOREIGN KEY ([Rating_Employee]) REFERENCES [dbo].[T0030_HRMS_RATING_MASTER] ([Rate_ID]),
+    CONSTRAINT [FK_T0080_KPIRating_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID]),
+    CONSTRAINT [FK_T0080_KPIRating_T0080_KPIPMS_EVAL] FOREIGN KEY ([KPIPMS_ID]) REFERENCES [dbo].[T0080_KPIPMS_EVAL] ([KPIPMS_ID]),
+    CONSTRAINT [FK_T0080_KPIRating_T0080_SubKPI_Master] FOREIGN KEY ([SubKPIId]) REFERENCES [dbo].[T0080_SubKPI_Master] ([SubKPIId])
+);
+

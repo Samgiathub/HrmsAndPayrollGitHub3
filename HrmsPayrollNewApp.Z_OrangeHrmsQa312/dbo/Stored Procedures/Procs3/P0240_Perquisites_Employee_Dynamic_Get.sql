@@ -1,0 +1,124 @@
+﻿
+
+
+-- =============================================
+-- Author:		Rohit Patel
+-- Create date: 24092015
+-- Description:	For Get Rate and Subsidy Of Grade For Effective Date.
+---01/2/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+-- =============================================
+CREATE PROCEDURE [dbo].[P0240_Perquisites_Employee_Dynamic_Get] 
+	@Cmp_ID Numeric(18,0),
+	@Emp_Id Numeric(18,0),
+	@Fin_Year varchar(max)
+AS
+BEGIN
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+SET ANSI_WARNINGS OFF;
+	
+	CREATE TABLE #AD_EARN_AMOUNT
+	(
+		EMP_ID NUMERIC(18,0),
+		IT_ID NUMERIC(18,0),
+		AD_ID NUMERIC(18,0),
+		AMOUNT NUMERIC(18,2)
+	 )
+	 
+	DECLARE @CUR_IT_ID NUMERIC(18,0)
+	DECLARE @CUR_AD_STRING NVARCHAR(MAX)
+
+	DECLARE @Cmp_PF_DEF_ID   INT
+	SET @Cmp_PF_DEF_ID  = 5
+	
+	
+	DECLARE @YEAR AS NUMERIC(18,0)
+	SELECT @YEAR = DATA FROM DBO.SPLIT(@FIN_YEAR,'-') WHERE ID = 1
+	
+	DECLARE @YEAR_ST_DATE AS DATETIME
+	DECLARE @YEAR_END_DATE AS DATETIME
+	
+	SET @YEAR_ST_DATE = dbo.GET_YEAR_START_DATE(@YEAR,4,0)
+	SET @YEAR_END_DATE = dbo.GET_YEAR_END_DATE(@YEAR,4,0)
+	
+ 
+	DECLARE CURADEARN CURSOR FOR 
+		SELECT IT_ID,AD_STRING FROM T0070_IT_MASTER IM WITH (NOLOCK)
+		WHERE IT_IS_ACTIVE =1 AND IT_IS_PERQUISITE =1 AND IM.CMP_ID=@CMP_ID AND ISNULL(IM.AD_STRING,'') <> ''
+	OPEN CURADEARN 
+			FETCH NEXT FROM CURADEARN INTO @CUR_IT_ID,@CUR_AD_STRING
+			WHILE @@FETCH_STATUS = 0
+				BEGIN
+						
+						INSERT INTO #AD_EARN_AMOUNT
+						SELECT @EMP_ID,@CUR_IT_ID,DATA,
+							CASE WHEN AM.AD_DEF_ID = @Cmp_PF_DEF_ID THEN
+								CASE WHEN QRY.AMOUNT >= 750000 AND @YEAR_ST_DATE >= '01-APR-2020' THEN QRY.AMOUNT -750000 ELSE 0 END
+							ELSE
+								QRY.AMOUNT
+							END
+						FROM DBO.SPLIT(@CUR_AD_STRING,'#') AD INNER JOIN
+							(	SELECT ISNULL(SUM(EED.M_AD_AMOUNT),0) AS AMOUNT,EED.AD_ID,EED.EMP_ID FROM  T0210_MONTHLY_AD_DETAIL EED WITH (NOLOCK)
+								WHERE EED.EMP_ID = @EMP_ID AND (EED.FOR_DATE BETWEEN @YEAR_ST_DATE AND @YEAR_END_DATE) GROUP BY EED.EMP_ID,EED.AD_ID
+							)QRY ON AD.DATA  = QRY.AD_ID
+						INNER JOIN T0050_AD_MASTER AM WITH (NOLOCK) ON AD.DATA = AM.AD_ID
+					
+					FETCH NEXT FROM CURADEARN INTO @CUR_IT_ID,@CUR_AD_STRING
+				END
+	CLOSE CURADEARN
+	DEALLOCATE CURADEARN
+
+	DECLARE @INTEREST_AMT NUMERIC(18,4)
+	SET @INTEREST_AMT = 0
+	
+	EXEC SP_INTEREST_CALCULATION_AS_PERQUISITES_IT @CMP_ID,@EMP_ID,@FIN_YEAR,@INTEREST_AMT OUTPUT
+	
+	Declare @CurrentYear numeric(9) = 0
+	Select @CurrentYear = [Year] from (
+			select  datename(year, dateadd(month, -3, [date])) as [Year],
+			 datename(year, dateadd(month, -3, [date]))  + '-' + datename(year, dateadd(month, +9, [date])) as [FinancialYear]
+			from    (values (dateadd(year, -1, getdate())), (getdate())) as fy ([date])
+	) a where  a.[FinancialYear] = @Fin_Year
+
+	
+	Declare @TaxablePreqValue  as numeric(18) = 0
+	Select @TaxablePreqValue = TaxablePerqValue from T0040_Emp_ESOP_Allocation  m inner join
+			(
+				Select MAX(Effective_DATE) as MaxEffectiveDate , Emp_Id
+				from T0040_Emp_ESOP_Allocation 
+				where emp_id = @Emp_id and YEAR(Effective_Date) = @CurrentYear
+				Group by Emp_ID
+			) a  on m.Emp_id = A.emp_id and m.Effective_DATE = a.MaxEffectiveDate
+
+				
+	SELECT CASE WHEN (ISNULL(PED.AMOUNT,0) > 0) THEN 'true' ELSE 'False' END AS CHECKED,
+	IM.IT_NAME,IT_LEVEL,IM.IT_ID,IM.CMP_ID, 
+	CASE WHEN IM.IT_DEF_ID = 166 THEN 
+		ISNULL(@INTEREST_AMT,0) 
+	ELSE
+		CASE WHEN ISNULL(PED.IT_ID,0) > 0 THEN 
+			ISNULL(PED.AMOUNT,0) 
+		ELSE 
+			ISNULL(QRY.AMOUNT,0) 
+		END 
+	END AS AMOUNT,@EMP_ID AS EMP_ID,@FIN_YEAR AS FINANCIAL_YEAR,IT_Alias
+	into #TmpITMaster
+	FROM T0070_IT_MASTER IM  WITH (NOLOCK) LEFT OUTER JOIN (
+	SELECT SUM(AEA.AMOUNT) AS AMOUNT,IT_ID FROM #AD_EARN_AMOUNT AEA GROUP BY AEA.IT_ID) QRY
+	  ON 	IM.IT_ID = QRY.IT_ID 
+	LEFT JOIN (
+				SELECT IT_ID,CMP_ID,EMP_ID,FINANCIAL_YEAR,AMOUNT FROM T0240_PERQUISITES_EMPLOYEE_DYNAMIC WITH (NOLOCK) 
+				WHERE CMP_ID=@CMP_ID AND EMP_ID=@EMP_ID AND FINANCIAL_YEAR= @FIN_YEAR
+			  ) PED ON IM.CMP_ID = PED.CMP_ID AND IM.IT_ID =PED.IT_ID
+	WHERE IT_IS_ACTIVE =1 AND IT_IS_PERQUISITE =1 AND IM.CMP_ID=@CMP_ID
+	
+	UPDATE #TmpITMaster set Amount = @TaxablePreqValue where  IT_Alias = 'Stock options' and Cmp_id = @cmp_Id
+
+	select * from #TmpITMaster
+
+ end
+return
+ 
+ 
+

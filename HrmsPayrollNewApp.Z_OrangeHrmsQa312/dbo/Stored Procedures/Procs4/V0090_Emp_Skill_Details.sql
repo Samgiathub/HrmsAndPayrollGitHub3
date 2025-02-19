@@ -1,0 +1,21 @@
+﻿
+
+
+
+---21/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+CREATE PROCEDURE [dbo].[V0090_Emp_Skill_Details]
+ @Cmp_Id numeric
+,@Emp_Id numeric
+,@Start_Date DateTime
+,@End_Date DateTime
+AS
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+
+
+RETURN
+
+
+
+

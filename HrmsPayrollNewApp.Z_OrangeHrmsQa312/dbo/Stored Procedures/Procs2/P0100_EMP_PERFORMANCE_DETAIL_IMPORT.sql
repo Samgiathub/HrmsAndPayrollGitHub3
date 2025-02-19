@@ -1,0 +1,222 @@
+﻿
+
+
+
+
+CREATE PROCEDURE [dbo].[P0100_EMP_PERFORMANCE_DETAIL_IMPORT]
+	 @CMP_ID						NUMERIC(18,0)
+	,@Data							xml
+	,@LOGIN_ID						NUMERIC(18,0)
+	--,@LOG_STATUS					VARCHAR(10)	OUTPUT		
+	,@GUID							VARCHAR(2000) = ''
+	,@Trans_Type char(5) = 'I'
+AS 
+
+        SET NOCOUNT ON 
+		SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+		SET ARITHABORT ON
+
+
+IF (@Data.exist('/NewDataSet/Sheet1OLE') = 1) -- For Web XML
+	BEGIN
+	
+		SELECT Sheet1OLE.value('(Alpha_Emp_code/text())[1]','varchar(50)') AS Alpha_Emp_code,
+		Sheet1OLE.value('(Emp_Full_Name/text())[1]','varchar(50)') AS Emp_Full_Name,
+		Sheet1OLE.value('(Branch/text())[1]','varchar(255)') AS Branch,
+		Sheet1OLE.value('(Performance_Name/text())[1]','varchar(50)') AS Performance_Name,
+		Sheet1OLE.value('(Year/text())[1]','numeric(18,0)') AS 'Year',
+		Sheet1OLE.value('(April/text())[1]','numeric(18,0)') AS April,
+		Sheet1OLE.value('(May/text())[1]','numeric(18,0)') AS May,
+		Sheet1OLE.value('(June/text())[1]','numeric(18,0)') AS June,
+		Sheet1OLE.value('(July/text())[1]','numeric(18,0)') AS July,
+		Sheet1OLE.value('(August/text())[1]','numeric(18,0)') AS August,
+		Sheet1OLE.value('(September/text())[1]','numeric(18,0)') AS September,
+		Sheet1OLE.value('(October/text())[1]','numeric(18,0)') AS October,
+		Sheet1OLE.value('(November/text())[1]','numeric(18,0)') AS November,
+		Sheet1OLE.value('(December/text())[1]','numeric(18,0)') AS December,
+		Sheet1OLE.value('(January/text())[1]','numeric(18,0)') AS January,
+		Sheet1OLE.value('(February/text())[1]','numeric(18,0)') AS February,
+		Sheet1OLE.value('(March/text())[1]','numeric(18,0)') AS March
+		INTO #ItemTemp FROM @Data.nodes('/NewDataSet/Sheet1OLE') as Temp(Sheet1OLE)
+	END	
+  	
+  	CREATE TABLE #EMP_PERFORMANCE_LOGS
+  	(
+  		ALPHA_EMP_CODE VARCHAR(128),
+  		EMP_ID NUMERIC(18,0),
+  		[Message] varchar(128),
+  	    STATUS VARCHAR(128)
+  	)
+  	
+  	DECLARE @EMP_ID AS NUMERIC(18,0)
+  	DECLARE @ALPHA_EMP_CODE AS VARCHAR(50)
+  	DECLARE @PERFORMANCE_NAME AS VARCHAR(50)
+  	DECLARE @Year AS VARCHAR(15)
+  	DECLARE @MONTH AS VARCHAR(15)
+  	DECLARE @Percentage AS NUMERIC(18,0)
+  	
+  	DECLARE @PER_DETAIL_ID AS NUMERIC(18,0)
+  	DECLARE @PER_INC_TRAN_ID AS NUMERIC(18,0)
+	DECLARE @FOR_DATE AS DATETIME
+	DECLARE @TOTAL_POINTS AS NUMERIC(18,0)
+	SET @TOTAL_POINTS = 0
+	IF @Trans_Type = 'I'
+	BEGIN
+	
+		
+	
+		DECLARE ITEM_CURSOR CURSOR  FAST_FORWARD FOR
+		--SELECT ALPHA_EMP_CODE,PERFORMANCE_NAME,YEAR,APRIL,MAY,JUNE,JULY,AUGUST,SEPTEMBER,OCTOBER,NOVEMBER,DECEMBER,JANUARY,FEBRUARY,MARCH FROM #ItemTemp
+		
+		SELECT ALPHA_EMP_CODE,PERFORMANCE_NAME,YEAR,MONTHS,PERCENTAGE
+		FROM #ItemTemp  
+		UNPIVOT  
+		(  
+			   PERCENTAGE  
+			   FOR months IN (APRIL,MAY,JUNE,JULY,AUGUST,SEPTEMBER,OCTOBER,NOVEMBER,DECEMBER,JANUARY,FEBRUARY,MARCH)  
+		) AS UnpivotExample  
+	
+		OPEN ITEM_CURSOR
+		FETCH NEXT FROM ITEM_CURSOR INTO @ALPHA_EMP_CODE,@PERFORMANCE_NAME,@YEAR,@MONTH,@PERCENTAGE
+		WHILE @@fetch_status = 0
+			BEGIN
+			
+				
+				SELECT @PER_DETAIL_ID = ISNULL(MAX(PER_DETAIL_ID),0) + 1 FROM T0100_EMP_PERFORMANCE_DETAIL WITH (NOLOCK)
+				SELECT	@EMP_ID = EMP_ID 
+						FROM T0080_EMP_MASTER WITH (NOLOCK)
+						WHERE ALPHA_EMP_CODE = @ALPHA_EMP_CODE AND CMP_ID = @CMP_ID
+						
+				IF ISNULL(@ALPHA_EMP_CODE,'') = ''
+					BEGIN
+						INSERT INTO #EMP_PERFORMANCE_LOGS
+						SELECT @ALPHA_EMP_CODE,ISNULL(@EMP_ID,0),'EMPLOYEE CODE CANNOT BE NULL','False'
+					END		
+				ELSE IF NOT EXISTS(SELECT 1 FROM T0080_EMP_MASTER WITH (NOLOCK) WHERE ALPHA_EMP_CODE = @ALPHA_EMP_CODE AND CMP_ID = @CMP_ID)
+					BEGIN
+						INSERT INTO #EMP_PERFORMANCE_LOGS
+						SELECT @ALPHA_EMP_CODE,ISNULL(@EMP_ID,0),@ALPHA_EMP_CODE + ' - EMPLOYEE CODE NOT EXIST','False'
+						
+					END
+				ELSE IF ISNULL(@PERFORMANCE_NAME,'') = ''
+					BEGIN
+						INSERT INTO #EMP_PERFORMANCE_LOGS
+						SELECT @ALPHA_EMP_CODE,ISNULL(@EMP_ID,0),'PERFORMANCE NAME CANNOT BE NULL','False'
+					END
+				ELSE IF ISNULL(@YEAR,'') = ''
+					BEGIN
+						INSERT INTO #EMP_PERFORMANCE_LOGS
+						SELECT @ALPHA_EMP_CODE,ISNULL(@EMP_ID,0),'YEAR CANNOT BE NULL','False'
+					END
+				ELSE IF NOT EXISTS(SELECT 1 FROM T0040_PERFORMANCE_INCENTIVE_MASTER WITH (NOLOCK) WHERE PER_NAME = @PERFORMANCE_NAME AND CMP_ID = @CMP_ID)
+					BEGIN
+						INSERT INTO #EMP_PERFORMANCE_LOGS
+						SELECT @ALPHA_EMP_CODE,ISNULL(@EMP_ID,0),@PERFORMANCE_NAME + ' - Performance Name is Not Proper','False'
+					END
+				ELSE 
+					BEGIN
+					
+						INSERT INTO #EMP_PERFORMANCE_LOGS
+						SELECT @ALPHA_EMP_CODE,ISNULL(@EMP_ID,0),'','True'
+						
+						SELECT 
+						@PER_INC_TRAN_ID = PER_INC_TRAN_ID ,
+						@TOTAL_POINTS = TOTAL_POINTS
+						FROM T0040_PERFORMANCE_INCENTIVE_MASTER WITH (NOLOCK)
+						WHERE PER_NAME = @PERFORMANCE_NAME AND CMP_ID = @CMP_ID
+						
+						
+						SET @FOR_DATE = DBO.GET_MONTH_ST_DATE(DATEPART(MM, CAST(@MONTH+CAST(@YEAR AS VARCHAR(5)) AS DATETIME)),@YEAR)
+						
+						IF EXISTS(	SELECT 1 FROM
+									T0100_EMP_PERFORMANCE_DETAIL WITH (NOLOCK) 
+									WHERE FOR_DATE = @FOR_DATE AND EMP_ID = @EMP_ID AND CMP_ID = @CMP_ID )
+							BEGIN
+							
+									UPDATE	T0100_EMP_PERFORMANCE_DETAIL
+									SET		PERCENTAGE = @PERCENTAGE,
+											OUT_OF_PER = @TOTAL_POINTS
+									WHERE 	FOR_DATE = @FOR_DATE AND EMP_ID = @EMP_ID AND CMP_ID = @CMP_ID
+								
+							END
+						ELSE 
+						
+							BEGIN
+							
+								INSERT INTO T0100_EMP_PERFORMANCE_DETAIL
+								(
+									PER_DETAIL_ID,
+									PER_INC_TRAN_ID,
+									CMP_ID,
+									EMP_ID,
+									FOR_DATE,
+									PERCENTAGE,
+									OUT_OF_PER,
+									LOGIN_ID,
+									SYS_DATE
+								)
+								VALUES
+								(
+									@PER_DETAIL_ID,
+									@PER_INC_TRAN_ID,
+									@CMP_ID,
+									@EMP_ID,
+									@FOR_DATE,
+									@PERCENTAGE,
+									@TOTAL_POINTS,
+									@LOGIN_ID,
+									GETDATE()
+								)
+						END
+					
+					END
+					
+				FETCH NEXT FROM ITEM_CURSOR INTO @ALPHA_EMP_CODE,@PERFORMANCE_NAME,@YEAR,@MONTH,@PERCENTAGE
+				
+			END
+		CLOSE ITEM_CURSOR
+		DEALLOCATE ITEM_CURSOR
+		
+		
+		
+		SELECT DISTINCT EMP_ID 
+		into #Success_Logs
+		FROM 
+		#EMP_PERFORMANCE_LOGS
+		WHERE STATUS = 'TRUE'
+		GROUP BY EMP_ID
+		
+		
+		SELECT COUNT(EMP_ID) AS TOTAL_COUNT_SUCCESS  
+		FROM #Success_Logs
+		
+		
+		SELECT DISTINCT ISNULL(B.EMP_FULL_NAME,A.ALPHA_EMP_CODE) AS ALPHA_EMP_CODE,A.MESSAGE,A.STATUS 
+		FROM #EMP_PERFORMANCE_LOGS A LEFT JOIN T0080_EMP_MASTER B WITH (NOLOCK) ON A.EMP_ID = B.EMP_ID  
+		WHERE A.STATUS = 'FALSE'
+		--SET @Result = 'Record Insert Successfully#True'
+	END
+IF @Trans_Type = 'E'
+	BEGIN
+		
+		DECLARE @FORM_ID AS NUMERIC(18,0)
+		SET 	@FORM_ID = 0
+		
+		IF  EXISTS(SELECT 1 FROM T0000_DEFAULT_FORM WITH (NOLOCK) WHERE FORM_NAME = 'PERFORMANCE IMPORT')
+			BEGIN
+			
+				SELECT @FORM_ID = FORM_ID 
+				FROM T0000_DEFAULT_FORM WITH (NOLOCK)
+				WHERE FORM_NAME = 'PERFORMANCE IMPORT'
+			END
+		
+		SELECT *
+		FROM T0050_PRIVILEGE_DETAILS WITH (NOLOCK)
+		WHERE PRIVILAGE_ID = @LOGIN_ID AND FORM_ID = @FORM_ID
+		
+			
+		
+	END	
+
+
+

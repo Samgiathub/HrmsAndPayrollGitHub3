@@ -1,0 +1,30 @@
+﻿
+
+
+CREATE VIEW [dbo].[V0090_EMP_GPF_RECORD_GET]
+AS
+	Select	E.Emp_ID,Alpha_Emp_Code,Emp_Full_Name,
+	isnull(Basic_Salary,0) as Basic_Salary,
+			Cast((isnull(Basic_Salary,0) * (AD.E_AD_PERCENTAGE / 100)) As Numeric(18,0)) As GPF_On_Basic,
+			B.Branch_ID,AD.CMP_ID, E.Date_Of_Join
+			,B.Vertical_ID,B.SubVertical_ID,B.Dept_ID  --Added By Jaina 23-09-2015
+	FROM	V0080_Employee_Details E WITH (NOLOCK) INNER JOIN (
+						SELECT	EED.EMP_ID,EED.E_AD_PERCENTAGE,AD.CMP_ID
+						FROM	T0100_EMP_EARN_DEDUCTION EED WITH (NOLOCK)  INNER JOIN T0050_AD_MASTER AD WITH (NOLOCK)  ON EED.CMP_ID=AD.CMP_ID AND EED.AD_ID=AD.AD_ID 
+						WHERE	AD.AD_DEF_ID=14 AND EED.E_AD_PERCENTAGE > 0
+					) AD ON E.Cmp_ID=AD.CMP_ID AND AD.EMP_ID=E.Emp_ID
+			INNER JOIN --Added By Jaina 23-09-2015 Start
+			(
+				SELECT	EMP_ID, Branch_ID, CMP_ID,I.Vertical_ID,I.SubVertical_ID,I.Dept_ID
+				FROM	T0095_INCREMENT I WITH (NOLOCK) 
+				WHERE	I.INCREMENT_ID = (
+											SELECT	TOP 1 INCREMENT_ID
+											FROM	T0095_INCREMENT I1 WITH (NOLOCK) 
+											WHERE	I1.EMP_ID=I.EMP_ID AND I1.CMP_ID=I.CMP_ID
+											ORDER BY	INCREMENT_EFFECTIVE_DATE DESC, INCREMENT_ID DESC
+										)
+		  ) AS B ON B.EMP_ID = E.EMP_ID AND B.CMP_ID=E.CMP_ID 	 --Added By Jaina 23-09-2015 End
+			
+
+
+

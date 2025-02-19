@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[T0090_EMP_POLICY_DOC_READ_DETAIL] (
+    [Row_ID]         NUMERIC (18) NOT NULL,
+    [Cmp_ID]         NUMERIC (18) NOT NULL,
+    [Emp_ID]         NUMERIC (18) NOT NULL,
+    [Policy_Doc_ID]  NUMERIC (18) NOT NULL,
+    [Read_Datetime]  DATETIME     NOT NULL,
+    [Doc_Type]       TINYINT      DEFAULT ((0)) NOT NULL,
+    [Is_Mobile_Read] TINYINT      DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_T0090_EMP_POLICY_DOC_READ_DETAIL] PRIMARY KEY CLUSTERED ([Row_ID] ASC) WITH (FILLFACTOR = 80)
+);
+

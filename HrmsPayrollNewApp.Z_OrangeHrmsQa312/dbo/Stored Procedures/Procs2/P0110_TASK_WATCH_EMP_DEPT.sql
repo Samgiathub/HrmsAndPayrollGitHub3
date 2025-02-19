@@ -1,0 +1,31 @@
+﻿-- EXEC P0110_TASK_WATCH_EMP_DEPT
+-- DROP PROCEDURE P0110_TASK_WATCH_EMP_DEPT
+CREATE PROCEDURE P0110_TASK_WATCH_EMP_DEPT
+@rCmpId INT,
+@rParentId INT,
+@rCurrentDate VARCHAR(100),
+@rpDepartmentIdMulti VARCHAR(MAX)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SET ARITHABORT ON;
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+	IF @rParentId = 0
+		BEGIN
+			SELECT DISTINCT DEP.Dept_Id,Dept_Name,1 AS HasChild,1 AS TypeId
+			FROM T0040_Department_Master DEP WITH(NOLOCK)
+			INNER JOIN T0080_EMP_MASTER EMP WITH(NOLOCK) ON DEP.Dept_Id = EMP.Dept_ID
+			INNER JOIN T0100_Emp_Role_Assign RA WITH(NOLOCK) ON EMP.Emp_ID = RA.Emp_Id
+			LEFT JOIN dbo.Split(@rpDepartmentIdMulti,'#') ON Data = DEP.Dept_Id AND Data <> '' AND Data <> 0
+			WHERE DEP.Cmp_Id = @rCmpId AND (InActive_EffeDate > @rCurrentDate OR InActive_EffeDate IS NULL) ORDER BY Dept_Name
+		END
+	ELSE
+		BEGIN
+			SELECT RA.Emp_Id AS Dept_Id,ISNULL(Alpha_Emp_Code,'') + ' - ' + ISNULL(EMP.Emp_First_Name,'') + ' ' + ISNULL(EMP.Emp_Last_Name,'') AS Dept_Name,
+			0 AS HasChild,2 AS TypeId
+			FROM T0100_Emp_Role_Assign RA WITH(NOLOCK)
+			INNER JOIN T0080_EMP_MASTER EMP WITH(NOLOCK) ON RA.EMP_ID = EMP.Emp_ID
+			WHERE EMP.Dept_ID = @rParentId
+		END
+END

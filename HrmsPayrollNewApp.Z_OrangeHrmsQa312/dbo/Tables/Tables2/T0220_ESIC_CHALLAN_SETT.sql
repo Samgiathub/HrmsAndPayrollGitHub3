@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T0220_ESIC_CHALLAN_SETT] (
+    [ESIC_Challan_ID]      NUMERIC (18)    NOT NULL,
+    [Cmp_ID]               NUMERIC (18)    NOT NULL,
+    [Branch_ID]            NUMERIC (18)    NULL,
+    [Bank_ID]              NUMERIC (18)    NOT NULL,
+    [Month]                NUMERIC (18)    NOT NULL,
+    [Year]                 NUMERIC (18)    NOT NULL,
+    [Payment_Date]         DATETIME        NOT NULL,
+    [E_Code]               VARCHAR (20)    NOT NULL,
+    [Acc_Gr_No]            VARCHAR (5)     NOT NULL,
+    [Payment_Mode]         VARCHAR (20)    NOT NULL,
+    [Cheque_No]            VARCHAR (50)    NOT NULL,
+    [Total_SubScriber]     NUMERIC (18)    NOT NULL,
+    [Total_Wages_Due]      NUMERIC (18)    NOT NULL,
+    [Emp_Cont_Per]         NUMERIC (18, 2) NOT NULL,
+    [Employer_Cont_Per]    NUMERIC (18, 2) NOT NULL,
+    [Emp_Cont_Amount]      NUMERIC (18)    NOT NULL,
+    [Employer_Cont_Amount] NUMERIC (18)    NOT NULL,
+    [Total_Amount]         NUMERIC (18)    NOT NULL,
+    CONSTRAINT [PK_T0220_ESIC_CHALLAN_SETT] PRIMARY KEY CLUSTERED ([ESIC_Challan_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0220_ESIC_CHALLAN_SETT_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0220_ESIC_CHALLAN_SETT_T0030_BRANCH_MASTER] FOREIGN KEY ([Branch_ID]) REFERENCES [dbo].[T0030_BRANCH_MASTER] ([Branch_ID]),
+    CONSTRAINT [FK_T0220_ESIC_CHALLAN_SETT_T0040_BANK_MASTER] FOREIGN KEY ([Bank_ID]) REFERENCES [dbo].[T0040_BANK_MASTER] ([Bank_ID])
+);
+

@@ -1,0 +1,27 @@
+﻿
+
+
+
+
+CREATE FUNCTION [DBO].[F_GET_MONTH_NAME]
+(
+@Month AS NUMERIC
+)
+RETURNS VARCHAR(100)
+AS
+BEGIN
+	
+	DECLARE @MonthName AS VARCHAR(20)
+	DECLARE @Date AS DATETIME
+	DECLARE @DateStr AS VARCHAR(10)
+
+	SET @DateStr = CAST(@Month AS VARCHAR(2)) + '/01/2008'
+	SET @Date = CAST(@DateStr AS DATETIME)
+	Set @MonthName = DATENAME(MONTH, @Date)
+	
+	RETURN @MonthName	
+END
+
+
+
+

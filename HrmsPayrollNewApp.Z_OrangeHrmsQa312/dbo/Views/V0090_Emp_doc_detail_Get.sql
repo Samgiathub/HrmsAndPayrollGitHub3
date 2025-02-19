@@ -1,0 +1,15 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0090_Emp_doc_detail_Get]
+AS
+SELECT     dbo.T0090_EMP_DOC_DETAIL.*, dbo.T0040_DOCUMENT_MASTER.Doc_Name AS Doc_Name
+FROM         dbo.T0090_EMP_DOC_DETAIL WITH (NOLOCK) INNER JOIN
+                      dbo.T0040_DOCUMENT_MASTER WITH (NOLOCK)  ON dbo.T0090_EMP_DOC_DETAIL.Doc_ID = dbo.T0040_DOCUMENT_MASTER.Doc_ID
+
+
+
+

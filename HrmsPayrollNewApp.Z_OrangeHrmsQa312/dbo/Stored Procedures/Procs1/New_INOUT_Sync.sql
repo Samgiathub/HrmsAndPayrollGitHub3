@@ -1,0 +1,9 @@
+﻿
+
+
+CREATE PROCEDURE New_INOUT_Sync
+
+as
+
+Select * from #TEMP_EMP_INOUT_RECORD 
+

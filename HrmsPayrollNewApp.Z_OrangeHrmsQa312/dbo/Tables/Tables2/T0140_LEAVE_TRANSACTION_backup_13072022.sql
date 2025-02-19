@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[T0140_LEAVE_TRANSACTION_backup_13072022] (
+    [Leave_Tran_ID]     NUMERIC (18)    NOT NULL,
+    [Cmp_ID]            NUMERIC (18)    NOT NULL,
+    [Leave_ID]          NUMERIC (18)    NOT NULL,
+    [Emp_ID]            NUMERIC (18)    NOT NULL,
+    [For_Date]          DATETIME        NOT NULL,
+    [Leave_Opening]     NUMERIC (22, 8) NOT NULL,
+    [Leave_Credit]      NUMERIC (22, 8) NOT NULL,
+    [Leave_Used]        NUMERIC (22, 8) NOT NULL,
+    [Leave_Closing]     NUMERIC (22, 8) NOT NULL,
+    [Leave_Posting]     NUMERIC (22, 8) NULL,
+    [Leave_Adj_L_Mark]  NUMERIC (18, 2) NULL,
+    [Leave_Cancel]      NUMERIC (18, 1) NULL,
+    [Eff_In_Salary]     TINYINT         NULL,
+    [Leave_Encash_Days] NUMERIC (18, 2) NOT NULL,
+    [Comoff_Flag]       TINYINT         NOT NULL,
+    [Arrear_Used]       NUMERIC (18, 2) NULL,
+    [Back_Dated_Leave]  NUMERIC (18, 2) NULL,
+    [CompOff_Credit]    NUMERIC (18, 2) NOT NULL,
+    [CompOff_Debit]     NUMERIC (18, 2) NOT NULL,
+    [CompOff_Balance]   NUMERIC (18, 2) NOT NULL,
+    [CompOff_Used]      NUMERIC (18, 2) NOT NULL,
+    [Half_Payment_Days] NUMERIC (18, 8) NOT NULL,
+    [CF_Laps_Days]      NUMERIC (18, 2) NOT NULL
+);
+

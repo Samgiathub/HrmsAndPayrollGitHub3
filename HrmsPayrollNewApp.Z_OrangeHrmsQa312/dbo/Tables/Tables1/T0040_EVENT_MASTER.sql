@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[T0040_EVENT_MASTER] (
+    [Event_ID]      NUMERIC (18)  NOT NULL,
+    [Cmp_ID]        NUMERIC (18)  NOT NULL,
+    [Emp_ID]        NUMERIC (18)  NULL,
+    [Event_Name]    VARCHAR (200) NOT NULL,
+    [Event_Type]    VARCHAR (50)  NULL,
+    [Event_Date]    DATETIME      NOT NULL,
+    [Event_Repeate] CHAR (10)     NULL,
+    [Event_Show]    NUMERIC (18)  NULL,
+    [Image_Name]    VARCHAR (100) NULL,
+    [ShowAll]       NUMERIC (18)  NULL,
+    [Login_Id]      NUMERIC (18)  CONSTRAINT [DF_T0040_EVENT_MASTER_Login_Id] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_T0040_EVENT_MASTER] PRIMARY KEY CLUSTERED ([Event_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0040_EVENT_MASTER_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id])
+);
+

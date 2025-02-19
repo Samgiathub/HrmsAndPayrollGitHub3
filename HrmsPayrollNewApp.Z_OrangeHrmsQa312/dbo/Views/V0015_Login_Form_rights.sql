@@ -1,0 +1,18 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0015_Login_Form_rights]
+AS
+SELECT     dbo.T0000_DEFAULT_FORM.*, dbo.T0015_LOGIN_FORM_RIGHTS.Login_Id, dbo.T0011_LOGIN.Login_Name, dbo.T0011_LOGIN.Login_Password
+FROM         dbo.T0015_LOGIN_BRANCH_RIGHTS WITH (NOLOCK) INNER JOIN
+                      dbo.T0015_LOGIN_FORM_RIGHTS WITH (NOLOCK)  ON dbo.T0015_LOGIN_BRANCH_RIGHTS.Tran_Id = dbo.T0015_LOGIN_FORM_RIGHTS.Tran_ID INNER JOIN
+                      dbo.T0000_DEFAULT_FORM WITH (NOLOCK)  ON dbo.T0015_LOGIN_FORM_RIGHTS.Form_ID = dbo.T0000_DEFAULT_FORM.Form_ID INNER JOIN
+                      dbo.T0011_LOGIN WITH (NOLOCK)  ON dbo.T0015_LOGIN_BRANCH_RIGHTS.Login_ID = dbo.T0011_LOGIN.Login_ID AND 
+                      dbo.T0015_LOGIN_FORM_RIGHTS.Login_Id = dbo.T0011_LOGIN.Login_ID
+
+
+
+

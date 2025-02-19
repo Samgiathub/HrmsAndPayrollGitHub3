@@ -1,0 +1,25 @@
+﻿  
+  
+  
+                
+                
+                
+                
+                
+                
+                
+Create VIEW [dbo].[V0110_Travel_Approval_Other_Mode_Detail]                
+AS                
+                
+                
+--SELECT TRAN_ID,tamd.CMP_ID,TRAVEL_APP_OTHER_DETAIL_ID,TRAVEL_APP_ID,mm.Mode_Type as  TRAVEL_MODE,FROM_PLACE,TO_PLACE,MODE_NAME,MODE_NO,                
+--  --TRAVEL_DATE,DEP_TIME,                
+--  CITY,CHECK_OUT_DATE,ISNULL(NO_PASSENGER,0) AS NO_PASSENGER,CONVERT(varchar(11),BOOKING_DATE,103) as BOOKING_DATE,PICK_UP_ADDRESS,RIGHT(CONVERT(VARCHAR,PICK_UP_TIME,100),7)as PICK_UP_TIME,DROP_ADDRESS,BILL_NO,DESCRIPTION                
+--FROM T0110_TRAVEL_APPLICATION_MODE_DETAIL tamd WITH (NOLOCK)                
+--inner join T0030_TRAVEL_MODE_MASTER mm With(NOLOCK) on mm.Mode_Type=tamd.TRAVEL_MODE and tamd.Cmp_ID=mm.Cmp_ID              
+            
+SELECT distinct TRAN_ID,tamd.CMP_ID,TRAVEL_APP_OTHER_DETAIL_ID,TRAVEL_APP_ID,mm.Mode_Type as  TRAVEL_MODE,FROM_PLACE,TO_PLACE,MODE_NAME,MODE_NO,              
+  --TRAVEL_DATE,DEP_TIME,              
+  CITY,CHECK_OUT_DATE,ISNULL(NO_PASSENGER,0) AS NO_PASSENGER,CONVERT(varchar(11),BOOKING_DATE,103) as BOOKING_DATE,PICK_UP_ADDRESS,RIGHT(CONVERT(VARCHAR,PICK_UP_TIME,100),7)as PICK_UP_TIME,DROP_ADDRESS,BILL_NO,DESCRIPTION              
+FROM T0110_TRAVEL_APPLICATION_MODE_DETAIL tamd WITH (NOLOCK)              
+inner join T0030_TRAVEL_MODE_MASTER mm With(NOLOCK) on mm.Travel_Mode_Id=tamd.Travel_Mode and tamd.Cmp_ID=mm.Cmp_ID   

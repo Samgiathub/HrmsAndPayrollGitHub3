@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[T9999_MAC_MASTER] (
+    [Tran_id]       INT      IDENTITY (1, 1) NOT NULL,
+    [Cmp_id]        INT      NOT NULL,
+    [Is_Enable]     TINYINT  CONSTRAINT [DF_T9999_MAC_MASTER_Is_Enable] DEFAULT ((0)) NOT NULL,
+    [Deny_Mac]      TINYINT  CONSTRAINT [DF_Table_1_Allow_Mac] DEFAULT ((0)) NOT NULL,
+    [Last_Modified] DATETIME NOT NULL,
+    CONSTRAINT [PK_T9999_MAC_MASTER] PRIMARY KEY CLUSTERED ([Tran_id] ASC) WITH (FILLFACTOR = 80)
+);
+

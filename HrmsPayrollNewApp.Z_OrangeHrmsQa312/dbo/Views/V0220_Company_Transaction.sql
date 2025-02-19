@@ -1,0 +1,18 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0220_Company_Transaction]
+AS
+SELECT     dbo.T0020_COMPANY_TRANSACTION.Tran_ID, dbo.T0020_COMPANY_TRANSACTION.Cmp_ID, dbo.T0020_COMPANY_TRANSACTION.Tran_Year, 
+                      dbo.T0020_COMPANY_TRANSACTION.Tran_From_Date, dbo.T0020_COMPANY_TRANSACTION.Tran_To_Date, 
+                      dbo.T0020_COMPANY_TRANSACTION.Tran_Lock, dbo.T0020_COMPANY_TRANSACTION.Tran_Year_End, 
+                      dbo.T0010_COMPANY_MASTER.Cmp_Address, dbo.T0010_COMPANY_MASTER.Cmp_Name
+FROM         dbo.T0020_COMPANY_TRANSACTION WITH (NOLOCK) INNER JOIN
+                      dbo.T0010_COMPANY_MASTER WITH (NOLOCK)  ON dbo.T0020_COMPANY_TRANSACTION.Cmp_ID = dbo.T0010_COMPANY_MASTER.Cmp_Id
+
+
+
+

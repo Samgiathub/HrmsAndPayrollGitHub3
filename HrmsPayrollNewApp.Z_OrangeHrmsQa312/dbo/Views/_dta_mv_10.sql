@@ -1,0 +1,9 @@
+﻿
+
+
+
+CREATE VIEW [dbo].[_dta_mv_10] WITH SCHEMABINDING
+ AS 
+SELECT  [dbo].[T0090_EMP_REPORTING_DETAIL].[Emp_ID] as _col_1,  [dbo].[T0090_EMP_REPORTING_DETAIL].[R_Emp_ID] as _col_2,  [dbo].[T0090_EMP_REPORTING_DETAIL].[Effect_Date] as _col_3,  count_big(*) as _col_4 FROM  [dbo].[T0090_EMP_REPORTING_DETAIL] WITH (NOLOCK)  GROUP BY  [dbo].[T0090_EMP_REPORTING_DETAIL].[Emp_ID],  [dbo].[T0090_EMP_REPORTING_DETAIL].[R_Emp_ID],  [dbo].[T0090_EMP_REPORTING_DETAIL].[Effect_Date]  
+
+

@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T0100_Ticket_Approval] (
+    [Ticket_Apr_ID]         NUMERIC (18)  NOT NULL,
+    [Ticket_App_ID]         NUMERIC (18)  NULL,
+    [Cmp_ID]                NUMERIC (18)  NULL,
+    [Emp_ID]                NUMERIC (18)  NULL,
+    [Ticket_Type_ID]        NUMERIC (18)  NULL,
+    [Ticket_Gen_Date]       DATETIME      NULL,
+    [Ticket_Apr_Date]       DATETIME      NULL,
+    [Ticket_Dept_ID]        NUMERIC (18)  NULL,
+    [Ticket_Priority]       VARCHAR (50)  NULL,
+    [Ticket_Apr_Attachment] VARCHAR (500) NULL,
+    [Ticket_Solution]       VARCHAR (500) NULL,
+    [S_Emp_ID]              NUMERIC (18)  NULL,
+    [Ticket_Status]         CHAR (1)      NULL,
+    [Sys_Datetime]          DATETIME      NULL,
+    [User_ID]               NUMERIC (18)  NULL,
+    [Ticket_OnHold_Reason]  VARCHAR (500) NULL,
+    [Ticket_OnHold_Date]    DATETIME      NULL,
+    [Ticket_OnHold_User]    NUMERIC (18)  NULL,
+    [Feedback_Rating]       NUMERIC (18)  CONSTRAINT [DF_T0100_Ticket_Approval_Feedback_Rating] DEFAULT ((0)) NULL,
+    [Feedback_Date]         DATETIME      NULL,
+    [Feedback_Suggestion]   VARCHAR (MAX) NULL,
+    PRIMARY KEY CLUSTERED ([Ticket_Apr_ID] ASC)
+);
+

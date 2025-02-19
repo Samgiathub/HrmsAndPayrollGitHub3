@@ -1,0 +1,55 @@
+﻿
+---02/2/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+CREATE PROCEDURE [dbo].[P0050_Form_16_Import]
+	@CMP_ID			NUMERIC,
+	@EMP_ID			NUMERIC,
+	@FIN_YEAR		VARCHAR(10),
+	@REPORT_PARTA	VARCHAR(500),
+	@REPORT_PARTB	VARCHAR(500),
+	@UPLOADED_BY	VARCHAR(50)
+AS
+BEGIN
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+	
+	DECLARE @ALPHA_EMP_CODE AS VARCHAR(50)
+	SELECT @ALPHA_EMP_CODE = Alpha_Emp_Code FROM T0080_EMP_MASTER WITH (NOLOCK) WHERE Emp_ID = @EMP_ID AND Cmp_ID = @CMP_ID
+	
+	IF @ALPHA_EMP_CODE IS NOT NULL
+		BEGIN
+			IF NOT EXISTS (SELECT 1 FROM T0050_FORM_16_IMPORT WITH (NOLOCK) WHERE Emp_ID = @EMP_ID AND Financial_Year = @FIN_YEAR AND Cmp_ID = @CMP_ID)
+				BEGIN
+					INSERT INTO T0050_FORM_16_IMPORT
+						(
+							Emp_ID,Cmp_ID,Alpha_Emp_Code,Financial_Year,Report_PartA,Report_PartB,Uploaded_By,Uploaded_On
+						)
+					VALUES
+						(
+							@EMP_ID ,@CMP_ID,@ALPHA_EMP_CODE,@FIN_YEAR,@REPORT_PARTA,@REPORT_PARTB,@UPLOADED_BY,GETDATE()
+						)
+				END
+			ELSE
+				BEGIN
+					IF @REPORT_PARTA <> ''
+						BEGIN
+							UPDATE	T0050_FORM_16_IMPORT
+							SET		Financial_Year	= @FIN_YEAR,
+									Report_PartA	= @REPORT_PARTA,
+									Uploaded_By		= @UPLOADED_BY,
+									Uploaded_On		= GETDATE()	
+							WHERE	Emp_ID = @EMP_ID AND Cmp_ID = @CMP_ID
+						END
+					ELSE IF @REPORT_PARTB <> ''
+						BEGIN
+							UPDATE	T0050_FORM_16_IMPORT
+							SET		Financial_Year	= @FIN_YEAR,
+									Report_PartB	= @REPORT_PARTB,
+									Uploaded_By		= @UPLOADED_BY,
+									Uploaded_On		= GETDATE()	
+							WHERE	Emp_ID = @EMP_ID AND Cmp_ID = @CMP_ID
+						END
+				END
+		END
+END
+

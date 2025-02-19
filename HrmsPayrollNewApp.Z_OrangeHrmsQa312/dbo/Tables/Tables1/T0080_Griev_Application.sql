@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[T0080_Griev_Application] (
+    [GA_ID]         NUMERIC (18)  IDENTITY (1, 1) NOT NULL,
+    [Receive_Date]  DATETIME      NULL,
+    [From]          NUMERIC (18)  NULL,
+    [Emp_IDF]       NUMERIC (18)  NULL,
+    [NameF]         VARCHAR (500) NULL,
+    [AddressF]      VARCHAR (500) NULL,
+    [EmailF]        VARCHAR (500) NULL,
+    [ContactF]      VARCHAR (500) NULL,
+    [Receive_From]  NUMERIC (18)  NULL,
+    [Griev_Against] NUMERIC (18)  NULL,
+    [Emp_IDT]       NUMERIC (18)  NULL,
+    [NameT]         VARCHAR (500) NULL,
+    [AddressT]      VARCHAR (500) NULL,
+    [EmailT]        VARCHAR (500) NULL,
+    [ContactT]      VARCHAR (500) NULL,
+    [SubjectLine]   VARCHAR (MAX) NULL,
+    [Details]       VARCHAR (MAX) NULL,
+    [DocumentName]  VARCHAR (MAX) NULL,
+    [Cmp_ID]        NUMERIC (18)  NULL,
+    [CreatedDate]   DATETIME      NULL,
+    [UpdatedDate]   DATETIME      NULL,
+    [User ID]       VARCHAR (MAX) NULL,
+    [IsForwarded]   INT           DEFAULT ((0)) NULL,
+    [App_No]        NVARCHAR (20) NULL,
+    CONSTRAINT [PK_T0080_Griev_Application] PRIMARY KEY CLUSTERED ([GA_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[tmpLoanPay] (
+    [Loan_Pay_ID]             NUMERIC (18)    NOT NULL,
+    [Loan_Apr_ID]             NUMERIC (18)    NOT NULL,
+    [Cmp_ID]                  NUMERIC (18)    NOT NULL,
+    [Sal_Tran_ID]             NUMERIC (18)    NULL,
+    [S_Sal_Tran_ID]           NUMERIC (18)    NULL,
+    [L_Sal_Tran_ID]           NUMERIC (18)    NULL,
+    [Loan_Pay_Amount]         NUMERIC (22, 2) NOT NULL,
+    [Loan_Pay_Comments]       VARCHAR (250)   NOT NULL,
+    [Loan_Payment_Date]       DATETIME        NOT NULL,
+    [Loan_Payment_Type]       VARCHAR (20)    NOT NULL,
+    [Bank_Name]               VARCHAR (50)    NOT NULL,
+    [Loan_Cheque_No]          VARCHAR (50)    NOT NULL,
+    [Loan_Pay_Code]           VARCHAR (20)    NULL,
+    [Temp_Sal_Tran_ID]        NUMERIC (18)    NULL,
+    [Interest_Percent]        NUMERIC (18, 2) NOT NULL,
+    [Interest_Amount]         NUMERIC (18, 2) NOT NULL,
+    [Interest_Subsidy_Amount] NUMERIC (18, 2) NOT NULL,
+    [Is_Loan_Interest_Flag]   NUMERIC (18)    NOT NULL,
+    [Is_Subsidy_Flag]         NUMERIC (18, 2) NOT NULL,
+    [Subsidy_Amount]          NUMERIC (18, 2) NOT NULL,
+    [Temp_Loan_Pay_ID]        NUMERIC (18, 2) NULL,
+    [Is_Subsidy_Loan]         NUMERIC (18, 2) CONSTRAINT [DF_tmpLoanPay_Is_Subsidy_Loan] DEFAULT ((0)) NOT NULL
+);
+

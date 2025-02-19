@@ -1,0 +1,19 @@
+﻿CREATE TABLE [dbo].[T0090_ADVANCE_PAYMENT_APPROVAL] (
+    [Adv_Approval_ID]  NUMERIC (18)  NOT NULL,
+    [Cmp_ID]           NUMERIC (18)  NOT NULL,
+    [Emp_ID]           NUMERIC (18)  NOT NULL,
+    [Application_Date] DATETIME      NULL,
+    [Requested_Amount] NUMERIC (18)  NOT NULL,
+    [Emp_Remarks]      VARCHAR (250) NOT NULL,
+    [Approval_Date]    DATETIME      NULL,
+    [Approval_Amount]  NUMERIC (18)  NULL,
+    [Superior_Remarks] VARCHAR (250) NULL,
+    [Advance_Status]   CHAR (1)      NOT NULL,
+    [Approved_By]      NUMERIC (18)  NULL,
+    [Create_Date]      DATETIME      NOT NULL,
+    [Res_Id]           NUMERIC (18)  NULL,
+    CONSTRAINT [PK_T0090_ADVANCE_PAYMENT_APPROVAL] PRIMARY KEY CLUSTERED ([Adv_Approval_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0090_ADVANCE_PAYMENT_APPROVAL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0090_ADVANCE_PAYMENT_APPROVAL_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

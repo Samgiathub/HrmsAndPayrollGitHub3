@@ -1,0 +1,17 @@
+﻿CREATE TABLE [dbo].[T0000_DEFAULT_FORM] (
+    [Form_ID]            NUMERIC (18)    NOT NULL,
+    [Form_Name]          VARCHAR (100)   NOT NULL,
+    [Under_Form_ID]      NUMERIC (18)    NOT NULL,
+    [Sort_ID]            NUMERIC (4)     NOT NULL,
+    [Form_Type]          TINYINT         NOT NULL,
+    [Form_url]           VARCHAR (500)   NULL,
+    [Form_Image_url]     VARCHAR (500)   NULL,
+    [Is_Active_For_menu] TINYINT         CONSTRAINT [DF_T0000_DEFAULT_FORM_Is_Active_For_menu] DEFAULT ((0)) NOT NULL,
+    [Alias]              VARCHAR (100)   NULL,
+    [Sort_Id_Check]      NUMERIC (4)     CONSTRAINT [DF_T0000_DEFAULT_FORM_Sort_Id_Check] DEFAULT ((0)) NOT NULL,
+    [Module_name]        VARCHAR (100)   NULL,
+    [Page_Flag]          CHAR (2)        NULL,
+    [chinese_alias]      NVARCHAR (1000) NULL,
+    CONSTRAINT [PK_T0000_DEFAULT_FORM] PRIMARY KEY CLUSTERED ([Form_ID] ASC)
+);
+

@@ -1,0 +1,53 @@
+﻿
+
+-- =============================================
+-- Author:		<Jaina>
+-- Create date: <17-08-2016>
+-- Description:	<Insert, Update Admin Setting>
+---29/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+-- =============================================
+CREATE PROCEDURE [dbo].[P0040_SETTING]
+	@Cmp_ID NUMERIC,
+	@SETTING_NAME VARCHAR(100),	
+	@ALIAS VARCHAR(100),
+	@TOOLTIP VARCHAR(MAX),
+	@GROUP_NAME VARCHAR(50),	
+	@VTYPE TINYINT = 1,
+	@VREF VARCHAR(1024) = '{"min":"0","max":"1000"}',
+	@SETTING_VALUE VARCHAR(10) = 0,
+	@MODULE_NAME VARCHAR(100) = NULL
+AS
+BEGIN
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+
+	DECLARE @SETTING_ID_MAX NUMERIC
+	set @SETTING_ID_MAX = 0
+	
+	SET @SETTING_ID_MAX = (SELECT Setting_ID FROM T0040_SETTING WITH (NOLOCK) WHERE Cmp_ID = @Cmp_ID AND Setting_Name=@SETTING_NAME)
+  
+	IF @SETTING_ID_MAX IS NULL
+		BEGIN
+			SELECT @Setting_ID_max=ISNULL(MAX(Setting_ID),0) + 1 FROM T0040_SETTING WITH (NOLOCK)
+	 
+			INSERT INTO T0040_SETTING(Setting_ID,Cmp_ID,Setting_Name,Setting_Value,Comment,Group_By,Alias,Value_Type,Value_Ref,Module_Name)
+			VALUES	(@SETTING_ID_MAX,@Cmp_ID,@SETTING_NAME,@SETTING_VALUE,@TOOLTIP,@GROUP_NAME,@ALIAS,@VTYPE, @VREF,@MODULE_NAME)
+		END
+	ELSE
+		BEGIN
+			UPDATE	T0040_SETTING 
+			SET		Group_By = @GROUP_NAME,
+					Alias=@ALIAS,
+					Comment=@TOOLTIP,
+					Value_Type=@VTYPE,
+					Value_Ref=@VREF,
+					Module_Name=@MODULE_NAME,
+					Setting_Value = @SETTING_VALUE
+			WHERE	Setting_ID = @SETTING_ID_MAX
+		END
+END
+
+
+
+

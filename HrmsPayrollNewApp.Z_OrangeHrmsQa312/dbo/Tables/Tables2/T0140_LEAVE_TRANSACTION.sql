@@ -1,0 +1,134 @@
+﻿CREATE TABLE [dbo].[T0140_LEAVE_TRANSACTION] (
+    [Leave_Tran_ID]     NUMERIC (18)    NOT NULL,
+    [Cmp_ID]            NUMERIC (18)    NOT NULL,
+    [Leave_ID]          NUMERIC (18)    NOT NULL,
+    [Emp_ID]            NUMERIC (18)    NOT NULL,
+    [For_Date]          DATETIME        NOT NULL,
+    [Leave_Opening]     NUMERIC (22, 8) NOT NULL,
+    [Leave_Credit]      NUMERIC (22, 8) NOT NULL,
+    [Leave_Used]        NUMERIC (22, 8) NOT NULL,
+    [Leave_Closing]     NUMERIC (22, 8) NOT NULL,
+    [Leave_Posting]     NUMERIC (22, 8) NULL,
+    [Leave_Adj_L_Mark]  NUMERIC (18, 2) NULL,
+    [Leave_Cancel]      NUMERIC (18, 1) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_Leave_Cancel] DEFAULT ((0)) NULL,
+    [Eff_In_Salary]     TINYINT         NULL,
+    [Leave_Encash_Days] NUMERIC (18, 2) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_Leave_Encash_Days] DEFAULT ((0)) NOT NULL,
+    [Comoff_Flag]       TINYINT         CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_Comoff_Flag] DEFAULT ((0)) NOT NULL,
+    [Arrear_Used]       NUMERIC (18, 2) DEFAULT ((0)) NULL,
+    [Back_Dated_Leave]  NUMERIC (18, 2) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_Back_Dated_Leave] DEFAULT ((0)) NULL,
+    [CompOff_Credit]    NUMERIC (18, 2) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_CompOff_Credit] DEFAULT ((0)) NOT NULL,
+    [CompOff_Debit]     NUMERIC (18, 2) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_CompOff_Debit] DEFAULT ((0)) NOT NULL,
+    [CompOff_Balance]   NUMERIC (18, 2) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_CompOff_Balance] DEFAULT ((0)) NOT NULL,
+    [CompOff_Used]      NUMERIC (18, 2) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_CompOff_Used] DEFAULT ((0)) NOT NULL,
+    [Half_Payment_Days] NUMERIC (18, 8) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_Half_Payment_Days] DEFAULT ((0)) NOT NULL,
+    [CF_Laps_Days]      NUMERIC (18, 2) CONSTRAINT [DF_T0140_LEAVE_TRANSACTION_CF_Laps_Days] DEFAULT ((0)) NULL,
+    [IsMakerChaker]     INT             NULL,
+    CONSTRAINT [PK_T0140_LEAVE_TRANSACTION] PRIMARY KEY CLUSTERED ([Leave_Tran_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0140_LEAVE_TRANSACTION_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0140_LEAVE_TRANSACTION_T0040_LEAVE_MASTER] FOREIGN KEY ([Leave_ID]) REFERENCES [dbo].[T0040_LEAVE_MASTER] ([Leave_ID]),
+    CONSTRAINT [FK_T0140_LEAVE_TRANSACTION_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_T0140_LEAVE_TRANSACTION_For_SP_RPT_EMP_IN_OUT_MUSTER_HOME_GET]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([For_Date] ASC)
+    INCLUDE([Leave_ID], [Emp_ID], [Leave_Used]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [T0140_Leave_Transaction_Index]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Cmp_ID] ASC, [Leave_ID] ASC, [Emp_ID] ASC, [For_Date] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0140_LEAVE_TRANSACTION_26_1042102753__K3_K4_K5]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_ID] ASC, [Emp_ID] ASC, [For_Date] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0140_LEAVE_TRANSACTION_26_1042102753__K3_K4_K5_K1_K6_8_9]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_ID] ASC, [Emp_ID] ASC, [For_Date] ASC, [Leave_Tran_ID] ASC, [Leave_Opening] ASC)
+    INCLUDE([Leave_Used], [Leave_Closing]) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_T0140_LEAVE_TRANSACTION_Leave_ID_Emp_ID_For_Date_Leave_encashDays]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_ID] ASC, [Emp_ID] ASC, [For_Date] ASC, [Leave_Encash_Days] ASC, [Leave_Used] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [I_dx_T0140_LEAVE_TRANSACTION_Emp_id_For_Date]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Emp_ID] ASC, [For_Date] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0140_LEAVE_TRANSACTION_24_1157579162__K4_K5_K3_8]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Emp_ID] ASC, [For_Date] ASC, [Leave_ID] ASC)
+    INCLUDE([Leave_Used]) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [T0140_LEAVE_TRANSACTION_IX_EmpID_ForDate_LeaveUsed]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Emp_ID] ASC, [For_Date] ASC, [Leave_Used] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1042102753_13_3]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Eff_In_Salary], [Leave_ID]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1042102753_5_3]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([For_Date], [Leave_ID]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1042102753_6_3_4_5]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_Opening], [Leave_ID], [Emp_ID], [For_Date]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1042102753_3_1_4_5_6]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_ID], [Leave_Tran_ID], [Emp_ID], [For_Date], [Leave_Opening]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1042102753_1_6_3_4]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_Tran_ID], [Leave_Opening], [Leave_ID], [Emp_ID]);
+
+
+GO
+CREATE STATISTICS [IS_T0140_LEAVE_TRANSACTION_Emp_ID_For_Date_Leave_Used_Leave_Encash_Days_Leave_ID]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Emp_ID], [For_Date], [Leave_Used], [Leave_Encash_Days], [Leave_ID]);
+
+
+GO
+CREATE STATISTICS [IS_T0140_LEAVE_TRANSACTION_Leave_Used_Emp_ID]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_Used], [Emp_ID]);
+
+
+GO
+CREATE STATISTICS [IS_T0140_LEAVE_TRANSACTION_Leave_ID_Emp_ID_For_Date_Leave_Used]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_ID], [Emp_ID], [For_Date], [Leave_Used]);
+
+
+GO
+CREATE STATISTICS [IS_T0140_LEAVE_TRANSACTION_Leave_encash_days_Emp_ID_For_Date]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_Encash_Days], [Emp_ID], [For_Date]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1157579162_8_1_4]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_Used], [Leave_Tran_ID], [Emp_ID]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1157579162_4_5_1_8]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Emp_ID], [For_Date], [Leave_Tran_ID], [Leave_Used]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1157579162_1_4]
+    ON [dbo].[T0140_LEAVE_TRANSACTION]([Leave_Tran_ID], [Emp_ID]);
+

@@ -1,0 +1,118 @@
+﻿
+
+CREATE PROCEDURE [dbo].[Update_Email_Notification_Config]
+		@Cmp_ID		numeric
+AS
+
+        SET NOCOUNT ON 
+		SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+		SET ARITHABORT ON
+
+BEGIN
+
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Leave Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Leave Approval'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Forget Password'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Travel Settlement Approval'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Cancel Leave Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Cancel Leave Approval'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Loan Application'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Loan Approval'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Loan Payment'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal1' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Appraisal Initiation'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Claim Approval'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Claim Payment'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Claim Application'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal1' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Appraisal Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Recruitment Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Interview Schedule'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Travel Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Comp-Off Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Comp-Off Approval'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Attendance Regularization'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee Probation'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Exit Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Attendance Regularization Approve'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Birth Day'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Travel Settlement Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Change Request Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Change Request Approval'
+	Update T0040_Email_Notification_Config set Module_Name='TIMESHEET' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Timesheet Application'
+	Update T0040_Email_Notification_Config set Module_Name='TIMESHEET' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Timesheet Approval'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Reimbursement\Claim Application'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Reimbursement\Claim Approval'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Auto Mail of Probation Over'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Auto Carry forward Intimation'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Self Assessment'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='SelfAssessment Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='SelfAssessment Review'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='SelfAssessment Approved'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='PerformanceAssessment Allocation'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='PerformanceAssessment Review'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='PerformanceAssessment Final'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Final Stage Review'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Direct Assessment Approved'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Extended Self Assessment'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Asset Application'
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Asset Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Recruitment Request'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Recruitment Request Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Resume Screening'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Resume Screened'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPI Employee Review'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPI Employee Approved'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPI Reviewed'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPI Manager Approved'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPIRating Employee Review'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPIRating Reviewed'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPIRating Employee Approved'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPIRating Manager Approved'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPIRating Manager Review'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPIRating Reject'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPIRating Approve'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPI Closed'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPI Objective Manager Review'
+	Update T0040_Email_Notification_Config set Module_Name='Appraisal3' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='KPI Objective Final Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Recruitment Approval Level'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Candidate Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Candidate Approval Level'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Candidate Rejection'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Recruitment Post Detail'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Training Reminder'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Survey Form Filled By Employee'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Fill The Survey Form'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Pre-CompOff Application'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Pre-CompOff Approval'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Send final list of trainees'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Training Answers/Feedback Submitted'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Offer/Appointment Letter Status'
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Training In-Out'
+	Update T0040_Email_Notification_Config set Module_Name=NULL where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee Training'	--Ankit 06042016
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee Increment Application'  --added by jimit 14112016
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee Increment Approval'  --added by jimit 14112016
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Marriage Anniversary'  --added by jimit 14112016
+	Update T0040_Email_Notification_Config set Module_Name='PAYROLL' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Ticket Application' 
+	Update T0040_Email_Notification_Config set Module_Name='HRMS' where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Resume From Consultant' --sneha 04/10/2017
+	
+	--Added by Mukti(25102017)start--not in use email format
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Appraisal Initiation'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Appraisal Approval'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation for Employee Signoff For Goal Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation for Manager Signoff For Goal Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation for Emp Performance Summary Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation Performance Summary Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation for Employee Competency Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation for Manager Competency Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation for Employee Goal Signoff'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Confirmation for Manager Goal Signoff'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Manager SignoffGoal'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Manager Signoff For Goal Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Manager Review For Performance Summary'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Manager Review For Competency'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee SignoffGoal'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee Signoff For Goal Review'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee Review For Performance Summary'
+	delete from T0040_Email_Notification_Config where Cmp_ID=@Cmp_ID and EMAIL_TYPE_NAME='Employee Review For Competency'
+	--Added by Mukti(25102017)end
+	
+END

@@ -1,0 +1,15 @@
+﻿CREATE TABLE [dbo].[T0030_CATEGORY_MASTER] (
+    [Cat_ID]            NUMERIC (18)    NOT NULL,
+    [cmp_ID]            NUMERIC (18)    NOT NULL,
+    [Cat_Name]          VARCHAR (100)   NOT NULL,
+    [Cat_Description]   VARCHAR (250)   NULL,
+    [Cate_Code]         VARCHAR (50)    NULL,
+    [Chk_Birth]         NUMERIC (18)    DEFAULT ((1)) NOT NULL,
+    [NewJoin_Employee]  TINYINT         CONSTRAINT [DF_T0030_CATEGORY_MASTER_NewJoin_Employee] DEFAULT ((1)) NOT NULL,
+    [OT_Rate_11PM]      NUMERIC (10, 3) CONSTRAINT [DF_T0030_CATEGORY_MASTER_OT_Rate_11PM] DEFAULT ((0)) NOT NULL,
+    [IsActive]          TINYINT         NULL,
+    [InActive_EffeDate] DATETIME        NULL,
+    CONSTRAINT [PK_T0030_CATEGORY_MASTER] PRIMARY KEY CLUSTERED ([Cat_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0030_CATEGORY_MASTER_T0010_COMPANY_MASTER] FOREIGN KEY ([cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id])
+);
+

@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[SAP_FAMST] (
+    [FAMST_ID]    INT            IDENTITY (1, 1) NOT NULL,
+    [FAMST]       VARCHAR (50)   NULL,
+    [Description] VARCHAR (100)  NULL,
+    [Alias]       NVARCHAR (100) NULL,
+    CONSTRAINT [PK_SAP_FAMST] PRIMARY KEY CLUSTERED ([FAMST_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

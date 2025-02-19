@@ -1,0 +1,9 @@
+﻿
+
+
+
+CREATE VIEW [dbo].[_dta_mv_8] WITH SCHEMABINDING
+ AS 
+SELECT  [dbo].[T0090_EMP_REPORTING_DETAIL].[R_Emp_ID] as _col_1,  [dbo].[T0090_EMP_REPORTING_DETAIL].[Emp_ID] as _col_2,  [dbo].[T0080_EMP_MASTER].[Cmp_ID] as _col_3,  [dbo].[T0090_EMP_REPORTING_DETAIL].[Effect_Date] as _col_4,  [dbo].[T0090_EMP_REPORTING_DETAIL].[Row_ID] as _col_5 FROM  [dbo].[T0090_EMP_REPORTING_DETAIL] WITH (NOLOCK),  [dbo].[T0080_EMP_MASTER] WITH (NOLOCK)   WHERE  [dbo].[T0090_EMP_REPORTING_DETAIL].[Emp_ID] = [dbo].[T0080_EMP_MASTER].[Emp_ID]  
+
+

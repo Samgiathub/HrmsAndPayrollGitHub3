@@ -1,0 +1,18 @@
+﻿
+
+
+
+CREATE PROC [dbo].[getBusinessLineHistory]
+AS
+
+		SET NOCOUNT ON 
+		SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+		SET ARITHABORT ON
+
+BEGIN
+    SELECT * FROM sys.databases
+END
+
+
+
+

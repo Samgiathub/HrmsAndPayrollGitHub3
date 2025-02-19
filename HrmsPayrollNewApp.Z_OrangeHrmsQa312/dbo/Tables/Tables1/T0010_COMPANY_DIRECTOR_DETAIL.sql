@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[T0010_COMPANY_DIRECTOR_DETAIL] (
+    [Director_Id]          NUMERIC (18)  NOT NULL,
+    [Cmp_Id]               NUMERIC (18)  NOT NULL,
+    [Director_Name]        VARCHAR (50)  NOT NULL,
+    [Director_Address]     VARCHAR (250) NOT NULL,
+    [Director_DOB]         DATETIME      NULL,
+    [Director_Branch]      VARCHAR (50)  NOT NULL,
+    [Director_Designation] VARCHAR (50)  NOT NULL,
+    CONSTRAINT [PK_T0010_COMPANY_DIRECTOR_DETAIL] PRIMARY KEY CLUSTERED ([Director_Id] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0010_COMPANY_DIRECTOR_DETAIL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_Id]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id])
+);
+

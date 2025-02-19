@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[T0100_LOAN_APPLICATION] (
+    [Loan_App_ID]                 NUMERIC (18)    NOT NULL,
+    [Cmp_ID]                      NUMERIC (18)    NOT NULL,
+    [Emp_ID]                      NUMERIC (18)    NOT NULL,
+    [Loan_ID]                     NUMERIC (18)    NOT NULL,
+    [Loan_App_Date]               DATETIME        NOT NULL,
+    [Loan_App_Code]               VARCHAR (20)    NOT NULL,
+    [Loan_App_Amount]             NUMERIC (18)    NOT NULL,
+    [Loan_App_No_of_Insttlement]  NUMERIC (18)    NOT NULL,
+    [Loan_App_Installment_Amount] NUMERIC (22, 2) NOT NULL,
+    [Loan_App_Comments]           VARCHAR (250)   NOT NULL,
+    [Loan_status]                 CHAR (1)        NOT NULL,
+    [Guarantor_Emp_ID]            NUMERIC (18)    NULL,
+    [Installment_Start_Date]      DATETIME        NULL,
+    [Loan_Interest_Type]          VARCHAR (20)    NULL,
+    [Loan_Interest_Per]           NUMERIC (18, 4) CONSTRAINT [DF_T0100_LOAN_APPLICATION_Loan_Interest_Per] DEFAULT ((0)) NOT NULL,
+    [Loan_Require_Date]           DATETIME        NULL,
+    [Attachment_Path]             NVARCHAR (MAX)  NULL,
+    [No_of_Inst_Loan_Amt]         NUMERIC (18)    DEFAULT ((0)) NOT NULL,
+    [Total_Loan_Int_Amount]       NUMERIC (18, 2) DEFAULT ((0)) NOT NULL,
+    [Loan_Int_Installment_Amount] NUMERIC (18, 2) DEFAULT ((0)) NOT NULL,
+    [Guarantor_Emp_ID2]           NUMERIC (18)    NULL,
+    CONSTRAINT [PK_T0100_LOAN_APPLICATION] PRIMARY KEY CLUSTERED ([Loan_App_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0100_LOAN_APPLICATION_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0100_LOAN_APPLICATION_T0040_LOAN_MASTER] FOREIGN KEY ([Loan_ID]) REFERENCES [dbo].[T0040_LOAN_MASTER] ([Loan_ID]),
+    CONSTRAINT [FK_T0100_LOAN_APPLICATION_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

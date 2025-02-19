@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[T0080_File_Application] (
+    [File_App_Id]      NUMERIC (18)   IDENTITY (1, 1) NOT NULL,
+    [Application_Date] DATETIME       NULL,
+    [Branch_Id]        NUMERIC (18)   NULL,
+    [Dept_Id]          NUMERIC (18)   NULL,
+    [Desig_Id]         NUMERIC (18)   NULL,
+    [Emp_Id]           NUMERIC (18)   NULL,
+    [S_Emp_Id]         NUMERIC (18)   NULL,
+    [File_Number]      VARCHAR (50)   NOT NULL,
+    [F_StatusId]       INT            CONSTRAINT [DF_T0080_File_Application_F_StatusId] DEFAULT ((1)) NULL,
+    [F_TypeId]         NUMERIC (18)   NULL,
+    [Subject]          VARCHAR (500)  NULL,
+    [Description]      VARCHAR (MAX)  NULL,
+    [Process_Date]     DATETIME       NULL,
+    [File_App_Doc]     NVARCHAR (MAX) NULL,
+    [Cmp_ID]           NUMERIC (18)   NULL,
+    [CreatedDate]      DATETIME       NULL,
+    [UpdatedDate]      DATETIME       NULL,
+    [UpdatedByUserId]  VARCHAR (MAX)  NULL,
+    [User ID]          VARCHAR (MAX)  NULL,
+    [RComments]        VARCHAR (MAX)  NULL,
+    [Review_Emp_Id]    NUMERIC (18)   CONSTRAINT [DF_T0080_File_Application_Review_Emp_Id] DEFAULT ((0)) NULL,
+    [File_Type_Number] NVARCHAR (MAX) NULL,
+    [File_Type_Name]   NVARCHAR (MAX) NULL,
+    CONSTRAINT [PK_T0080_File_Application] PRIMARY KEY CLUSTERED ([File_App_Id] ASC) WITH (FILLFACTOR = 95)
+);
+

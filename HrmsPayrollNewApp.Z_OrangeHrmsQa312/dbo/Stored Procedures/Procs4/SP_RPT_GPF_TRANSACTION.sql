@@ -1,0 +1,104 @@
+﻿
+
+CREATE PROCEDURE [dbo].[SP_RPT_GPF_TRANSACTION]
+	 @Cmp_ID 		numeric
+	,@From_Date 	datetime
+	,@To_Date 		datetime
+	,@Branch_ID 	varchar(max) = ''
+	,@Cat_ID 		varchar(max) = ''
+	,@Grd_ID 		varchar(max) = ''
+	,@Type_ID 		varchar(max) = ''
+	,@Dept_ID 		varchar(max) = ''
+	,@Desig_ID 		varchar(max) = ''
+	,@Constraint 	varchar(MAX) = ''
+	,@mode			numeric = 0	
+AS
+	SET NOCOUNT ON 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+	SET ARITHABORT ON	
+
+	CREATE TABLE #Emp_Cons 
+	(      
+		Emp_ID NUMERIC ,     
+		Branch_ID NUMERIC,
+		Increment_ID NUMERIC
+	)		
+	exec SP_RPT_FILL_EMP_CONS_MULTIDROPDOWN @Cmp_ID,@From_Date,@To_Date,@Branch_ID,@Cat_ID,@Grd_ID,@Type_ID,@Dept_ID,@Desig_ID,0,@Constraint,0,0,'','','','',0,0,0,'0',0,0	
+	
+
+	UPDATE	#Emp_Cons
+	SET		Branch_ID=I.BRANCH_ID,Increment_ID=I.INCREMENT_ID
+	FROM	#Emp_Cons E INNER JOIN (
+						SELECT	I1.Increment_ID, I1.Branch_ID, I1.Emp_ID, I1.Cmp_ID
+						FROM	T0095_INCREMENT I1 WITH (NOLOCK)
+						WHERE	I1.Increment_ID=(
+								SELECT TOP 1 I2.Increment_ID
+								FROM	T0095_INCREMENT I2 WITH (NOLOCK)
+								WHERE	I2.Cmp_ID=I1.Cmp_ID AND I2.Emp_ID=I1.Emp_ID
+										AND I2.Increment_Effective_Date <= @TO_DATE
+								ORDER BY I1.Increment_Effective_Date DESC, I1.Increment_ID DESC
+								)
+							) I ON E.Emp_ID=I.Emp_ID 
+					
+	WHERE	I.Cmp_ID=@CMP_ID  
+		
+		
+	IF @mode = 2 
+		SELECT	TOP 0	T.Emp_ID,
+				E.Emp_code,E.Alpha_Emp_Code, E.Emp_full_Name, BM.Branch_Name,BM.Comp_Name, Dept_Name, GM.Grd_Name, DGM.Desig_Name,TM.Type_Name, 
+				Branch_Address, Comp_Name,Cmp_Name,Cmp_Address,@From_Date As From_Date,@To_Date As To_Date,
+				T.GPF_OPENING,T.GPF_CREDIT,T.GPF_DEBIT,T.GPF_CLOSING,BM.BRANCH_ID,E.SSN_No As PF_No
+		FROM	T0140_EMP_GPF_TRANSACTION T WITH (NOLOCK) INNER JOIN #Emp_Cons ET ON T.EMP_ID=ET.Emp_ID
+				Inner join T0080_EMP_MASTER E WITH (NOLOCK) ON T.EMP_ID = E.EMP_ID
+				INNER JOIN T0095_INCREMENT I WITH (NOLOCK) ON I.Emp_ID = ET.Emp_ID AND I.Cmp_ID=E.Cmp_ID AND I.Increment_ID=ET.Increment_ID
+				INNER JOIN T0040_GRADE_MASTER GM WITH (NOLOCK) ON I.Grd_Id = gm.Grd_ID 
+				INNER JOIN T0030_BRANCH_MASTER BM WITH (NOLOCK) ON I.BRANCH_ID = BM.BRANCH_ID 
+				LEFT OUTER JOIN T0040_DEPARTMENT_MASTER DM WITH (NOLOCK) ON I.DEPT_ID = DM.DEPT_ID 
+				LEFT OUTER JOIN T0040_DESIGNATION_MASTER DGM WITH (NOLOCK) ON I.DESIG_ID = DGM.DESIG_ID 
+				LEFT OUTER JOIN T0040_TYPE_MASTER TM WITH (NOLOCK) ON I.TYPE_ID = TM.TYPE_ID 
+				INNER JOIN T0010_COMPANY_MASTER C WITH (NOLOCK) On E.Cmp_ID = C.Cmp_Id 
+		WHERE T.CMP_ID=@Cmp_ID AND (T.FOR_DATE BETWEEN @FROM_DATE AND @TO_DATE)
+		ORDER BY	E.Alpha_Emp_Code,T.FOR_DATE
+	ELSE		
+		SELECT	E.Emp_ID,E.Emp_code,('="' + E.Alpha_Emp_Code + '"' ) As Alpha_Emp_Code, E.Emp_full_Name, BM.Branch_Name,BM.Comp_Name, Dept_Name, GM.Grd_Name, DGM.Desig_Name,TM.Type_Name, 
+				Branch_Address, Comp_Name,Cmp_Name,Cmp_Address,@From_Date As From_Date,@To_Date As To_Date,
+				ISNULL(OP.GPF_OPENING,0) As GPF_OPENING,IsNull(GPF.GPF_CREDIT,0) As GPF_CREDIT,IsNull(GPF.GPF_DEBIT,0) As GPF_DEBIT,IsNull(CL.GPF_CLOSING,0) As GPF_CLOSING,BM.BRANCH_ID,E.SSN_No As PF_No
+		FROM	#Emp_Cons ET Inner join T0080_EMP_MASTER E WITH (NOLOCK) ON ET.EMP_ID = E.EMP_ID
+				INNER JOIN (SELECT	Increment_ID,Emp_ID,Cmp_ID,Branch_ID,Cat_ID,Grd_ID,Dept_ID,Desig_Id,Type_ID 
+							FROM	T0095_INCREMENT I1 WITH (NOLOCK)
+							WHERE	I1.Increment_ID=(
+														SELECT TOP 1 I2.Increment_ID 
+														FROM	T0095_INCREMENT I2 WITH (NOLOCK)
+														WHERE	I1.Cmp_ID=I2.Cmp_ID AND I1.Emp_ID=I2.Emp_ID
+																AND I2.Increment_Effective_Date <= @TO_DATE
+														ORDER BY I1.Increment_Effective_Date DESC, I1.Increment_ID DESC
+													)
+							) I ON I.Emp_ID = ET.Emp_ID AND I.Cmp_ID=E.Cmp_ID AND I.Increment_ID=ET.Increment_ID				
+				INNER JOIN T0040_GRADE_MASTER GM WITH (NOLOCK) ON I.Grd_Id = gm.Grd_ID 
+				INNER JOIN T0030_BRANCH_MASTER BM WITH (NOLOCK) ON I.BRANCH_ID = BM.BRANCH_ID 
+				LEFT OUTER JOIN T0040_DEPARTMENT_MASTER DM WITH (NOLOCK) ON I.DEPT_ID = DM.DEPT_ID 
+				LEFT OUTER JOIN T0040_DESIGNATION_MASTER DGM WITH (NOLOCK) ON I.DESIG_ID = DGM.DESIG_ID 
+				LEFT OUTER JOIN T0040_TYPE_MASTER TM WITH (NOLOCK) ON I.TYPE_ID = TM.TYPE_ID 
+				INNER JOIN T0010_COMPANY_MASTER C WITH (NOLOCK) On E.Cmp_ID = C.Cmp_Id 
+				LEFT OUTER JOIN (
+							SELECT	GPF_Opening,G.Cmp_ID,G.Emp_ID 
+							FROM	T0140_EMP_GPF_TRANSACTION G WITH (NOLOCK)
+							WHERE	G.TRAN_ID=(SELECT TOP 1 TRAN_ID FROM T0140_EMP_GPF_TRANSACTION G1 WITH (NOLOCK) WHERE G1.CMP_ID=G.CMP_ID AND G1.EMP_ID=G.EMP_ID AND G1.FOR_DATE >= @FROM_DATE ORDER BY G1.FOR_DATE ASC)							
+							) OP ON OP.Cmp_ID=E.Cmp_ID AND OP.Emp_ID=ET.Emp_ID
+				LEFT OUTER JOIN (
+							SELECT	G.GPF_CLOSING,G.Cmp_ID,G.Emp_ID 
+							FROM	T0140_EMP_GPF_TRANSACTION G WITH (NOLOCK)
+							WHERE	G.TRAN_ID=(SELECT TOP 1 TRAN_ID FROM T0140_EMP_GPF_TRANSACTION G1 WITH (NOLOCK) WHERE G1.CMP_ID=G.CMP_ID AND G1.EMP_ID=G.EMP_ID AND G1.FOR_DATE <= @TO_DATE ORDER BY G1.FOR_DATE DESC)							
+							) CL ON CL.Cmp_ID=E.Cmp_ID AND CL.Emp_ID=ET.Emp_ID
+				LEFT OUTER JOIN (
+							SELECT	SUM(G.GPF_CREDIT) AS GPF_CREDIT,SUM(G.GPF_DEBIT) AS GPF_DEBIT,G.Cmp_ID,G.Emp_ID 
+							FROM	T0140_EMP_GPF_TRANSACTION G WITH (NOLOCK)
+							WHERE	(G.For_Date BETWEEN @FROM_DATE AND @TO_DATE)
+							GROUP BY G.CMP_ID, G.EMP_ID
+							) GPF ON GPF.Cmp_ID=E.Cmp_ID AND GPF.Emp_ID=ET.Emp_ID
+		WHERE	(ISNULL(CL.GPF_CLOSING,0) + ISNULL(OP.GPF_OPENING,0) + ISNULL(GPF.GPF_CREDIT,0) + ISNULL(GPF.GPF_DEBIT,0)) <> 0
+		ORDER BY	E.Alpha_Emp_Code
+		
+		
+		
+

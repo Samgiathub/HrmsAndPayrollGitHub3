@@ -1,0 +1,14 @@
+﻿CREATE TABLE [dbo].[T0050_Optional_Holiday_Limit] (
+    [Tran_ID]     NUMERIC (18) NOT NULL,
+    [Hday_ID]     NUMERIC (18) NOT NULL,
+    [Cmp_ID]      NUMERIC (18) NOT NULL,
+    [Branch_ID]   NUMERIC (18) NOT NULL,
+    [Max_Limit]   NUMERIC (18) NOT NULL,
+    [System_Date] DATETIME     NOT NULL,
+    [User_ID]     NUMERIC (18) NOT NULL,
+    CONSTRAINT [PK_T0050_Optional_Holiday_Limit] PRIMARY KEY CLUSTERED ([Tran_ID] ASC),
+    CONSTRAINT [FK_T0050_Optional_Holiday_Limit_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0050_Optional_Holiday_Limit_T0030_BRANCH_MASTER] FOREIGN KEY ([Branch_ID]) REFERENCES [dbo].[T0030_BRANCH_MASTER] ([Branch_ID]),
+    CONSTRAINT [FK_T0050_Optional_Holiday_Limit_T0040_HOLIDAY_MASTER] FOREIGN KEY ([Hday_ID]) REFERENCES [dbo].[T0040_HOLIDAY_MASTER] ([Hday_ID])
+);
+

@@ -1,0 +1,14 @@
+﻿
+
+
+
+CREATE VIEW [dbo].[V0065_Emp_doc_detail_Get]
+AS
+SELECT     dbo.T0065_EMP_DOC_DETAIL_APP.Row_ID, dbo.T0065_EMP_DOC_DETAIL_APP.Emp_Tran_ID, dbo.T0065_EMP_DOC_DETAIL_APP.Emp_Application_ID, 
+                      dbo.T0065_EMP_DOC_DETAIL_APP.Approved_Emp_ID, dbo.T0065_EMP_DOC_DETAIL_APP.Approved_Date, dbo.T0065_EMP_DOC_DETAIL_APP.Rpt_Level, 
+                      dbo.T0065_EMP_DOC_DETAIL_APP.Cmp_ID, dbo.T0065_EMP_DOC_DETAIL_APP.Doc_ID, dbo.T0065_EMP_DOC_DETAIL_APP.Doc_Path, dbo.T0065_EMP_DOC_DETAIL_APP.Doc_Comments, 
+                      dbo.T0065_EMP_DOC_DETAIL_APP.Date_of_Expiry AS Doc_Name, dbo.T0040_DOCUMENT_MASTER.Doc_Name AS Expr1
+FROM         dbo.T0065_EMP_DOC_DETAIL_APP WITH (NOLOCK) INNER JOIN
+                      dbo.T0040_DOCUMENT_MASTER WITH (NOLOCK)  ON dbo.T0065_EMP_DOC_DETAIL_APP.Doc_ID = dbo.T0040_DOCUMENT_MASTER.Doc_ID
+
+

@@ -1,0 +1,30 @@
+﻿CREATE TABLE [dbo].[T0040_CAPTION_SETTING] (
+    [Tran_Id]     NUMERIC (18)   NOT NULL,
+    [Cmp_Id]      NUMERIC (18)   NOT NULL,
+    [Caption]     NVARCHAR (200) NULL,
+    [Alias]       NVARCHAR (200) NULL,
+    [SortingNo]   NUMERIC (5)    NOT NULL,
+    [Remarks]     NVARCHAR (100) NULL,
+    [Module_Name] VARCHAR (100)  NULL,
+    [Group_BY]    VARCHAR (500)  NULL,
+    [CaptionCode] VARCHAR (128)  NULL,
+    [Is_Hidden]   NUMERIC (18)   DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_T0040_CAPTION_SETTING] PRIMARY KEY CLUSTERED ([Tran_Id] ASC) WITH (FILLFACTOR = 80)
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0040_CAPTION_SETTING_26_1508252478__K3_K2_1_4_5_6]
+    ON [dbo].[T0040_CAPTION_SETTING]([SortingNo] ASC, [Cmp_Id] ASC)
+    INCLUDE([Tran_Id], [Alias], [Remarks]) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_T0040_CAPTION_SETTING_MISSING_2910]
+    ON [dbo].[T0040_CAPTION_SETTING]([Cmp_Id] ASC, [Caption] ASC);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1508252478_2_3]
+    ON [dbo].[T0040_CAPTION_SETTING]([Cmp_Id], [Caption]);
+

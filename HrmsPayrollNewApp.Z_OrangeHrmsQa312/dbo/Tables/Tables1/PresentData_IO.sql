@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[PresentData_IO] (
+    [Emp_Id]               NUMERIC (18)    NULL,
+    [For_date]             DATETIME        NULL,
+    [Duration_in_sec]      NUMERIC (18)    NULL,
+    [Shift_ID]             NUMERIC (18)    NULL,
+    [Shift_Type]           NUMERIC (18)    NULL,
+    [Emp_OT]               NUMERIC (18)    NULL,
+    [Emp_OT_min_Limit]     NUMERIC (18)    NULL,
+    [Emp_OT_max_Limit]     NUMERIC (18)    NULL,
+    [P_days]               NUMERIC (12, 3) NULL,
+    [OT_Sec]               NUMERIC (18)    NULL,
+    [In_Time]              DATETIME        NULL,
+    [Shift_Start_Time]     DATETIME        NULL,
+    [OT_Start_Time]        NUMERIC (18)    NULL,
+    [Shift_Change]         TINYINT         NULL,
+    [Flag]                 INT             NULL,
+    [Weekoff_OT_Sec]       NUMERIC (18)    NULL,
+    [Holiday_OT_Sec]       NUMERIC (18)    NULL,
+    [Chk_By_Superior]      NUMERIC (18)    NULL,
+    [IO_Tran_Id]           NUMERIC (18)    NULL,
+    [OUT_Time]             DATETIME        NULL,
+    [Shift_End_Time]       DATETIME        NULL,
+    [OT_End_Time]          NUMERIC (18)    NULL,
+    [Working_Hrs_St_Time]  TINYINT         NULL,
+    [Working_Hrs_End_Time] TINYINT         NULL,
+    [GatePass_Deduct_Days] NUMERIC (18, 2) NULL
+);
+

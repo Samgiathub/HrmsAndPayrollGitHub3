@@ -1,0 +1,15 @@
+﻿
+
+
+ 
+CREATE VIEW [dbo].[V0096_EMP_GEO_LOCATION_ASSIGN_DETAIL]
+AS
+SELECT ISNULL(ELA.Emp_Geo_Location_Detail_ID,0) AS 'Emp_Geo_Location_Detail_ID',ELA.Emp_Geo_Location_ID,GLM.Geo_Location_ID,
+(CASE WHEN ISNULL(ELA.Meter,0) = 0 THEN GLM.Meter ELSE ELA.Meter END) AS 'Meter',
+GLM.Geo_Location,(CASE WHEN ISNULL(ELA.Emp_Geo_Location_Detail_ID,0) = 0 THEN 0 ELSE 1 END) AS 'checkstatus'
+FROM T0096_EMP_GEO_LOCATION_ASSIGN_DETAIL ELA WITH (NOLOCK)
+RIGHT JOIN T0040_GEO_LOCATION_MASTER GLM WITH (NOLOCK) ON ELA.Geo_Location_ID = GLM.Geo_Location_ID
+
+
+
+

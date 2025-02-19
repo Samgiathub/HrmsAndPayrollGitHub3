@@ -1,0 +1,9 @@
+﻿
+create VIEW [dbo].[V0090_EMP_DOC_DETAIL_backup11042021]
+AS
+SELECT     dbo.T0040_DOCUMENT_MASTER.Doc_Name, dbo.T0090_EMP_DOC_DETAIL.Row_ID, dbo.T0090_EMP_DOC_DETAIL.Emp_ID, 
+                      dbo.T0090_EMP_DOC_DETAIL.Cmp_ID, dbo.T0090_EMP_DOC_DETAIL.Doc_ID, dbo.T0090_EMP_DOC_DETAIL.Doc_Path, 
+                      dbo.T0090_EMP_DOC_DETAIL.Doc_Comments
+                      ,dbo.T0090_EMP_DOC_DETAIL.Date_of_Expiry
+FROM         dbo.T0090_EMP_DOC_DETAIL WITH (NOLOCK) LEFT OUTER JOIN
+                      dbo.T0040_DOCUMENT_MASTER WITH (NOLOCK)  ON dbo.T0090_EMP_DOC_DETAIL.Doc_ID = dbo.T0040_DOCUMENT_MASTER.Doc_ID

@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[T0120_HRMS_TRAINING_Attachment] (
+    [TrainingAttach_Id] NUMERIC (18)   NOT NULL,
+    [Cmp_Id]            NUMERIC (18)   NOT NULL,
+    [Training_Apr_Id]   NUMERIC (18)   NOT NULL,
+    [Attachment]        VARCHAR (MAX)  NULL,
+    [VideoUrl]          NVARCHAR (MAX) NULL,
+    CONSTRAINT [PK_T0120_HRMS_TRAINING_Attachment] PRIMARY KEY CLUSTERED ([TrainingAttach_Id] ASC),
+    CONSTRAINT [FK_T0120_HRMS_TRAINING_Attachment_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_Id]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0120_HRMS_TRAINING_Attachment_T0120_HRMS_TRAINING_APPROVAL] FOREIGN KEY ([Training_Apr_Id]) REFERENCES [dbo].[T0120_HRMS_TRAINING_APPROVAL] ([Training_Apr_ID])
+);
+

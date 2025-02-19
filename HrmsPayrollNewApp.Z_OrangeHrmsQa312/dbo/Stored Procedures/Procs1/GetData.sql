@@ -1,0 +1,19 @@
+﻿
+
+
+
+---23/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+CREATE PROCEDURE [dbo].[GetData]
+  @Cmp_ID  numeric
+As
+
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+
+Select * From T0080_Emp_Master WITH (NOLOCK)
+Select * From T0030_Branch_master WITH (NOLOCK)
+
+
+
+

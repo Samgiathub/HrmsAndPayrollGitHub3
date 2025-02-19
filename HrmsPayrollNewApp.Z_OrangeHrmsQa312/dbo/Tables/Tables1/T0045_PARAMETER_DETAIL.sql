@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[T0045_PARAMETER_DETAIL] (
+    [Row_Id]     NUMERIC (18)    NOT NULL,
+    [Cmp_Id]     NUMERIC (18)    NOT NULL,
+    [Para_Id]    NUMERIC (18)    NOT NULL,
+    [From_Slab]  NUMERIC (18, 2) NULL,
+    [To_Slab]    NUMERIC (18, 2) NULL,
+    [Slab_Value] NUMERIC (18, 2) NULL,
+    [Para_Name]  VARCHAR (100)   NULL,
+    [Para_For]   VARCHAR (50)    NULL,
+    CONSTRAINT [FK_T0045_PARAMETER_DETAIL_T0040_PARAMETER_MASTER] FOREIGN KEY ([Para_Id]) REFERENCES [dbo].[T0040_PARAMETER_MASTER] ([Para_Id])
+);
+

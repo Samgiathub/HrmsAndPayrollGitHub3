@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[T0240_Perquisites_Employee] (
+    [Tran_id]           NUMERIC (18)    NOT NULL,
+    [Cmp_id]            NUMERIC (18)    NOT NULL,
+    [Emp_id]            NUMERIC (18)    NOT NULL,
+    [Perquisites_id]    NUMERIC (18)    NOT NULL,
+    [Financial_Year]    NVARCHAR (30)   NOT NULL,
+    [On_Rent]           TINYINT         CONSTRAINT [DF_T0240_Perquisites_Employee_On_Rent] DEFAULT ((0)) NOT NULL,
+    [On_Rent_From]      DATETIME        NULL,
+    [On_Rent_To]        DATETIME        NULL,
+    [Cmp_Quarter]       TINYINT         CONSTRAINT [DF_T0240_Perquisites_Employee_Cmp_Quarter] DEFAULT ((0)) NOT NULL,
+    [Cmp_Quarter_From]  DATETIME        NULL,
+    [Cmp_Quarter_To]    DATETIME        NOT NULL,
+    [Salary]            NUMERIC (18, 2) CONSTRAINT [DF_T0240_Perquisites_Employee_Salary] DEFAULT ((0)) NOT NULL,
+    [On_Rent_Per]       NUMERIC (18, 2) CONSTRAINT [DF_T0240_Perquisites_Employee_On_Rent_Per] DEFAULT ((0)) NOT NULL,
+    [Cmp_Quater_Per]    NUMERIC (18, 2) CONSTRAINT [DF_T0240_Perquisites_Employee_Cmp_Quater_Per] DEFAULT ((0)) NOT NULL,
+    [Total_Rent_Amt]    NUMERIC (18, 2) CONSTRAINT [DF_T0240_Perquisites_Employee_Total_Rent] DEFAULT ((0)) NOT NULL,
+    [Total_Furnish_Amt] NUMERIC (18, 2) CONSTRAINT [DF_T0240_Perquisites_Employee_Total_Furnish_Amt] DEFAULT ((0)) NOT NULL,
+    [Population]        NVARCHAR (50)   NULL,
+    [On_Rent_days]      NUMERIC (18, 2) NULL,
+    [Cmp_Quarter_days]  NUMERIC (18, 2) NULL,
+    [Month]             NUMERIC (18)    CONSTRAINT [DF_T0240_Perquisites_Employee_Total_Month] DEFAULT ((0)) NOT NULL,
+    [Per_Rent_Amt]      NUMERIC (18, 2) CONSTRAINT [DF_T0240_Perquisites_Employee_Per_Rent_Amt] DEFAULT ((0)) NOT NULL,
+    [Per_Quater_Amt]    NUMERIC (18, 2) CONSTRAINT [DF_T0240_Perquisites_Employee_Per_Furnish_Amt] DEFAULT ((0)) NOT NULL,
+    [Change_Date]       DATETIME        CONSTRAINT [DF_T0240_Perquisites_Employee_Change_Date] DEFAULT (getdate()) NULL,
+    CONSTRAINT [PK_T0240_Perquisites_Employee] PRIMARY KEY CLUSTERED ([Tran_id] ASC) WITH (FILLFACTOR = 80)
+);
+

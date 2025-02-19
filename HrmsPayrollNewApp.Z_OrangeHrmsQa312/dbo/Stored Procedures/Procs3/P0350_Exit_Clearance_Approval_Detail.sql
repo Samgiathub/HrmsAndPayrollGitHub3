@@ -1,0 +1,117 @@
+﻿
+
+-- =============================================
+-- Author:		<Jaina>
+-- Create date: <03-06-2016>
+-- Description:	<Exit Clearance Approval Detail>
+---22/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+-- =============================================
+CREATE PROCEDURE [dbo].[P0350_Exit_Clearance_Approval_Detail]
+	@TRAN_ID AS NUMERIC(18,0)OUTPUT,
+	@CMP_ID AS NUMERIC(18,0),
+	@APPROVAL_ID AS NUMERIC(18,0),
+	@CLEARANCE_ID AS NUMERIC(18,0),
+	@RECOVERY_AMT AS NUMERIC(18,2),
+	@REMARKS AS VARCHAR(250),
+	@ATTACHMENT_PATH AS VARCHAR(MAX),
+	@NOT_APPLICABLE AS TINYINT,
+	@USER_ID NUMERIC(18,0) = 0,
+    @IP_ADDRESS VARCHAR(30)= '',
+    @STATUS VARCHAR(50) = ''   --Added By Jaina 05-07-2016
+	
+AS
+BEGIN
+	
+	SET NOCOUNT ON 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+	SET ARITHABORT ON
+	
+	DECLARE @OLDVALUE AS VARCHAR(MAX)
+	DECLARE @OLDAPPROVAL_ID AS NUMERIC(18,0)
+	DECLARE @NEW_ATTRIBUTE_NAME AS VARCHAR(250)
+	DECLARE @OLD_ATTRIBUTE_NAME AS VARCHAR(250)
+	DECLARE @OLDRECOVERY_AMT AS NUMERIC(18,0)
+	DECLARE @OLDREMARKS AS VARCHAR(250)
+	DECLARE @OLDATTACHMENT_PATH AS VARCHAR(MAX)
+	DECLARE @OLDNOT_APPLICABLE AS VARCHAR(10)
+	DECLARE @NEWNOT_APPLICABLE AS VARCHAR(10)
+	DECLARE @OLDSTATUS AS VARCHAR(50)  --Added By Jaina 05-07-2016
+	
+	SET @OLDNOT_APPLICABLE = ''
+	SET @OLDAPPROVAL_ID = 0
+	SET @OLDATTACHMENT_PATH = ''
+	SET @OLDRECOVERY_AMT = 0
+	SET @OLDREMARKS = ''
+	SET @NEW_ATTRIBUTE_NAME = ''
+	SET @OLD_ATTRIBUTE_NAME = ''
+	SET @NEWNOT_APPLICABLE = ''
+	SET @OLDVALUE = ''
+	SET @OLDSTATUS = ''
+	
+    IF NOT EXISTS ( SELECT 1 FROM T0350_EXIT_CLEARANCE_APPROVAL_DETAIL WITH (NOLOCK) WHERE  CMP_ID=@CMP_ID AND CLEARANCE_ID = @CLEARANCE_ID AND APPROVAL_ID=@APPROVAL_ID)
+		BEGIN
+	    
+			SELECT @TRAN_ID = ISNULL(MAX(TRAN_ID),0) + 1 FROM T0350_EXIT_CLEARANCE_APPROVAL_DETAIL WITH (NOLOCK)
+			
+			INSERT INTO T0350_EXIT_CLEARANCE_APPROVAL_DETAIL (TRAN_ID,CMP_ID,APPROVAL_ID,CLEARANCE_ID,RECOVERY_AMT,REMARKS,ATTACHMENT_PATH,NOT_APPLICABLE,STATUS)
+	 			VALUES (@TRAN_ID,@CMP_ID,@APPROVAL_ID,@CLEARANCE_ID,@RECOVERY_AMT,@REMARKS,@ATTACHMENT_PATH,@NOT_APPLICABLE,@STATUS)  --Change By Jaina 05-07-2016
+	 			
+	 		SELECT @NEW_ATTRIBUTE_NAME = ITEM_NAME FROM T0040_CLEARANCE_ATTRIBUTE WITH (NOLOCK) WHERE CLEARANCE_ID = @CLEARANCE_ID AND CMP_ID = @CMP_ID
+	 		
+	 		IF @NOT_APPLICABLE = 1
+	 			SET @NEWNOT_APPLICABLE = 'YES'
+	 		ELSE
+	 			SET @NEWNOT_APPLICABLE = 'NO'
+	 		
+		 	set @OldValue = 'New Value' + '#'+ 'Attribute Name :' + ISNULL(@NEW_ATTRIBUTE_NAME,'')
+										+ '#'+ 'Recovery Amount :' + CAST(@RECOVERY_AMT AS varchar(10))
+									    + '#'+ 'Remarks :' + ISNULL(@REMARKS,'') 
+									    + '#'+ 'Status :' + ISNULL(@STATUS,'')
+										+ '#'+ 'Not Applicable : ' + ISNULL(@NEWNOT_APPLICABLE,'')
+										+ '#'+ 'Attachment Path :' + ISNULL(@ATTACHMENT_PATH,'')
+			
+			exec P9999_Audit_Trail @Cmp_ID,'I','Exit Clearance Approval Detail',@OldValue,@Tran_id,@User_Id,@IP_Address
+											  
+		End
+    ELSE
+		Begin
+			
+			SELECT @NEW_ATTRIBUTE_NAME = ITEM_NAME FROM T0040_CLEARANCE_ATTRIBUTE WITH (NOLOCK) WHERE CLEARANCE_ID = @CLEARANCE_ID AND CMP_ID = @CMP_ID
+						
+			SELECT  @OLDAPPROVAL_ID = APPROVAL_ID,
+					@OLD_ATTRIBUTE_NAME = (SELECT ITEM_NAME FROM T0040_CLEARANCE_ATTRIBUTE C WITH (NOLOCK) WHERE C.CLEARANCE_ID = ECA.CLEARANCE_ID),
+					@OLDRECOVERY_AMT = RECOVERY_AMT,
+					@OLDREMARKS = REMARKS,
+					@OLDATTACHMENT_PATH = ATTACHMENT_PATH,
+					@OLDNOT_APPLICABLE = CASE WHEN ISNULL(NOT_APPLICABLE,0) = 1 THEN 'YES' ELSE 'NO' END,
+					@OLDSTATUS = isnull(Status,'')   --Added By Jaina 05-07-2016
+			FROM T0350_EXIT_CLEARANCE_APPROVAL_DETAIL AS ECA WITH (NOLOCK)
+			WHERE TRAN_ID = @TRAN_ID AND CMP_ID=@CMP_ID AND CLEARANCE_ID = @CLEARANCE_ID
+			
+			UPDATE T0350_EXIT_CLEARANCE_APPROVAL_DETAIL 
+					SET RECOVERY_AMT = @RECOVERY_AMT,
+						REMARKS = @REMARKS,
+						ATTACHMENT_PATH = @ATTACHMENT_PATH,
+						NOT_APPLICABLE = @NOT_APPLICABLE,
+						STATUS = @STATUS   --Added By Jaina 05-07-2016
+			WHERE TRAN_ID = @TRAN_ID AND CMP_ID=@CMP_ID AND CLEARANCE_ID = @CLEARANCE_ID
+			
+			
+			set @OldValue = 'Old Value' + '#'+ 'Attribute Name :' + ISNULL(@OLD_ATTRIBUTE_NAME,'')
+										+ '#'+ 'Recovery Amount :' + CAST(@OldRecovery_Amt AS varchar(10))
+									    + '#'+ 'Remarks :' + ISNULL(@OldRemarks,'') 
+									    + '#'+ 'Status :' + ISNULL(@OLDSTATUS,'')
+										+ '#'+ 'Not Applicable : ' + ISNULL(@OldNot_Applicable,'')
+										+ '#'+ 'Attachment Path :' + ISNULL(@OldAttachment_path,'')+
+							'New Value' + '#'+ 'Attribute Name :' + ISNULL(@NEW_ATTRIBUTE_NAME,'')
+										+ '#'+ 'Recovery Amount :' + CAST(@Recovery_amt AS varchar(10))
+									    + '#'+ 'Remarks :' + ISNULL(@Remarks,'') 
+									    + '#'+ 'Status :' + ISNULL(@STATUS,'')
+										+ '#'+ 'Not Applicable : ' + ISNULL(@NewNot_Applicable,'')
+										+ '#'+ 'Attachment Path :' + ISNULL(@Attachment_path,'')
+										
+		exec P9999_Audit_Trail @Cmp_ID,'U','Exit Clearance Approval Detail',@OldValue,@Tran_id,@User_Id,@IP_Address
+		
+		End
+END
+

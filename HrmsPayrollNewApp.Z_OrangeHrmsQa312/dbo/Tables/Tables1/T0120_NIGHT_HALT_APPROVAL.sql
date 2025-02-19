@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[T0120_NIGHT_HALT_APPROVAL] (
+    [Approval_ID]       NUMERIC (18)    NOT NULL,
+    [Application_ID]    NUMERIC (18)    NOT NULL,
+    [Cmp_ID]            NUMERIC (18)    NOT NULL,
+    [Emp_ID]            NUMERIC (18)    NOT NULL,
+    [S_Emp_ID]          NUMERIC (18)    NULL,
+    [From_Date]         DATETIME        NOT NULL,
+    [To_Date]           DATETIME        NOT NULL,
+    [No_Of_Days]        NUMERIC (18, 2) NOT NULL,
+    [Visit_Place]       VARCHAR (100)   NULL,
+    [Remarks]           VARCHAR (50)    NULL,
+    [Is_Effect_Sal]     INT             CONSTRAINT [DF_T0120_NIGHT_HALT_APPROVAL_Is_Effect_Sal] DEFAULT ((0)) NOT NULL,
+    [Eff_Month]         NUMERIC (18)    NULL,
+    [Eff_Year]          NUMERIC (18)    NULL,
+    [App_Status]        VARCHAR (1)     NULL,
+    [Approve_Days]      NUMERIC (18, 2) NULL,
+    [Amount]            NUMERIC (18, 2) NULL,
+    [Calculated_Amount] NUMERIC (18, 2) NULL,
+    [Login_ID]          NUMERIC (18)    NULL,
+    [System_Date]       DATETIME        NULL,
+    [AdminFlag]         BIT             NULL,
+    CONSTRAINT [PK_T0120_NIGHT_HALT_APPROVAL] PRIMARY KEY CLUSTERED ([Approval_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0120_NIGHT_HALT_APPROVAL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0120_NIGHT_HALT_APPROVAL_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID]),
+    CONSTRAINT [FK_T0120_NIGHT_HALT_APPROVAL_T0100_NIGHT_HALT_APPLICATION] FOREIGN KEY ([Application_ID]) REFERENCES [dbo].[T0100_NIGHT_HALT_APPLICATION] ([Application_ID])
+);
+

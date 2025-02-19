@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[T0120_VEHICLE_APPROVAL] (
+    [Vehicle_Apr_ID]           INT            IDENTITY (1, 1) NOT NULL,
+    [Vehicle_App_ID]           INT            NOT NULL,
+    [Cmp_ID]                   NUMERIC (18)   NOT NULL,
+    [Emp_ID]                   NUMERIC (18)   NOT NULL,
+    [Vehicle_ID]               INT            NOT NULL,
+    [Manufacture_Year]         INT            NOT NULL,
+    [Max_Limit]                FLOAT (53)     NOT NULL,
+    [Initial_Emp_Contribution] FLOAT (53)     NOT NULL,
+    [Vehicle_Cost]             FLOAT (53)     NOT NULL,
+    [Employee_Share]           FLOAT (53)     NOT NULL,
+    [Attachment]               VARCHAR (5000) NOT NULL,
+    [Approval_Status]          VARCHAR (25)   NOT NULL,
+    [Approval_Date]            DATETIME       NOT NULL,
+    [Approval_Amount]          FLOAT (53)     NOT NULL,
+    [S_Emp_ID]                 NUMERIC (18)   NOT NULL,
+    [Comments]                 VARCHAR (5000) NOT NULL,
+    [Transaction_By]           INT            NULL,
+    [Transaction_Date]         DATETIME       NULL,
+    [Vehicle_Model]            VARCHAR (500)  DEFAULT ('') NOT NULL,
+    [Vehicle_Manufacture]      VARCHAR (500)  DEFAULT ('') NOT NULL,
+    [Vehicle_Option]           VARCHAR (100)  NULL,
+    CONSTRAINT [PK_T0120_VEHICLE_APPROVAL] PRIMARY KEY CLUSTERED ([Vehicle_Apr_ID] ASC),
+    CONSTRAINT [FK_T0120_VEHICLE_APPROVAL_T0100_VEHICLE_APPLICATION] FOREIGN KEY ([Vehicle_App_ID]) REFERENCES [dbo].[T0100_VEHICLE_APPLICATION] ([Vehicle_App_ID])
+);
+

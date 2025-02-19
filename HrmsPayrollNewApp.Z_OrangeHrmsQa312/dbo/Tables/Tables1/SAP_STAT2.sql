@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[SAP_STAT2] (
+    [STAT2_ID]    INT            IDENTITY (1, 1) NOT NULL,
+    [STAT2]       VARCHAR (50)   NULL,
+    [Description] VARCHAR (100)  NULL,
+    [Alias]       NVARCHAR (100) NULL,
+    CONSTRAINT [PK_SAP_STAT2] PRIMARY KEY CLUSTERED ([STAT2_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

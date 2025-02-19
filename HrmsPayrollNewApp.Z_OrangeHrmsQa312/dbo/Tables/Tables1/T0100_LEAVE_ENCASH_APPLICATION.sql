@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[T0100_LEAVE_ENCASH_APPLICATION] (
+    [Lv_Encash_App_ID]       NUMERIC (18)    NOT NULL,
+    [Cmp_ID]                 NUMERIC (18)    NOT NULL,
+    [Emp_ID]                 NUMERIC (18)    NOT NULL,
+    [Leave_ID]               NUMERIC (18)    NOT NULL,
+    [Lv_Encash_App_Code]     VARCHAR (20)    NOT NULL,
+    [Lv_Encash_App_Date]     DATETIME        NOT NULL,
+    [Lv_Encash_App_Days]     NUMERIC (5, 2)  NOT NULL,
+    [Lv_Encash_App_Status]   VARCHAR (2)     NOT NULL,
+    [Lv_Encash_App_Comments] VARCHAR (250)   NOT NULL,
+    [Login_ID]               NUMERIC (18)    NOT NULL,
+    [System_Date]            DATETIME        NOT NULL,
+    [Leave_CompOff_Dates]    VARCHAR (MAX)   NULL,
+    [Leave_Encash_Amount]    NUMERIC (18, 2) CONSTRAINT [DF_T0100_LEAVE_ENCASH_APPLICATION_Leave_Encash_Amount] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_T0100_LEAVE_ENCASH_APPLICATION] PRIMARY KEY CLUSTERED ([Lv_Encash_App_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0100_LEAVE_ENCASH_APPLICATION_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0100_LEAVE_ENCASH_APPLICATION_T0040_LEAVE_MASTER] FOREIGN KEY ([Leave_ID]) REFERENCES [dbo].[T0040_LEAVE_MASTER] ([Leave_ID]),
+    CONSTRAINT [FK_T0100_LEAVE_ENCASH_APPLICATION_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

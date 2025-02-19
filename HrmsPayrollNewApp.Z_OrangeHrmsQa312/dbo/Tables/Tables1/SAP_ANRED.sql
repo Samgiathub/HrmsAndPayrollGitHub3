@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[SAP_ANRED] (
+    [ANRED_ID]    INT            IDENTITY (1, 1) NOT NULL,
+    [ANRED]       VARCHAR (50)   NULL,
+    [Description] VARCHAR (100)  NULL,
+    [Alias]       NVARCHAR (100) NULL,
+    CONSTRAINT [PK_SAP_ANRED] PRIMARY KEY CLUSTERED ([ANRED_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

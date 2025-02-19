@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[T0050_GENERAL_DETAIL_SLAB] (
+    [Slab_id]        INT             IDENTITY (1, 1) NOT NULL,
+    [Cmp_ID]         NUMERIC (18)    NOT NULL,
+    [GEN_ID]         NUMERIC (18)    NOT NULL,
+    [From_hours]     NUMERIC (18, 2) NULL,
+    [To_hours]       NUMERIC (18, 2) NULL,
+    [Deduction_Days] NUMERIC (18, 2) CONSTRAINT [DF_T0050_GENERAL_DETAIL_SLAB_Deduction_Days] DEFAULT ((0)) NULL,
+    [Slab_Type]      NVARCHAR (1)    CONSTRAINT [DF_T0050_GENERAL_DETAIL_SLAB_Slab_Type] DEFAULT ('P') NOT NULL,
+    CONSTRAINT [PK_T0050_GENERAL_DETAIL_SLAB] PRIMARY KEY CLUSTERED ([Slab_id] ASC) WITH (FILLFACTOR = 80)
+);
+

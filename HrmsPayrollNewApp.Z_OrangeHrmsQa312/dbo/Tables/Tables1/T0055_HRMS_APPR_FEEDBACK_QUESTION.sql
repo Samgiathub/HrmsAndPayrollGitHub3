@@ -1,0 +1,15 @@
+﻿CREATE TABLE [dbo].[T0055_HRMS_APPR_FEEDBACK_QUESTION] (
+    [Que_id]          NUMERIC (18)   NOT NULL,
+    [Question]        NVARCHAR (100) NULL,
+    [Que_Description] NVARCHAR (500) NULL,
+    [Posted_Date]     DATETIME       NULL,
+    [Appr_id]         NUMERIC (18)   NOT NULL,
+    [Login_id]        NUMERIC (18)   NULL,
+    [Emp_status]      INT            NULL,
+    [Cmp_Id]          NUMERIC (18)   NULL,
+    [Is_View]         INT            NULL,
+    CONSTRAINT [PK_T0055_HRMS_APPR_FEEDBACK_QUESTION] PRIMARY KEY CLUSTERED ([Que_id] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0055_HRMS_APPR_FEEDBACK_QUESTION_T0011_LOGIN] FOREIGN KEY ([Login_id]) REFERENCES [dbo].[T0011_LOGIN] ([Login_ID]),
+    CONSTRAINT [FK_T0055_HRMS_APPR_FEEDBACK_QUESTION_T0050_HRMS_APPRAISAL_SETTING] FOREIGN KEY ([Appr_id]) REFERENCES [dbo].[T0050_HRMS_APPRAISAL_SETTING] ([Appr_id])
+);
+

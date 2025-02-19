@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[SAP_NATIO] (
+    [NATIO_ID]    INT            IDENTITY (1, 1) NOT NULL,
+    [NATIO]       VARCHAR (50)   NULL,
+    [Description] VARCHAR (100)  NULL,
+    [Alias]       NVARCHAR (100) NULL,
+    CONSTRAINT [PK_SAP_NATIO] PRIMARY KEY CLUSTERED ([NATIO_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

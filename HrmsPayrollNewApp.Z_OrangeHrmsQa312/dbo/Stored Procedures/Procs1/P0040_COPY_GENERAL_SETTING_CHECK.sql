@@ -1,0 +1,127 @@
+﻿
+---18/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+CREATE PROCEDURE [dbo].[P0040_COPY_GENERAL_SETTING_CHECK]
+@Source_Cmp_ID	numeric(18, 0)
+,@Source_BranchID	numeric(18, 0)
+,@Destination_BranchID	numeric(18, 0)
+,@User_Id numeric(18,0) = 0
+,@IP_Address varchar(30)= ''
+
+AS
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON 
+SET ANSI_WARNINGS OFF;		
+
+Declare @SOURCE_GEN_ID varchar(10)
+Declare @DESTINATION_GEN_ID	numeric(18, 0) 
+Declare @Cmp_ID	numeric(18, 0)
+Declare @Branch_ID	numeric(18, 0)
+Declare @Destination_For_Date	datetime
+Declare @String Varchar(Max) = '' 
+
+--Fetch the Source Branch Variables and Its MAX DATE Settings
+SELECT @SOURCE_GEN_ID = GEN_ID FROM T0040_GENERAL_SETTING WITH (NOLOCK)
+	WHERE CMP_ID= @SOURCE_CMP_ID AND BRANCH_ID = @SOURCE_BRANCHID 
+		AND FOR_DATE = (
+						 SELECT MAX(FOR_DATE) FROM T0040_GENERAL_SETTING WITH (NOLOCK)
+						 WHERE CMP_ID = @SOURCE_CMP_ID AND BRANCH_ID =@SOURCE_BRANCHID
+						)
+
+
+--Fetch the Destination Branch Variables and Its MAX DATE Settings					
+	SELECT @CMP_ID = CMP_ID,@DESTINATION_GEN_ID = GEN_ID
+	FROM T0040_GENERAL_SETTING WITH (NOLOCK)
+	WHERE CMP_ID= @SOURCE_CMP_ID AND BRANCH_ID = @DESTINATION_BRANCHID 
+		AND FOR_DATE = (
+						 SELECT MAX(FOR_DATE) FROM T0040_GENERAL_SETTING WITH (NOLOCK)
+						 WHERE CMP_ID = @SOURCE_CMP_ID AND BRANCH_ID =@DESTINATION_BRANCHID
+						)  
+
+ 
+
+DECLARE
+  @TABLE			VARCHAR(MAX),	--SPECIFY THE TABLE NAME
+  @KEY_COLUMN		SYSNAME,		--SPECIFY COLUMN NAME WHICH IS NOT TO BE INCLUDED IN SELECT QUERY
+  @COLNAMES			NVARCHAR(MAX),
+  @COLVALUES		NVARCHAR(MAX),
+  @SQL				NVARCHAR(MAX),
+  @NEWSQL			NVARCHAR(MAX),
+  @UPDATE_QUERY		NVARCHAR(MAX),
+  @PARMDEFINITION	NVARCHAR(MAX),
+  @USER_TYPE_ID		NUMERIC(18,0),
+  @COLNAMES_ins			NVARCHAR(MAX),
+  @COLVALUES_ins		NVARCHAR(MAX);
+  
+	SET @table = 'T0040_GENERAL_SETTING'
+	SET @key_column = 'GEN_ID'
+	
+	SET @colNames = N''
+	SET @colValues = N''
+	SET @COLNAMES_ins = N''
+	SET @COLVALUES_ins = N''
+	SET @sql = N''
+	SET @NewSql = N''
+	Set @Update_Query = N''
+   
+	SET @ParmDefinition = N'@retvalOUT NVarchar(max) OUTPUT';
+
+--FOR UPDATING GENERAL_SETTING
+SELECT 
+  @colNames = @colNames + ', 
+    ' + QUOTENAME(COLUMN_NAME), 
+  @colValues = 
+				@colValues + ',
+				' + QUOTENAME(COLUMN_NAME)
+				+ ' = CONVERT(VARCHAR(320), ' + QUOTENAME(COLUMN_NAME) + ')'
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='T0040_GENERAL_SETTING WITH (NOLOCK)' 
+AND COLUMN_NAME NOT IN ( 'GEN_ID' , 'CMP_ID' , 'BRANCH_ID', 'FOR_DATE');  -- Specify Column Names which are not to be Updated
+
+
+--FOR INSERTING GENERAL SETTING
+SELECT 
+  @COLNAMES_ins = @COLNAMES_ins + ', 
+    ' + QUOTENAME(COLUMN_NAME), 
+  @COLVALUES_ins = 
+				@COLVALUES_ins + ',
+				' + QUOTENAME(COLUMN_NAME)
+				+ ' = CONVERT(VARCHAR(320), ' + QUOTENAME(COLUMN_NAME) + ')'
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='T0040_GENERAL_SETTING WITH (NOLOCK)'
+AND COLUMN_NAME NOT IN ( 'GEN_ID' , 'CMP_ID' , 'BRANCH_ID');  -- Specify Column Names which are not to be Updated
+
+
+SET @SQL = N'SELECT ' + @KEY_COLUMN + ', PROPERTY, VALUE INTO #DT
+FROM
+(
+  SELECT ' + @KEY_COLUMN + @COLVALUES + '
+   FROM ' + @TABLE + '
+) AS T
+UNPIVOT
+(
+  VALUE FOR PROPERTY IN (' + STUFF(@COLNAMES, 1, 1, '') + ')
+) AS UP;
+';
+
+set @SQL = ''
+set @SQL = 'select * from #DT'
+exec (@SQL)
+return
+
+
+--SET @NEWSQL = 'SELECT @RETVALOUT = STUFF((SELECT '' '' + S.VALUE FROM ( SELECT ('''' + PROPERTY + '' = '''''' + VALUE + '''''','' ) AS VALUE, ' + @KEY_COLUMN + ' FROM #DT ) S WHERE S.'+ @KEY_COLUMN + '= T.'+ @KEY_COLUMN +' FOR XML PATH('''')),1,1,'''') FROM #DT AS T WHERE T.'+@KEY_COLUMN +'= '+ @SOURCE_GEN_ID + ' GROUP BY T.' + @KEY_COLUMN +';'
+SET @NEWSQL = 'SELECT @RETVALOUT = STUFF((SELECT '' '' + S.VALUE FROM ( SELECT ('''' + PROPERTY + '' = '''''' + VALUE + '''''','' ) AS VALUE, ' + @KEY_COLUMN + ' FROM #DT ) S WHERE S.'+ @KEY_COLUMN + '= T.'+ @KEY_COLUMN +' FOR XML PATH('''')),1,1,'''') FROM #DT AS T WHERE T.'+@KEY_COLUMN +'= '+ @SOURCE_GEN_ID + ' GROUP BY T.' + @KEY_COLUMN +';'
+SET @SQL = @SQL + @NEWSQL
+
+EXEC sp_executesql @sql,@ParmDefinition, @retvalOUT=@String OUTPUT;
+
+SET @Update_Query = N'UPDATE T0040_GENERAL_SETTING SET ' + LEFT(@STRING , LEN(@STRING)-1) + ' Where CMP_ID = '+ cast(@CMP_ID as varchar(3)) +' and Branch_ID = '+ CAST(@DESTINATION_BRANCHID as Varchar(10)) +' AND GEN_ID = '+ CAST(@DESTINATION_GEN_ID as varchar(10)) +''
+
+EXEC (@Update_Query);
+
+
+
+
+
+

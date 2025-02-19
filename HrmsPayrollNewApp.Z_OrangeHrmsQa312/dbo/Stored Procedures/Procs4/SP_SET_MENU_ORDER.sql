@@ -1,0 +1,62 @@
+﻿
+
+-- =============================================
+-- Author:		<Jaina>
+-- Create date: <2-09-2016>
+-- Description:	<For Sorting>
+---28/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_SET_MENU_ORDER]
+	@FORM_NAME VARCHAR(MAX),
+	@UNDER_FORM_ID Numeric,
+	@RESET_ID tinyint = 0,
+	@Module_Name varchar(max) = ''	
+AS
+BEGIN
+
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+	
+
+	DECLARE @SORT_ID INT
+	DECLARE @SORT_ID_CHECK INT
+	
+	SET @SORT_ID_CHECK = 0;
+	SET @SORT_ID = 0;
+		
+	CREATE TABLE #MENU_ORDER
+	(
+		FORM_NAME VARCHAR(128),
+		SORT_ID INT,
+		SORT_ID_CHECK INT,
+		Module_Name varchar(250)
+	)
+
+	SELECT @SORT_ID = MAX(SORT_ID),
+		   @SORT_ID_CHECK=MAX(SORT_ID_CHECK)
+    FROM #MENU_ORDER where Module_Name = @Module_Name
+	
+	INSERT INTO #MENU_ORDER (FORM_NAME,SORT_ID,SORT_ID_CHECK,Module_Name) 
+					  VALUES(@FORM_NAME, @SORT_ID, @SORT_ID_CHECK,@Module_Name)
+					  
+	IF @RESET_ID =1
+	Begin
+		SET @SORT_ID_CHECK = 0;
+		SET @SORT_ID = 0;
+	End
+	
+	--SELECT @UNDER_FORM_ID = UNDER_FORM_ID FROM T0000_DEFAULT_FORM WHERE FORM_NAME = @FORM_NAME
+
+	SET @SORT_ID = ISNULL(@SORT_ID,0) + 1
+	SET @SORT_ID_CHECK = ISNULL(@SORT_ID_CHECK,0) + 1
+
+	UPDATE T0000_DEFAULT_FORM 
+	SET Sort_Id_Check=@Sort_ID_Check,
+		Sort_Id=@Sort_ID
+    WHERE FORM_NAME=@Form_Name AND UNDER_FORM_ID=@UNDER_FORM_ID
+	
+	
+
+END
+

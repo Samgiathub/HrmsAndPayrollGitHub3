@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[EMP_DETAILS] (
+    [EMP_ID]       NUMERIC (18) NULL,
+    [BRANCH_ID]    NUMERIC (18) NULL,
+    [INCREMENT_ID] NUMERIC (18) NULL,
+    [GRD_ID]       NUMERIC (18) NULL
+);
+

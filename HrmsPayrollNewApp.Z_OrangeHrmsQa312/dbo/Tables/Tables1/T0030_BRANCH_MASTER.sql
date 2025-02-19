@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[T0030_BRANCH_MASTER] (
+    [Branch_ID]            NUMERIC (18)  NOT NULL,
+    [Cmp_ID]               NUMERIC (18)  NULL,
+    [State_ID]             NUMERIC (18)  NULL,
+    [Branch_Code]          VARCHAR (50)  NULL,
+    [Branch_Name]          VARCHAR (100) NULL,
+    [Branch_City]          VARCHAR (30)  NULL,
+    [Branch_Address]       VARCHAR (250) NULL,
+    [Branch_Default]       NUMERIC (1)   CONSTRAINT [DF_T0030_BRANCH_MASTER_Branch_Default] DEFAULT ((0)) NULL,
+    [Comp_Name]            VARCHAR (200) NULL,
+    [Is_Contractor_Branch] TINYINT       CONSTRAINT [DF_T0030_BRANCH_MASTER_Is_Contractor_Branch] DEFAULT ((0)) NOT NULL,
+    [Location_ID]          NUMERIC (18)  NULL,
+    [PT_RC_No]             VARCHAR (50)  NULL,
+    [PT_Zone]              VARCHAR (50)  NULL,
+    [PT_Ward_No]           VARCHAR (50)  NULL,
+    [PT_Census_No]         VARCHAR (50)  NULL,
+    [IsActive]             TINYINT       CONSTRAINT [DF__T0030_BRA__IsAct__0DE04FF1] DEFAULT ((1)) NULL,
+    [InActive_EffeDate]    DATETIME      CONSTRAINT [DF__T0030_BRA__InEff__0ED4742A] DEFAULT (NULL) NULL,
+    [PF_No]                VARCHAR (20)  DEFAULT (NULL) NULL,
+    [ESIC_No]              VARCHAR (20)  DEFAULT (NULL) NULL,
+    [District_ID]          INT           NULL,
+    [Tehsil_ID]            INT           NULL,
+    CONSTRAINT [PK_T0030_BRANCH_MASTER] PRIMARY KEY CLUSTERED ([Branch_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0030_BRANCH_MASTER_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0030_BRANCH_MASTER_T0020_STATE_MASTER] FOREIGN KEY ([State_ID]) REFERENCES [dbo].[T0020_STATE_MASTER] ([State_ID])
+);
+

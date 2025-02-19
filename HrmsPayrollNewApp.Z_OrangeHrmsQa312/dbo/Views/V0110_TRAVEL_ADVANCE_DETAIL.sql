@@ -1,0 +1,13 @@
+﻿
+
+
+CREATE VIEW [dbo].[V0110_TRAVEL_ADVANCE_DETAIL]
+As 
+
+Select TA.*,isnull(CM.Curr_symbol,'') as Currency--,--ROW_NUMBER() OVER (ORDER BY Travel_Advance_Detail_ID) AS Sr_No
+FROM T0110_TRAVEL_ADVANCE_DETAIL TA WITH (NOLOCK)
+left join T0040_CURRENCY_MASTER CM WITH (NOLOCK) on TA.Curr_ID=CM.Curr_ID
+
+
+
+

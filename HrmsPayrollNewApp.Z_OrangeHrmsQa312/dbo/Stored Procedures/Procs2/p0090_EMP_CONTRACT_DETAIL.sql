@@ -1,0 +1,78 @@
+﻿  
+  
+  
+---22/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---  
+  
+CREATE PROCEDURE [dbo].[p0090_EMP_CONTRACT_DETAIL]  
+ @TRAN_ID NUMERIC(18,0) OUTPUT  
+,@CMP_ID NUMERIC(18,0)  
+,@EMP_ID NUMERIC(18,0)  
+,@PRJ_ID NUMERIC(18,0)  
+,@START_DATE DATETIME  
+,@END_DATE DATETIME  
+,@IS_RENEW TINYINT  
+,@IS_REMINDER TINYINT  
+,@COMMENTS VARCHAR(200)  
+,@TRAN_TYPE CHAR  
+,@Login_Id NUMERIC(18,0)=0 -- Rathod '24/04/2012'  
+AS  
+  
+SET NOCOUNT ON   
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED  
+SET ARITHABORT ON  
+   set @COMMENTS = dbo.fnc_ReverseHTMLTags(@COMMENTS)  --added by Ronak 100121  
+   
+ If @TRAN_TYPE  = 'I'  
+  Begin  
+   If Exists(Select TRAN_ID From T0090_EMP_CONTRACT_DETAIL WITH (NOLOCK) Where Cmp_ID = @Cmp_ID and Emp_Id=@Emp_ID And Prj_ID=@prj_Id And @Is_renew=0)  
+     begin  
+      set @TRAN_ID = 0  
+      Return   
+     end  
+    select @TRAN_ID = Isnull(max(TRAN_ID),0) + 1  From T0090_EMP_CONTRACT_DETAIL WITH (NOLOCK)  
+      
+    INSERT INTO T0090_EMP_CONTRACT_DETAIL  
+                          (TRAN_ID, CMP_ID, EMP_ID, PRJ_ID, START_DATE, END_DATE, IS_RENEW,IS_REMINDER,COMMENTS)  
+    VALUES     (@TRAN_ID,@CMP_ID,@EMP_ID,@PRJ_ID,@START_DATE,@END_DATE,@IS_RENEW,@IS_REMINDER,@COMMENTS)  
+      
+    INSERT INTO T0090_EMP_CONTRACT_DETAIL_Clone  
+                (TRAN_ID, CMP_ID, EMP_ID, PRJ_ID, START_DATE, END_DATE, IS_RENEW,IS_REMINDER,COMMENTS,System_Date,Login_Id)  
+    VALUES     (@TRAN_ID,@CMP_ID,@EMP_ID,@PRJ_ID,@START_DATE,@END_DATE,@IS_RENEW,@IS_REMINDER,@COMMENTS,GETDATE(),@Login_Id)  
+        
+          
+  End  
+ Else if @TRAN_TYPE = 'U'  
+  begin  
+    If Exists(Select TRAN_ID From T0090_EMP_CONTRACT_DETAIL WITH (NOLOCK)  Where Cmp_ID = @Cmp_ID and Emp_Id=@Emp_ID And Prj_ID=@prj_Id And @Is_renew=0 And TRAN_ID <> @TRAN_ID)  
+     begin  
+      set @TRAN_ID = 0  
+      Return   
+     end  
+    UPDATE    T0090_EMP_CONTRACT_DETAIL  
+    SET  
+    CMP_ID=@CMP_ID  
+    ,PRJ_ID=@PRJ_ID  
+    ,START_DATE=@START_DATE  
+    ,END_DATE=@END_DATE  
+    ,IS_RENEW=@IS_RENEW  
+    ,IS_REMINDER=@IS_REMINDER  
+    ,COMMENTS=@COMMENTS  
+    WHERE     (EMP_ID = @EMP_ID) AND (TRAN_ID = @TRAN_ID)  
+      
+    INSERT INTO T0090_EMP_CONTRACT_DETAIL_Clone  
+                (TRAN_ID, CMP_ID, EMP_ID, PRJ_ID, START_DATE, END_DATE, IS_RENEW,IS_REMINDER,COMMENTS,System_Date,Login_Id)  
+    VALUES     (@TRAN_ID,@CMP_ID,@EMP_ID,@PRJ_ID,@START_DATE,@END_DATE,@IS_RENEW,@IS_REMINDER,@COMMENTS,GETDATE(),@Login_Id)  
+    
+     end  
+ Else if @TRAN_TYPE = 'D'  
+  begin  
+     
+   DELETE FROM T0090_EMP_CONTRACT_DETAIL  
+   WHERE     (TRAN_ID = @TRAN_ID)  
+  end  
+  
+ RETURN  
+  
+  
+  
+  

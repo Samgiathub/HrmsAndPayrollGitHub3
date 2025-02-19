@@ -1,0 +1,1 @@
+﻿CREATE PROCEDURE dbo.sp_BlitzIndex AS RETURN 0;

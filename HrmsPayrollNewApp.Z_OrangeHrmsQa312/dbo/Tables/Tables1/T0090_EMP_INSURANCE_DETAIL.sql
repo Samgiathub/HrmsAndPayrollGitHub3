@@ -1,0 +1,23 @@
+﻿CREATE TABLE [dbo].[T0090_EMP_INSURANCE_DETAIL] (
+    [Emp_Ins_Tran_ID]    NUMERIC (18)    NOT NULL,
+    [Cmp_ID]             NUMERIC (18)    NOT NULL,
+    [Emp_Id]             NUMERIC (18)    NOT NULL,
+    [Ins_Tran_ID]        NUMERIC (18)    NOT NULL,
+    [Ins_Cmp_name]       VARCHAR (50)    NOT NULL,
+    [Ins_Policy_No]      VARCHAR (50)    NOT NULL,
+    [Ins_Taken_Date]     DATETIME        NULL,
+    [Ins_Due_Date]       DATETIME        NULL,
+    [Ins_Exp_Date]       DATETIME        NULL,
+    [Ins_Amount]         NUMERIC (18, 2) NOT NULL,
+    [Ins_Anual_Amt]      NUMERIC (18, 2) NOT NULL,
+    [Login_ID]           NUMERIC (18)    NOT NULL,
+    [Monthly_Premium]    NUMERIC (18, 2) CONSTRAINT [DF_T0090_EMP_INSURANCE_DETAIL_Monthly_Premium] DEFAULT ((0)) NOT NULL,
+    [Deduct_From_Salary] TINYINT         CONSTRAINT [DF_T0090_EMP_INSURANCE_DETAIL_Deduct_From_Salary] DEFAULT ((0)) NOT NULL,
+    [Sal_Effective_Date] DATETIME        NULL,
+    [Emp_Dependent_ID]   VARCHAR (MAX)   NULL,
+    CONSTRAINT [PK_T0090_EMP_INSURANCE_DETAIL] PRIMARY KEY CLUSTERED ([Emp_Ins_Tran_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0090_EMP_INSURANCE_DETAIL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0090_EMP_INSURANCE_DETAIL_T0040_INSURANCE_MASTER] FOREIGN KEY ([Ins_Tran_ID]) REFERENCES [dbo].[T0040_INSURANCE_MASTER] ([Ins_Tran_ID]),
+    CONSTRAINT [FK_T0090_EMP_INSURANCE_DETAIL_T0080_EMP_MASTER] FOREIGN KEY ([Emp_Id]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

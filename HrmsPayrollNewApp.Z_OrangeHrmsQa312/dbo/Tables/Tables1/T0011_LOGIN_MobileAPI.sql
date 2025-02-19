@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[T0011_LOGIN_MobileAPI] (
+    [Login_ID]          NUMERIC (18)   NOT NULL,
+    [Cmp_ID]            NUMERIC (18)   NOT NULL,
+    [Login_Name]        VARCHAR (50)   NOT NULL,
+    [Login_Password]    VARCHAR (MAX)  NOT NULL,
+    [Emp_ID]            NUMERIC (18)   NULL,
+    [Branch_ID]         NUMERIC (18)   NULL,
+    [Login_Rights_ID]   NUMERIC (18)   NULL,
+    [Is_Default]        NUMERIC (1)    NULL,
+    [Is_HR]             TINYINT        NULL,
+    [Is_Accou]          TINYINT        NULL,
+    [Email_ID]          VARCHAR (60)   NULL,
+    [Email_ID_Accou]    VARCHAR (60)   NULL,
+    [Is_Active]         TINYINT        NOT NULL,
+    [Emp_Search_Type]   INT            NOT NULL,
+    [Login_Alias]       VARCHAR (50)   NOT NULL,
+    [Effective_Date]    DATETIME       NULL,
+    [Travel_Help_Desk]  TINYINT        NULL,
+    [Branch_id_multi]   NVARCHAR (MAX) NULL,
+    [Email_ID_HelpDesk] VARCHAR (50)   NULL,
+    [IS_IT]             NUMERIC (1)    NOT NULL,
+    [Email_ID_IT]       VARCHAR (100)  NULL,
+    [IS_Medical]        NUMERIC (18)   NULL,
+    [Token]             NVARCHAR (MAX) NULL
+);
+

@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[T0100_RC_Application] (
+    [RC_APP_ID]         NUMERIC (18)    CONSTRAINT [DF_T0100_RC_Application_RC_APP_ID] DEFAULT ((0)) NOT NULL,
+    [Cmp_ID]            NUMERIC (18)    NOT NULL,
+    [Emp_ID]            NUMERIC (18)    NOT NULL,
+    [RC_ID]             NUMERIC (18)    NOT NULL,
+    [APP_Date]          DATETIME        NOT NULL,
+    [APP_Amount]        NUMERIC (18, 2) NOT NULL,
+    [APP_Comments]      NVARCHAR (MAX)  NULL,
+    [APP_Status]        TINYINT         CONSTRAINT [DF_T0100_RC_Application_APP_Status] DEFAULT ((0)) NOT NULL,
+    [Leave_From_Date]   DATETIME        NULL,
+    [Leave_To_Date]     DATETIME        NULL,
+    [Days]              NUMERIC (5, 2)  NULL,
+    [FY]                VARCHAR (255)   NULL,
+    [Tax_Exception]     TINYINT         NULL,
+    [FileName]          VARCHAR (255)   NULL,
+    [RC_Apr_ID]         NUMERIC (18)    NULL,
+    [Is_Manager_Record] TINYINT         NULL,
+    [S_emp_ID]          NUMERIC (18)    NULL,
+    [Taxable_Amount]    NUMERIC (18, 2) CONSTRAINT [DF__T0100_RC___Taxab__37B1CA22] DEFAULT ((0)) NULL,
+    [Submit_Flag]       TINYINT         DEFAULT ((0)) NOT NULL,
+    [Reim_Quar_ID]      NUMERIC (5)     DEFAULT ((0)) NOT NULL,
+    [Quarter_Name]      VARCHAR (50)    NULL,
+    CONSTRAINT [PK_T0100_RC_Application] PRIMARY KEY CLUSTERED ([RC_APP_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0100_RC_Application_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0100_RC_Application_T0050_AD_MASTER] FOREIGN KEY ([RC_ID]) REFERENCES [dbo].[T0050_AD_MASTER] ([AD_ID]),
+    CONSTRAINT [FK_T0100_RC_Application_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

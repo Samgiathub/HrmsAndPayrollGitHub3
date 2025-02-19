@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[Tb124] (
+    [IP_ADDRESS_ID]   NUMERIC (18) NOT NULL,
+    [IP_ADDRESS]      VARCHAR (20) NOT NULL,
+    [CARD_ID]         NUMERIC (18) NOT NULL,
+    [FINGER_ID]       NUMERIC (18) NOT NULL,
+    [FINGER_TEMPLATE] TEXT         NOT NULL,
+    [PWD]             NUMERIC (18) NULL,
+    [PRIVILEDGE]      NUMERIC (18) NULL,
+    [NAME]            VARCHAR (50) NULL,
+    [IS_FINGER]       INT          NULL
+);
+

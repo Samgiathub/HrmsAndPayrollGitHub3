@@ -1,0 +1,20 @@
+﻿
+
+CREATE FUNCTION [DBO].[f_Round_Upper]
+(
+	@ROUND_VAL NUMERIC(18,2),
+	@ROUND_PART NUMERIC(5,2)
+)
+RETURNS Numeric(18,2) 
+AS
+BEGIN
+	
+	Declare @Value as numeric(18,2)
+
+
+	set  @Value= @ROUND_VAL - (@ROUND_VAL % @ROUND_PART) + (CASE (@ROUND_VAL % @ROUND_PART) WHEN 0 THEN 0 ELSE @ROUND_PART END)
+
+
+	RETURN @Value
+
+END

@@ -1,0 +1,21 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0100_PROJECT_ALLOCATION]
+AS
+SELECT     dbo.T0040_PROJECT_MASTER.Prj_name, dbo.T0080_EMP_MASTER.Emp_Full_Name, dbo.T0100_PROJECT_ALLOCATION.Row_ID, 
+                      dbo.T0100_PROJECT_ALLOCATION.Cmp_ID, dbo.T0100_PROJECT_ALLOCATION.Prj_ID, dbo.T0100_PROJECT_ALLOCATION.Emp_ID, 
+                      dbo.T0080_EMP_MASTER.Emp_First_Name, dbo.T0100_PROJECT_ALLOCATION.Emp_Active, dbo.T0100_PROJECT_ALLOCATION.Eff_date, 
+                      dbo.V0080_Employee_Master.Branch_Name, dbo.T0080_EMP_MASTER.Branch_ID
+FROM         dbo.T0080_EMP_MASTER WITH (NOLOCK) LEFT OUTER JOIN
+                      dbo.V0080_Employee_Master WITH (NOLOCK)  ON dbo.T0080_EMP_MASTER.Emp_ID = dbo.V0080_Employee_Master.Emp_ID RIGHT OUTER JOIN
+                      dbo.T0040_PROJECT_MASTER WITH (NOLOCK)  RIGHT OUTER JOIN
+                      dbo.T0100_PROJECT_ALLOCATION WITH (NOLOCK)  ON dbo.T0040_PROJECT_MASTER.Prj_ID = dbo.T0100_PROJECT_ALLOCATION.Prj_ID ON 
+                      dbo.T0080_EMP_MASTER.Emp_ID = dbo.T0100_PROJECT_ALLOCATION.Emp_ID
+
+
+
+

@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[T0110_Task_Detail] (
+    [Task_Detail_Id]      INT            IDENTITY (1, 1) NOT NULL,
+    [Task_Id]             INT            NULL,
+    [Task_ParentId]       INT            NULL,
+    [Status_Id]           INT            NULL,
+    [Priority_Id]         INT            NULL,
+    [Project_Id]          INT            NULL,
+    [Task_Type_Id]        INT            NULL,
+    [Task_Cat_Id]         INT            NULL,
+    [Created_Emp_Id]      INT            NULL,
+    [Assigned_Emp_Id]     INT            NULL,
+    [Activity_Id]         INT            NULL,
+    [Task_Title]          VARCHAR (5000) NULL,
+    [Task_Description]    VARCHAR (MAX)  NULL,
+    [Task_DueDate]        SMALLDATETIME  NULL,
+    [Task_TargetDate]     SMALLDATETIME  NULL,
+    [Task_EstimatedTime]  VARCHAR (50)   NULL,
+    [Task_UpdatedDate]    SMALLDATETIME  NULL,
+    [Task_Updated_Emp_Id] INT            NULL,
+    [Task_Log_Hours]      TIME (7)       NULL,
+    [Task_Log_Comments]   VARCHAR (MAX)  NULL,
+    [Task_Log_Notes]      VARCHAR (MAX)  NULL,
+    [Task_IsActive]       BIT            DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_T0110_Task_Detail] PRIMARY KEY CLUSTERED ([Task_Detail_Id] ASC)
+);
+

@@ -1,0 +1,17 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0040_Advance_master]
+AS
+SELECT     dbo.T0080_EMP_MASTER.Emp_ID, dbo.T0080_EMP_MASTER.Emp_Full_Name, dbo.T0090_EMP_REPORTING_DETAIL.R_Emp_ID, 
+                      dbo.T0080_EMP_MASTER.Cmp_ID
+FROM         dbo.T0080_EMP_MASTER WITH (NOLOCK) INNER JOIN
+                      dbo.T0090_EMP_REPORTING_DETAIL WITH (NOLOCK)  ON dbo.T0080_EMP_MASTER.Emp_ID = dbo.T0090_EMP_REPORTING_DETAIL.Emp_ID AND 
+                      dbo.T0080_EMP_MASTER.Emp_ID = dbo.T0090_EMP_REPORTING_DETAIL.Emp_ID
+
+
+
+

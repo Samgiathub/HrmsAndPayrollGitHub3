@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[T0115_OT_LEVEL_APPROVAL] (
+    [Tran_ID]              NUMERIC (18)    NOT NULL,
+    [Emp_ID]               NUMERIC (18)    NOT NULL,
+    [cmp_ID]               NUMERIC (18)    NOT NULL,
+    [For_Date]             DATETIME        NOT NULL,
+    [Working_Sec]          NUMERIC (18, 2) NOT NULL,
+    [OT_Sec]               NUMERIC (18, 2) NOT NULL,
+    [Is_Approved]          TINYINT         NOT NULL,
+    [Approved_OT_Sec]      NUMERIC (18, 2) NOT NULL,
+    [Comments]             VARCHAR (250)   NOT NULL,
+    [Login_ID]             NUMERIC (18)    NOT NULL,
+    [System_Date]          DATETIME        NOT NULL,
+    [Approved_OT_Hours]    VARCHAR (10)    NULL,
+    [P_Days_Count]         NUMERIC (18, 2) NULL,
+    [Is_Month_Wise]        TINYINT         NULL,
+    [Weekoff_OT_Sec]       NUMERIC (18, 2) NULL,
+    [Approved_WO_OT_Sec]   NUMERIC (18, 2) NULL,
+    [Approved_WO_OT_Hours] VARCHAR (10)    NULL,
+    [Holiday_OT_Sec]       NUMERIC (18, 2) NULL,
+    [Approved_HO_OT_Sec]   NUMERIC (18, 2) NULL,
+    [Approved_HO_OT_Hours] VARCHAR (10)    NULL,
+    [Remark]               VARCHAR (MAX)   NULL,
+    [S_Emp_Id]             NUMERIC (18)    NOT NULL,
+    [Rpt_Level]            TINYINT         NOT NULL,
+    [Final_Approver]       TINYINT         CONSTRAINT [DF_T0115_OT_LEVEL_APPROVAL_Final_Approver] DEFAULT ((0)) NOT NULL,
+    [Is_Fwd_OT_Rej]        INT             CONSTRAINT [DF_T0115_OT_LEVEL_APPROVAL_Is_Fwd_OT_Rej] DEFAULT ((0)) NOT NULL
+);
+

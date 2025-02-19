@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[SAP_ANSVH] (
+    [ANSVH_ID]    INT            IDENTITY (1, 1) NOT NULL,
+    [ANSVH]       VARCHAR (50)   NULL,
+    [Description] VARCHAR (100)  NULL,
+    [Alias]       NVARCHAR (100) NULL,
+    CONSTRAINT [PK_SAP_ANSVH] PRIMARY KEY CLUSTERED ([ANSVH_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

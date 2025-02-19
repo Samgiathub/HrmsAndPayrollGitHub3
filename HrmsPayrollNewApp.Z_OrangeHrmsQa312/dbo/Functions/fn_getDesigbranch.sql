@@ -1,0 +1,113 @@
+﻿
+
+
+-- =============================================
+-- Author:		Nimesh Parmar
+-- Create date: 12-April-2017
+-- Description:	To retreive the Increment/Bonus Calculation Particulars
+---10/3/2021 (EDIT BY MEHUL ) (Table-valued function WITH NOLOCK)---
+-- =============================================
+CREATE FUNCTION [dbo].[fn_getDesigbranch] 
+(	
+	@Cmp_ID Numeric, 
+	@Scheme_ID NUMERIC,
+	--@For_Date DATETIME,
+	@Data_For Char(1)		--'D' FOR DESIGNATION, 'B' FOR BRANCH, 'P' FOR PARAMETER , I FOR INCENTIVE
+)
+RETURNS @PARTICULAR TABLE(ID NUMERIC(18,0), CAPTION Varchar(100), Flag Char(1), Selected Bit,Cal_Flag Bit)
+AS
+BEGIN
+
+	IF ISNULL(@Data_For,'') = ''
+		SET @Data_For = 'D'
+    
+    IF @Data_For='D'
+		BEGIN
+			INSERT INTO @PARTICULAR(ID, CAPTION, FLAG, Selected,Cal_Flag)
+			SELECT	Desig_ID, Desig_Name, 'D' As Flag, 0 As Selected,0 As Cal_Flag
+			FROM	T0040_DESIGNATION_MASTER DM  WITH (NOLOCK)
+			WHERE	DM.Cmp_ID=@Cmp_ID order by DM.Desig_Name
+		END
+	ELSE IF  @Data_For='B'
+		BEGIN
+			INSERT INTO @PARTICULAR(ID, CAPTION, FLAG, Selected,Cal_Flag)
+			SELECT	BRANCH_ID, BRANCH_NAME, 'B' As Flag, 0 As Selected,0 As Cal_Flag
+			FROM	T0030_BRANCH_MASTER BM WITH (NOLOCK)
+			WHERE	BM.Cmp_ID=@Cmp_ID order by BM.BRANCH_NAME
+		END
+	ELSE IF @Data_For='P' 
+		BEGIN 
+			INSERT INTO @PARTICULAR(ID, CAPTION, FLAG, Selected,Cal_Flag)
+			SELECT	PARA_ID, PARA_NAME, 'P' As Flag, 0 As Selected,0 As Cal_Flag
+			FROM	T0040_PARAMETER_MASTER PM WITH (NOLOCK)
+			WHERE	PM.Cmp_ID=@Cmp_ID order by PM.PARA_NAME
+			
+		END
+	ELSE IF @DATA_FOR='I' 
+		BEGIN
+		 
+			INSERT INTO @PARTICULAR(ID, CAPTION, FLAG, Selected,Cal_Flag)
+			SELECT	INC_TRAN_ID, INCENTIVE_NAME, 'I' As Flag, 0 As Selected,0 As Cal_Flag
+			FROM	T0040_INCENTIVE_MASTER PM WITH (NOLOCK)
+			WHERE	PM.Cmp_ID=@Cmp_ID AND INCENTIVE_FOR<>'DEDUCTION' order by PM.INCENTIVE_NAME
+			
+		END
+	ELSE IF @Data_For='Q' -- ADDED ON 30012018
+		BEGIN
+		
+			INSERT INTO @PARTICULAR(ID,CAPTION,FLAG,SELECTED,CAL_FLAG)
+			SELECT INC_TRAN_ID,INCENTIVE_NAME,'Q' AS FLAG,0 AS SELECTED,0 AS CAL_FLAG
+			FROM T0040_INCENTIVE_MASTER PM WITH (NOLOCK)
+			WHERE PM.CMP_ID=@CMP_ID AND PM.INCENTIVE_FOR='DEDUCTION' ORDER BY PM.INCENTIVE_NAME
+		END
+		
+	
+	--IF ISNULL(@Branch_ID,0) > 0
+		--BEGIN			
+			DECLARE @PART_CONS VARCHAR(MAX),@PARA_CONSTRAINT VARCHAR(1000);
+			--No need to put max(For_Date) or order by statement
+			--Getting first record with clustered index given on for_date desc
+			IF @Data_For = 'D'
+				BEGIN
+				SELECT	TOP 1 @PART_CONS = DESIG_ID
+				FROM	T0050_INCENTIVE_SCHEME WITH (NOLOCK)
+				WHERE	SCHEME_ID=@SCHEME_ID
+				END
+			ELSE IF @Data_For='B'
+				BEGIN
+				
+				SELECT	TOP 1 @PART_CONS = BRANCH_ID
+				FROM	T0050_INCENTIVE_SCHEME WITH (NOLOCK)
+				WHERE	SCHEME_ID=@SCHEME_ID
+				
+				END
+			ELSE IF @Data_For='P'
+				BEGIN
+				SELECT @PARA_CONSTRAINT= COALESCE(@PARA_CONSTRAINT + '#', '') + CAST(PARA_ID AS VARCHAR)
+				FROM   (SELECT DISTINCT PARA_ID FROM T0055_INCENTIVE_SCHEME_PARA WITH (NOLOCK) WHERE SCHEME_ID=@SCHEME_ID) INC
+				SELECT	TOP 1 @PART_CONS = @PARA_CONSTRAINT
+				FROM	T0040_PARAMETER_MASTER WITH (NOLOCK)
+				WHERE	CMP_ID=@CMP_ID
+				END
+			ELSE IF @DATA_FOR='I'
+				BEGIN
+					SELECT @PARA_CONSTRAINT= COALESCE(@PARA_CONSTRAINT + '#', '') + CAST(INC_TRAN_ID AS VARCHAR)
+					FROM   (SELECT DISTINCT INC_TRAN_ID FROM T0055_INCENTIVE_SCHEME_INC WITH (NOLOCK) WHERE SCHEME_ID=@SCHEME_ID) INC
+					SELECT	TOP 1 @PART_CONS = @PARA_CONSTRAINT
+					FROM	T0040_INCENTIVE_MASTER WITH (NOLOCK)
+					WHERE	CMP_ID=@CMP_ID
+				END
+				
+			UPDATE	P
+			SET		Selected = 1
+			FROM	@PARTICULAR P
+					INNER JOIN (Select Cast(Data As Numeric) ID FROM dbo.Split(@PART_CONS, '#') T Where IsNumeric(Data) > 0) T 
+					ON P.ID=T.ID			
+			
+	--	END
+		
+	RETURN 
+END
+
+
+

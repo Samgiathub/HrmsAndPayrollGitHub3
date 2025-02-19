@@ -1,0 +1,17 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0110_training_application_detail]  
+AS  
+SELECT     dbo.T0110_TRAINING_APPLICATION_DETAIL.Emp_ID, dbo.T0110_TRAINING_APPLICATION_DETAIL.Training_App_ID,   
+                      dbo.T0110_TRAINING_APPLICATION_DETAIL.Tran_App_Detail_ID, dbo.T0080_EMP_MASTER.Cmp_ID,   
+                      dbo.T0080_EMP_MASTER.Emp_Full_Name  ,dbo.T0080_EMP_MASTER.Emp_Code
+FROM         dbo.T0110_TRAINING_APPLICATION_DETAIL WITH (NOLOCK) INNER JOIN  
+                      dbo.T0080_EMP_MASTER WITH (NOLOCK) ON dbo.T0110_TRAINING_APPLICATION_DETAIL.Emp_ID = dbo.T0080_EMP_MASTER.Emp_ID  
+
+
+
+

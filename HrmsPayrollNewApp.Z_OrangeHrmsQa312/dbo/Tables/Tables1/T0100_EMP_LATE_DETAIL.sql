@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[T0100_EMP_LATE_DETAIL] (
+    [L_Mark_ID]           NUMERIC (18) NOT NULL,
+    [Cmp_ID]              NUMERIC (18) NOT NULL,
+    [Emp_ID]              NUMERIC (18) NOT NULL,
+    [For_Date]            DATETIME     NOT NULL,
+    [Late_Balance_BF]     NUMERIC (5)  NOT NULL,
+    [Late_Curr_Days]      NUMERIC (5)  NOT NULL,
+    [Late_Total_Days]     NUMERIC (5)  NOT NULL,
+    [Late_Tobe_Adj_Days]  NUMERIC (5)  NOT NULL,
+    [Late_Adj_Days]       NUMERIC (5)  NOT NULL,
+    [Late_Closing]        NUMERIC (5)  NOT NULL,
+    [Leave_ID]            NUMERIC (18) NULL,
+    [Late_Adj_Agn_Leave]  NUMERIC (5)  NOT NULL,
+    [Late_Total_Adj_Days] NUMERIC (5)  NOT NULL,
+    CONSTRAINT [PK_T0100_EMP_LATE_DETAIL] PRIMARY KEY CLUSTERED ([L_Mark_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0100_EMP_LATE_DETAIL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0100_EMP_LATE_DETAIL_T0040_LEAVE_MASTER] FOREIGN KEY ([Leave_ID]) REFERENCES [dbo].[T0040_LEAVE_MASTER] ([Leave_ID]),
+    CONSTRAINT [FK_T0100_EMP_LATE_DETAIL_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

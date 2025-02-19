@@ -1,0 +1,15 @@
+﻿
+CREATE PROCEDURE [DBO].[GET_EMP_GEO_LOCATION]
+@CMP_ID NUMERIC(18,0)
+,@EMP_ID NUMERIC(18,0)
+
+AS 
+SET NOCOUNT ON   
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED  
+SET ARITHABORT ON  
+
+
+			SELECT Emp_Geo_Location_ID,Emp_ID,Emp_Full_Name,Cmp_ID,Effective_Date,Login_ID FROM V0095_EMP_GEO_LOCATION_ASSIGN
+			WHERE Cmp_ID = @CMP_ID AND Effective_Date IN (SELECT MAX(Effective_Date) as Effective_Date FROM V0095_EMP_GEO_LOCATION_ASSIGN where Effective_Date<= getdate()  
+			and Emp_ID in (@EMP_ID)
+			Group By Emp_ID, Cmp_ID)

@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[EMP_CAT_WISE_COUNT] (
+    [COUNT_ID]  NUMERIC (18)    IDENTITY (1, 1) NOT NULL,
+    [EMP_ID]    NUMERIC (18)    NULL,
+    [CMP_ID]    NUMERIC (18)    NULL,
+    [CAT_ID]    NUMERIC (18)    NULL,
+    [CAT_COUNT] NUMERIC (18, 2) NULL,
+    [RESULT]    VARCHAR (MAX)   NULL
+);
+

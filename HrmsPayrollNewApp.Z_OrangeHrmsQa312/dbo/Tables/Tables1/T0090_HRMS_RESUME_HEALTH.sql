@@ -1,0 +1,14 @@
+﻿CREATE TABLE [dbo].[T0090_HRMS_RESUME_HEALTH] (
+    [Row_ID]        NUMERIC (18)  NOT NULL,
+    [Cmp_ID]        NUMERIC (18)  NULL,
+    [Resume_ID]     NUMERIC (18)  NOT NULL,
+    [Blood_group]   VARCHAR (20)  NULL,
+    [Height]        VARCHAR (20)  NULL,
+    [weight]        VARCHAR (20)  NULL,
+    [file_name]     VARCHAR (100) NULL,
+    [emp_file_name] VARCHAR (100) NULL,
+    CONSTRAINT [PK_T0090_HRMS_RESUME_HEALTH] PRIMARY KEY CLUSTERED ([Row_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0090_HRMS_RESUME_HEALTH_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0090_HRMS_RESUME_HEALTH_T0055_Resume_Master] FOREIGN KEY ([Resume_ID]) REFERENCES [dbo].[T0055_Resume_Master] ([Resume_Id])
+);
+

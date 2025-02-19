@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[SAP_MASSN] (
+    [MASSN_ID]    INT            IDENTITY (1, 1) NOT NULL,
+    [MASSN]       VARCHAR (50)   NULL,
+    [Description] VARCHAR (100)  NULL,
+    [Alias]       NVARCHAR (100) NULL,
+    CONSTRAINT [PK_SAP_MASSN] PRIMARY KEY CLUSTERED ([MASSN_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

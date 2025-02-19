@@ -1,0 +1,12 @@
+﻿
+
+
+CREATE VIEW [dbo].[V0140_BOND_TRANSACTION]
+AS
+SELECT	EM.Alpha_Emp_Code,EM.Emp_Full_Name,BT.Bond_Tran_ID,BT.Cmp_ID,BT.Bond_ID,BM.Bond_Name,BT.Emp_ID,BT.For_Date
+		,BT.Bond_Opening,BT.Bond_Issue,BT.Bond_Return,BT.Bond_Closing
+FROM	T0140_BOND_TRANSACTION as BT WITH (NOLOCK)
+		INNER JOIN T0040_BOND_MASTER as BM WITH (NOLOCK) ON BT.Bond_ID = BM.Bond_ID and BT.Cmp_ID = BM.Cmp_ID
+		INNER JOIN T0080_EMP_MASTER AS EM WITH (NOLOCK) ON BT.Emp_ID = EM.Emp_ID
+
+

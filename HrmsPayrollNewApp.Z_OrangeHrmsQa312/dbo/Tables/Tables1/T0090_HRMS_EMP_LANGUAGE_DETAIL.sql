@@ -1,0 +1,11 @@
+﻿CREATE TABLE [dbo].[T0090_HRMS_EMP_LANGUAGE_DETAIL] (
+    [Tran_ID]   INT          NOT NULL,
+    [Resume_ID] NUMERIC (18) NOT NULL,
+    [Cmp_ID]    NUMERIC (18) NOT NULL,
+    [Lang_ID]   NUMERIC (18) NOT NULL,
+    [Is_Read]   CHAR (10)    NOT NULL,
+    [Is_Write]  CHAR (10)    NOT NULL,
+    [Is_Speak]  CHAR (10)    NOT NULL,
+    CONSTRAINT [PK_T0090_HRMS_EMP_LANGUAGE_DETAIL] PRIMARY KEY CLUSTERED ([Tran_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

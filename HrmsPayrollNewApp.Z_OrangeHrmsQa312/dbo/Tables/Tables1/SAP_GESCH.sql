@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[SAP_GESCH] (
+    [GESCH_ID]    INT            IDENTITY (1, 1) NOT NULL,
+    [GESCH]       VARCHAR (50)   NULL,
+    [Description] VARCHAR (100)  NULL,
+    [Alias]       NVARCHAR (100) NULL,
+    CONSTRAINT [PK_SAP_GESCH] PRIMARY KEY CLUSTERED ([GESCH_ID] ASC) WITH (FILLFACTOR = 95)
+);
+

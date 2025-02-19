@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[T0000_VERSION_INFO] (
+    [Version_Id]    NUMERIC (18)  NOT NULL,
+    [Version_No]    NVARCHAR (20) NOT NULL,
+    [Last_Update]   DATETIME      NOT NULL,
+    [Database_Name] NVARCHAR (50) NOT NULL,
+    [Server_Name]   NVARCHAR (50) NOT NULL,
+    CONSTRAINT [PK_T0000_VERSION_INFO] PRIMARY KEY CLUSTERED ([Version_Id] ASC) WITH (FILLFACTOR = 80)
+);
+

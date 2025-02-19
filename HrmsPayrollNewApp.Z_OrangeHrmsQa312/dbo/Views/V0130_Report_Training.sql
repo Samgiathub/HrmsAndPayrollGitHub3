@@ -1,0 +1,31 @@
+﻿
+
+
+
+
+
+CREATE VIEW [dbo].[V0130_Report_Training]
+AS
+SELECT     dbo.T0110_TRAINING_APPLICATION_DETAIL.Emp_ID, dbo.T0100_TRAINING_APPLICATION.Training_App_ID, 
+                      dbo.T0100_TRAINING_APPLICATION.Training_Title, dbo.T0100_TRAINING_APPLICATION.Training_Desc, dbo.T0100_TRAINING_APPLICATION.For_Date, 
+                      dbo.T0100_TRAINING_APPLICATION.Posted_Emp_ID, dbo.T0100_TRAINING_APPLICATION.Skill_ID, dbo.T0100_TRAINING_APPLICATION.App_Status, 
+                      dbo.T0100_TRAINING_APPLICATION.Cmp_ID, dbo.T0100_TRAINING_APPLICATION.Login_ID, dbo.T0100_TRAINING_APPLICATION.System_Date, 
+                      ISNULL(dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Is_Attend, 'N') AS Attend, 
+                      ISNULL(dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Emp_Eval_Rate, 0) AS Emp_Rate, 
+                      ISNULL(dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Sup_Eval_Rate, 0) AS Sup_Rate, dbo.T0120_TRAINING_APPROVAL.Training_Date, 
+                      dbo.T0120_TRAINING_APPROVAL.Training_Cost, dbo.T0120_TRAINING_APPROVAL.Apr_Status, dbo.T0120_TRAINING_APPROVAL.Faculty, 
+                      dbo.T0120_TRAINING_APPROVAL.Place, dbo.T0120_TRAINING_APPROVAL.Company_Name, dbo.T0120_TRAINING_APPROVAL.Description, 
+                      dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Sup_feedback_date, dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Emp_Feedback_Date, 
+                      dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Superior_Feedback, dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Emp_Feedback, 
+                      dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Emp_S_ID, dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Training_Apr_Detail_ID
+FROM         dbo.T0100_TRAINING_APPLICATION WITH (NOLOCK) INNER JOIN
+                      dbo.T0110_TRAINING_APPLICATION_DETAIL WITH (NOLOCK)  ON 
+                      dbo.T0100_TRAINING_APPLICATION.Training_App_ID = dbo.T0110_TRAINING_APPLICATION_DETAIL.Training_App_ID INNER JOIN
+                      dbo.T0120_TRAINING_APPROVAL WITH (NOLOCK)  ON 
+                      dbo.T0100_TRAINING_APPLICATION.Training_App_ID = dbo.T0120_TRAINING_APPROVAL.Training_App_ID LEFT OUTER JOIN
+                      dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS WITH (NOLOCK)  ON 
+                      dbo.T0120_TRAINING_APPROVAL.Training_Apr_ID = dbo.T0130_HRMS_TRAINING_FEEDBACK_DETAILS.Training_Apr_ID
+
+
+
+

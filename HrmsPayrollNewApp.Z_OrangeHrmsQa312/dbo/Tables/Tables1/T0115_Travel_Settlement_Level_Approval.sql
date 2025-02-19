@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[T0115_Travel_Settlement_Level_Approval] (
+    [Tran_ID]                   NUMERIC (18)    NOT NULL,
+    [Travel_Set_Application_id] NUMERIC (18)    NOT NULL,
+    [Travel_Approval_ID]        NUMERIC (18)    NOT NULL,
+    [Emp_ID]                    NUMERIC (18)    NOT NULL,
+    [Cmp_ID]                    NUMERIC (18)    NOT NULL,
+    [manager_emp_id]            NUMERIC (18)    NOT NULL,
+    [pending_amount]            NUMERIC (18, 2) NOT NULL,
+    [Manager_comment]           VARCHAR (500)   NULL,
+    [Is_Apr]                    TINYINT         NULL,
+    [Approval_date]             DATETIME        NOT NULL,
+    [Advance_amount]            NUMERIC (18, 2) NOT NULL,
+    [Expance_Incured]           NUMERIC (18, 2) NOT NULL,
+    [Approved_Expance]          NUMERIC (18, 2) NOT NULL,
+    [Amount_Differnce]          NUMERIC (18, 2) NOT NULL,
+    [Adjust_Amount]             NUMERIC (18, 2) NOT NULL,
+    [cheque_No]                 NUMERIC (18)    NULL,
+    [Payment_Type]              NVARCHAR (100)  NULL,
+    [Rpt_Level]                 NUMERIC (18)    NULL,
+    [Status]                    NVARCHAR (10)   NOT NULL,
+    [Travel_Amt_In_Salary]      TINYINT         DEFAULT ((0)) NOT NULL,
+    [Effect_Salary_date]        DATETIME        DEFAULT (NULL) NULL,
+    CONSTRAINT [PK_T0015_Travel_Settlement_Level_Approval] PRIMARY KEY CLUSTERED ([Tran_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0015_Travel_Settlement_Level_Approval_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0015_Travel_Settlement_Level_Approval_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

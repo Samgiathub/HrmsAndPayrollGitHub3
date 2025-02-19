@@ -1,0 +1,574 @@
+﻿
+---28/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+CREATE  PROCEDURE [dbo].[SP_RPT_STATUTORY_FORM_3A_GET]
+	 @Cmp_ID 		numeric
+	,@From_Date		datetime
+	,@To_Date 		datetime
+	--,@Branch_ID		numeric   --Comment By Jaina 5-11-2015
+	--,@Cat_ID 		numeric 
+	--,@Grd_ID 		numeric
+	--,@Type_ID 		numeric
+	--,@Dept_ID 		numeric
+	--,@Desig_ID 		numeric
+	,@Branch_ID		varchar(max)=''   --Added By Jaina 5-11-2015 Start
+	,@Cat_ID 		varchar(max)='' 
+	,@Grd_ID 		varchar(max)=''
+	,@Type_ID 		varchar(max)=''
+	,@Dept_ID 		varchar(max)=''
+	,@Desig_ID 		varchar(max)=''    --Added By Jaina 5-11-2015 End
+	,@Emp_ID 		numeric
+	,@constraint 	varchar(MAX)=''
+	,@Segment_Id  varchar(max)=''  --Added By Jaina 5-11-2015 Start
+	,@Vertical_Id varchar(max)=''
+	,@SubVertical_Id varchar(max)=''
+	,@SubBranch_Id varchar(max)=''  --Added By Jaina 5-11-2015 End
+	,@Format  tinyint = 4 --Added By Mukti(15022017)
+AS
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+
+	EXEC [dbo].[SP_RPT_STATUTORY_FORM_3A_GET_EXPORT_TEXT] @Cmp_ID=@Cmp_Id,@From_Date =@From_Date,@To_Date = @To_Date, @Branch_ID = @Branch_ID,@Cat_ID=@Cat_ID,@Grd_ID=@Grd_ID,@Type_ID=@Type_ID,@Dept_ID= @Dept_ID,@Desig_ID=@Desig_ID,@Emp_ID=@Emp_ID,@constraint=@constraint,@Segment_Id=@Segment_Id,@Vertical_Id=@Vertical_Id,@SubVertical_Id=@SubVertical_Id,@SubBranch_Id=@SubBranch_Id,@Format=@Format
+
+/*
+	declare @PF_LIMIT as numeric
+	Declare @PF_DEF_ID		numeric 
+	set @PF_DEF_ID =2
+	
+	declare @Edli_charge as numeric(18,2) -- Added by rohit for Edli employee wise.
+	set @Edli_charge=0.5
+		
+	set @PF_LIMIT = 15000	
+	
+	IF @Branch_ID = '0' or @Branch_ID=''  --change By Jaina 5-11-2015 Start
+		set @Branch_ID = null
+		
+	IF @Cat_ID = '0' or   @Cat_ID=''
+		set @Cat_ID = null
+
+	--IF @Grd_ID = 0 or  @Grd_ID=''    commented jimit 22/07/2016
+	IF @Grd_ID = '0' or  @Grd_ID=''     
+		set @Grd_ID = null
+
+	--IF @Type_ID = 0  or @Type_ID=''		commented jimit 22/07/2016
+		IF @Type_ID = '0'  or @Type_ID=''
+		set @Type_ID = null
+
+	--IF @Dept_ID = 0 or @Dept_ID=''  commented jimit 22/07/2016
+	IF @Dept_ID = '0' or @Dept_ID=''
+		set @Dept_ID = null
+	
+	--IF @Desig_ID = 0  or @Desig_ID=''  commented jimit 22/07/2016
+	IF @Desig_ID = '0'  or @Desig_ID=''
+		set @Desig_ID = null				--change By Jaina 5-11-2015 Start
+	
+	IF @Emp_ID = 0  
+		set @Emp_ID = null
+		
+	If @Segment_Id = '0' or @Segment_Id=''		--Added By Jaina 5-11-2015 Start 
+	set @Segment_Id = null
+	If @Vertical_Id = '0' or @Vertical_Id=''		 
+	set @Vertical_Id = null
+	If @SubVertical_Id = '0' or @SubVertical_Id='' 	 
+	set @SubVertical_Id = null	
+	If @SubBranch_Id = '0' or @SubBranch_Id=''	--Added By Jaina 5-11-2015 End 
+	set @SubBranch_Id = null	
+
+	CREATE TABLE #Emp_Cons
+	(
+		Emp_ID	numeric,
+		Branch_ID numeric,  --Added By Jaina 5-11-2015
+	   Increment_ID numeric --Added By Jaina 5-11-2015   
+	)
+	--Added By Jaina 5-11-2015
+	exec SP_RPT_FILL_EMP_CONS_MULTIDROPDOWN @Cmp_ID,@From_Date,@To_Date,@Branch_ID,@Cat_ID,@Grd_ID,@Type_ID,@Dept_ID,@Desig_ID,@Emp_ID,@constraint,0,0,@Segment_Id,@Vertical_Id,@SubVertical_Id,@SubBranch_Id,0,0,0,'',0,0    	
+		
+		
+	Declare @Sal_St_Date   Datetime    
+    Declare @Sal_end_Date   Datetime  
+    Declare @IS_NCP_PRORATA as int  
+  
+  		   
+	
+	declare @manual_salary_period as numeric(18,0)
+	set @manual_salary_period = 0	
+  		   
+	Set @IS_NCP_PRORATA = 0
+	If @Branch_ID is null
+		Begin 
+			select Top 1 @Sal_St_Date  = Sal_st_Date, @PF_LIMIT =  PF_LIMIT, @IS_NCP_PRORATA = IS_NCP_PRORATA, @manual_salary_Period = isnull(manual_salary_Period ,0)
+			  from T0040_GENERAL_SETTING GS Inner Join T0050_GENERAL_DETAIL GD On GS.Gen_ID = GD.GEN_ID And GS.Cmp_ID = GD.CMP_ID
+			  where GS.Cmp_ID = @cmp_ID    
+			  and For_Date = ( select max(For_Date) from T0040_GENERAL_SETTING where For_Date <=@From_Date and Cmp_ID = @Cmp_ID)
+		End
+	Else
+		Begin
+			--Added By Jaina 5-11-2015					  
+			select @Sal_St_Date  =Sal_st_Date, @PF_LIMIT =  PF_LIMIT , @IS_NCP_PRORATA = IS_NCP_PRORATA, @manual_salary_Period = isnull(manual_salary_Period ,0)
+			  from T0040_GENERAL_SETTING GS Inner Join T0050_GENERAL_DETAIL GD On GS.Gen_ID = GD.GEN_ID And GS.Cmp_ID = GD.CMP_ID
+			  inner JOIN (Select Cast(data as numeric) as Branch_ID FROM dbo.Split(@Branch_ID,'#')) T ON T.Branch_ID=GS.Branch_ID 
+			  where GS.Cmp_ID = @cmp_ID 
+			  and For_Date = ( select max(For_Date) from T0040_GENERAL_SETTING G1
+			  inner JOIN (Select Cast(data as numeric) as Branch_ID FROM dbo.Split(@Branch_ID,'#')) T1 ON T1.Branch_ID=G1.Branch_ID 
+			   where For_Date <=@From_Date and Cmp_ID = @Cmp_ID)
+				   
+		End    
+       
+     
+       
+	 if isnull(@Sal_St_Date,'') = ''    
+		begin    
+		   set @From_Date  = @From_Date     
+		   set @To_Date = @To_Date    
+		end     
+	 else if day(@Sal_St_Date) =1 --and month(@Sal_St_Date)=1    
+		begin    
+		   set @From_Date  = @From_Date     
+		   set @To_Date = @To_Date    
+		end     
+	 else  if @Sal_St_Date <> ''  and day(@Sal_St_Date) > 1   
+		begin    
+			if @manual_salary_Period = 0     
+				Begin       
+				  set @Sal_St_Date =  cast(cast(day(@Sal_St_Date)as varchar(5)) + '-' + cast(datename(mm,dateadd(m,-1,@From_Date)) as varchar(10)) + '-' +  cast(year(dateadd(m,-1,@From_Date) )as varchar(10)) as smalldatetime)        
+					set @Sal_End_Date = dateadd(d,-1,dateadd(m,1,@Sal_St_Date))     			
+					Set @From_Date = @Sal_St_Date    
+					Set @To_Date = @Sal_End_Date     
+				end    
+			else  
+				begin    
+					select @Sal_St_Date=from_date,@Sal_End_Date=end_date from salary_period where month= month(@From_Date) and YEAR=year(@From_Date)                  
+					Set @From_Date = @Sal_St_Date    
+					Set @To_Date = @Sal_End_Date        				
+				End
+		End
+		
+	
+
+	--------
+	DECLARE @TEMP_DATE AS DATETIME	
+	
+	DECLARE @PF_REPORT TABLE
+		(
+			MONTH		NUMERIC ,
+			YEAR		NUMERIC ,
+			FOR_DATE	DATETIME
+		)
+	
+	SET @TEMP_DATE = @FROM_DATE
+	
+	WHILE @TEMP_DATE <= @TO_DATE
+		BEGIN
+			
+			INSERT INTO @PF_REPORT (MONTH,YEAR,FOR_DATE)
+				VALUES(MONTH(@TEMP_DATE),YEAR(@TEMP_DATE),@TEMP_DATE)	
+			
+			SET @TEMP_DATE = DATEADD(m,1,@TEMP_DATE)
+			if (DATEDIFF(m, @FROM_DATE , @to_date) < 2)
+				break;
+		END
+
+	if	exists (select * from [tempdb].dbo.sysobjects where name like '#EMP_PF_REPORT' )		
+			begin
+				drop table #EMP_PF_REPORT
+			end
+			
+	CREATE TABLE #EMP_PF_REPORT 
+		(
+			CMP_ID	NUMERIC,
+			EMP_CODE	NUMERIC,
+			EMP_ID		NUMERIC,
+			EMP_NAME	VARCHAR(200),
+			PF_NO		VARCHAR(50),
+			MONTH		NUMERIC,
+			YEAR		NUMERIC,
+			FOR_DATE	DATETIME
+		)
+				
+	-- Changed By Ali 23112013 EmpName_Alias
+	INSERT INTO  #EMP_PF_REPORT	
+	SELECT  QRY.CMP_ID,QRY.EMP_CODE,QRY.EMP_ID,EMP_full_NAME,PF_NO ,t.month, t.year, t.for_Date from @PF_Report t cross join 
+	( SELECT DISTINCT SG.CMP_ID,SG.EMP_ID ,E.EMP_CODE ,ISNULL(E.EmpName_Alias_PF,E.Emp_Full_Name) as EMP_full_NAME ,SSN_NO as PF_NO FROM    T0200_MONTHLY_SALARY  SG  INNER JOIN 
+			( select Emp_ID , M_AD_Percentage as PF_PER , M_AD_Amount as PF_Amount ,sal_Tran_ID
+					from T0210_MONTHLY_AD_DETAIL AD INNER JOIN T0050_AD_MASTER AM ON AD.AD_ID = AM.AD_ID where AD_DEF_ID = @PF_DEF_ID 
+					and ad_not_effect_salary <> 1
+					and AD.CMP_ID = @CMP_ID) MAD on SG.Emp_ID = MAD.Emp_ID 
+						and SG.Sal_Tran_ID = MAD.Sal_Tran_ID INNER JOIN
+				T0080_EMP_MASTER E ON SG.EMP_ID = E.EMP_ID INNER JOIN
+				#EMP_CONS E_S on E.Emp_ID = E_S.Emp_ID				
+		WHERE   e.CMP_ID = @CMP_ID 
+				and SG.Month_St_Date >=@From_Date  and SG.Month_End_Date <= @To_Date )QRY				
+
+	
+		
+	IF	EXISTS (select * from [tempdb].dbo.sysobjects where name like '#EMP_SALARY' )		
+		begin
+			drop table #EMP_SALARY
+		end
+	
+		CREATE TABLE #EMP_SALARY 
+			(
+				EMP_ID					NUMERIC,
+				MONTH					NUMERIC,
+				YEAR					NUMERIC,
+				SALARY_AMOUNT			NUMERIC,
+				OTHER_PF_SALARY			NUMERIC,
+				MONTH_ST_DATE			DATETIME,
+				MONTH_END_DATE			DATETIME,
+				PF_PER					NUMERIC(18,2),
+				PF_AMOUNT				NUMERIC,
+				PF_SALARY_AMOUNT		NUMERIC,
+				PF_LIMIT				numeric,
+				PF_367					NUMERIC,
+				PF_833					NUMERIC,
+				PF_DIFF_6500			NUMERIC,
+				VPF                  	NUMERIC,
+				Emp_Age					NUMERIC,
+				Sal_Cal_Day				Numeric(18,2), -- Added by Falak on 09-MAY-2011
+				Absent_days				NUMERIC(18,2),
+				Is_Sett                 TinyINt Default 0,    --Nikunj 25-04-2011
+				Sal_Effec_Date          DateTime Default GetDate(), --Nikunj 25-04-2011
+				EDLI_Wages				Numeric,
+				Arear_Day				Numeric(18,2),
+				arrear_days				numeric(18,1),
+				VPF_PER					Numeric(18,2),
+				Nationality				varchar(100),
+				cmp_full_pf				Tinyint,
+				Arear_M_AD_Amount		NUMERIC(18,2),
+				Arear_M_AD_Calculated_Amount NUMERIC(18,2),
+				Arear_Month_Salary_exists tinyint default 0
+			 )
+			 
+			 
+			
+			-- (m_ad_Calculated_Amount + Arear_Basic) added by mitesh on 08/02/2012
+			
+		    INSERT INTO #EMP_SALARY
+		    
+		    SELECT  SG.EMP_ID,MONTH(MONTH_ST_DATe),YEAR(MONTH_ST_DATE),SG.Salary_Amount 
+				 ,0 ,sg.Month_st_Date,SG.Month_End_date
+				 ,MAD.PF_PER,MAD.PF_AMOUNT,(m_ad_Calculated_Amount + Isnull(Arear_Basic,0)+ Isnull(Basic_Salary_Arear_cutoff ,0) + isnull(CMD_new.Other_PF_Calculate,0)) as m_ad_Calculated_Amount,
+				-- Added by Hardik 19/09/2014 and comment @PF_Limit
+				 (Select Top 1 PF_Limit From T0040_GENERAL_SETTING G Inner Join T0050_General_Detail GD on G.Gen_ID = GD.GEN_ID
+					Where G.Cmp_ID = @Cmp_ID 
+						--And Branch_ID = ISNULL (@Branch_Id,Branch_Id) 
+						and EXISTS (select Data from dbo.Split(@Branch_ID, '#') B Where cast(B.data as numeric)=Isnull(Branch_ID,0) or @Branch_id Is null)  --Added By Jaina 5-11-2015
+					And For_Date = (Select Max(For_Date) From T0040_GENERAL_SETTING 
+						Where Cmp_ID = @Cmp_ID 
+						--And Branch_ID = ISNULL(@Branch_id,Branch_Id)
+						and EXISTS (select Data from dbo.Split(@Branch_ID, '#') B Where cast(B.data as numeric)=Isnull(Branch_ID,0) or @Branch_id Is null)   --Added By Jaina 5-11-2015
+						 And For_Date<= Month_End_Date) )
+				 
+				 --@PF_Limit
+				 ,0,0,0,isnull(CMD.VPF,0),dbo.F_GET_AGE(Date_of_Birth,MONTH_ST_DATE,'N','N')
+				 ,SG.Sal_Cal_Days,0,0,NULL,0,Isnull(sg.Arear_Day,0) -- Added by Falak on 09-MAY-2011
+				 ,SG.arear_day,VPF_PER, Nationality -- added by mitesh on 18/02/2012
+				 ,isnull(emp_auto_vpf,0) --added by hasmukh on 06 08 2013 for company full pf
+				 ,ISNULL(Qry_arear.Arear_M_AD_Amount,0),ISNULL(Qry_arear.Arear_M_AD_Calculated_Amount,0)
+				 ,0
+				FROM    T0200_MONTHLY_SALARY  SG  INNER JOIN 
+				(Select Emp_ID , m_ad_Percentage as PF_PER , (m_ad_Amount + Isnull(M_AREAR_AMOUNT,0) + Isnull(M_AREAR_AMOUNT_Cutoff,0)) as PF_Amount , m_ad_Calculated_Amount ,SAL_tRAN_ID from 
+					T0210_MONTHLY_AD_DETAIL AD INNER JOIN T0050_AD_MASTER AM ON AD.AD_ID = AM.AD_ID  where ad_DEF_id = @PF_DEF_ID  And ad_not_effect_salary <> 1 and sal_type<>1
+					and AD.CMP_ID = @CMP_ID ) MAD on SG.Emp_ID = MAD.Emp_ID  
+					AND SG.SAL_tRAN_ID = MAD.SAL_TRAN_ID INNER JOIN
+					T0080_EMP_MASTER E ON SG.EMP_ID = E.EMP_ID inner join
+					t0095_increment inc on Sg.increment_id = inc.increment_id inner join
+				#EMP_CONS E_S on E.Emp_ID = E_S.Emp_ID
+				left outer join
+				--Comment from Sal_Tran_Id to S_Sal_Tran_Id by Hardik 03/12/2016 for Wonder case for Twice Salary Settlement			
+				(Select Emp_ID,(m_ad_Amount + isnull(M_AREAR_AMOUNT,0)+ Isnull(M_AREAR_AMOUNT_Cutoff,0)) as VPF,SAL_tRAN_ID,AD.M_AD_Percentage as VPF_PER  from 
+				--(Select Emp_ID,(m_ad_Amount + isnull(M_AREAR_AMOUNT,0)+ Isnull(M_AREAR_AMOUNT_Cutoff,0)) as VPF,AD.S_Sal_Tran_ID,AD.M_AD_Percentage as VPF_PER  from 
+					T0210_MONTHLY_AD_DETAIL AD INNER JOIN T0050_AD_MASTER AM ON AD.AD_ID = AM.AD_ID  where ad_DEF_id = 4  And ad_not_effect_salary <> 1 and sal_type<>1
+					and AD.CMP_ID = @CMP_ID) CMD on SG.Emp_ID= CMD.Emp_ID AND SG.Sal_Tran_ID = CMD.Sal_Tran_ID	--Change Condition from Sal_Tran_Id to S_Sal_Tran_Id by Hardik 03/12/2016 for Wonder case for Twice Salary Settlement			
+				left outer join  -- Added by rohit on 05102015
+				(Select Emp_ID,sum((isnull(M_AREAR_AMOUNT,0) + isnull(M_AREAR_AMOUNT_Cutoff,0))) as Other_PF_Calculate ,SAL_tRAN_ID from 
+				--(Select Emp_ID,sum((isnull(M_AREAR_AMOUNT,0) + isnull(M_AREAR_AMOUNT_Cutoff,0))) as Other_PF_Calculate ,S_Sal_Tran_ID from 
+					T0210_MONTHLY_AD_DETAIL AD INNER JOIN T0050_AD_MASTER AM ON AD.AD_ID = AM.AD_ID  
+						where AD.ad_id in (SELECT EAM.AD_ID  FROM dbo.T0060_EFFECT_AD_MASTER EAM 
+												inner join T0050_AD_MASTER AM on EAM.Effect_AD_ID = AM.AD_ID and EAM.CMP_ID = AM.CMP_ID
+											WHERE AM.AD_DEF_ID  = @PF_DEF_ID AND Am.Cmp_ID  = @Cmp_ID )
+							And ad_not_effect_salary <> 1 and sal_type<>1
+					and AD.CMP_ID = @CMP_ID group by emp_id,Sal_Tran_ID) CMD_new on SG.Emp_ID= CMD_new.Emp_ID AND SG.Sal_Tran_ID = CMD_new.Sal_Tran_ID	 --Change Condition from Sal_Tran_Id to S_Sal_Tran_Id by Hardik 03/12/2016 for Wonder case for Twice Salary Settlement			
+				LEFT OUTER JOIN	--Get Arear Calculated Amount --Ankit 06042016
+				( SELECT MAD1.Emp_ID , m_ad_Amount AS arear_m_ad_Amount , m_ad_Calculated_Amount AS arear_m_ad_Calculated_Amount	 ,MAD1.For_Date,MAD1.To_date
+				  FROM	T0210_MONTHLY_AD_DETAIL MAD1 INNER JOIN 
+						T0050_AD_MASTER AM ON MAD1.AD_ID = AM.AD_ID  INNER JOIN
+						#EMP_CONS Qry1 on MAD1.Emp_ID = Qry1.Emp_ID
+				  WHERE ad_DEF_id = @PF_DEF_ID  AND ad_not_effect_salary <> 1 AND sal_type<>1
+				)  Qry_arear ON Qry_arear.Emp_ID = SG.Emp_ID 
+						AND Qry_arear.For_Date >= CASE WHEN SG.Arear_Month <> 0 THEN dbo.GET_MONTH_ST_DATE(SG.Arear_Month,SG.Arear_Year) ELSE dbo.GET_MONTH_ST_DATE(NULL,NULL) END
+						AND Qry_arear.to_date <= CASE WHEN SG.Arear_Month <> 0 THEN dbo.GET_MONTH_END_DATE(SG.Arear_Month,SG.Arear_Year) ELSE dbo.GET_MONTH_END_DATE(NULL,NULL) END
+							
+					
+		WHERE   e.CMP_ID = @CMP_ID --changed by Falak on 04-JAN-2010 due error in condition and more than one record for same emp binds.
+ 				and SG.Month_St_Date >=@From_Date  and SG.Month_End_Date <= @To_Date  
+
+
+       
+  		--select Arear_Month,Arear_Year ,ES.EMP_ID
+        Update #EMP_SALARY set Arear_Month_Salary_exists = 1
+        from #EMP_SALARY ES Inner jOIn T0200_MONTHLY_SALARY MS ON ES.EMP_ID = MS.Emp_ID
+        WHERE  MS.CMP_ID = @CMP_ID and MS.Arear_Month <> 0 and MS.Month_St_Date >=@From_Date  and MS.Month_End_Date <= @To_Date 
+        and Exists ( Select Sal_Tran_ID from T0200_MONTHLY_SALARY MS1 where ES.EMP_ID = MS1.Emp_ID and MOnth(MS1.Month_St_Date) =  MS.Arear_Month and year(MS1.Month_St_Date) =  MS.Arear_Year  ) 
+  			
+  			
+ 				
+--In form 3a you have to saw March Challn Paid in April.for This Setting you can see in Report Leval Formula.Nikunj
+-----By nikunj 25-04-2011 For Settlement Pf Effect In Form 3A--------------------------Start
+If Exists(Select S_Sal_Tran_Id From dbo.T0201_monthly_salary_sett where S_Eff_Date Between @From_Date And @To_Date And Cmp_Id=@Cmp_Id)
+	Begin 
+				INSERT INTO #EMP_SALARY
+				SELECT  SG.EMP_ID,MONTH(S_MONTH_ST_DATe),YEAR(S_MONTH_ST_DATE),SG.s_Salary_Amount,0,sg.S_Month_st_Date,SG.S_Month_End_date
+					 ,MAD.PF_PER,MAD.PF_AMOUNT,m_ad_Calculated_Amount ,@PF_Limit,0,0,0,isnull(CMD.VPF,0),dbo.F_GET_AGE(Date_of_Birth,S_MONTH_ST_DATE,'N','N'),
+					 SG.S_Sal_Cal_Days,0,1,SG.S_Eff_date,0,0,0,0,Nationality-- Added by Falak on 09-MAY-2011
+					 ,isnull(emp_auto_vpf,0) --added by hasmukh on 06 08 2013 for company full pf
+					 ,0,0,0
+					FROM t0201_monthly_salary_sett  SG  INNER JOIN 
+					( select Emp_ID , m_ad_Percentage as PF_PER , (m_ad_Amount + isnull(M_AREAR_AMOUNT,0)+ Isnull(M_AREAR_AMOUNT_Cutoff,0)) as PF_Amount , m_ad_Calculated_Amount ,SAL_tRAN_ID from 
+						T0210_MONTHLY_AD_DETAIL AD INNER JOIN T0050_AD_MASTER AM ON AD.AD_ID = AM.AD_ID  
+						where ad_DEF_id = @PF_DEF_ID And ad_not_effect_salary <> 1 And ad.sal_type=1
+						and AD.CMP_ID = @CMP_ID and (m_ad_Amount + isnull(M_AREAR_AMOUNT,0)+ Isnull(M_AREAR_AMOUNT_Cutoff,0)) > 0 -- Greter Than Zero Condition --Ankit 06062016
+					) MAD on SG.Emp_ID = MAD.Emp_ID 
+						AND SG.SAL_tRAN_ID = MAD.SAL_TRAN_ID INNER JOIN
+						T0080_EMP_MASTER E ON SG.EMP_ID = E.EMP_ID inner join
+						t0095_increment inc on Sg.increment_id = inc.increment_id inner join
+					#EMP_CONS E_S on E.Emp_ID = E_S.Emp_ID	
+					left outer join
+					(Select Emp_ID,(m_ad_Amount + isnull(M_AREAR_AMOUNT,0)+ Isnull(M_AREAR_AMOUNT_Cutoff,0)) as VPF,SAL_tRAN_ID  from 
+						T0210_MONTHLY_AD_DETAIL AD INNER JOIN T0050_AD_MASTER AM ON AD.AD_ID = AM.AD_ID  where ad_DEF_id = 4  And ad_not_effect_salary <> 1 and sal_type=1
+						and AD.CMP_ID = @CMP_ID) CMD on SG.Emp_ID= CMD.Emp_ID AND SG.SAL_tRAN_ID = CMD.SAL_TRAN_ID
+			WHERE   e.CMP_ID = @CMP_ID 
+						And S_Eff_Date Between @From_Date And @To_Date
+ 					--and SG.s_Month_St_Date >=@From_Date  and SG.s_Month_End_Date <= @To_Date 
+				
+				
+				
+				Update #EMP_SALARY Set 
+				Salary_Amount= ES.Salary_Amount+Qry.Salary_Amount,
+				PF_Amount=ES.PF_Amount+Qry.PF_Amount,
+				PF_Salary_Amount=ES.PF_Salary_Amount+Qry.PF_Salary_Amount,
+				VPF = es.VPF + Qry.VPF From 
+				#EMP_SALARY As ES INNER JOIN
+				(Select SUM(Salary_Amount) As Salary_Amount,SUM(PF_Amount) As PF_Amount,SUM(PF_Salary_Amount) As PF_Salary_Amount,SUM(VPF) as VPF,Emp_Id,Sal_Effec_Date From #EMP_SALARY where Is_Sett=1 Group By Emp_Id,Sal_Effec_Date ) As Qry ON ES.Emp_Id=Qry.Emp_ID And ES.Month=Month(Qry.Sal_Effec_Date) And ES.Year=Year(Qry.Sal_Effec_Date)
+
+
+				Delete From #EMP_SALARY where Is_Sett=1
+				
+	End		
+------------------------------------------------------------------------------------------End
+
+
+		Declare @PF_Pension_Age as numeric(18,2)
+		Declare @PF_Max_Limit_From_GS As Numeric(18,2)
+		Declare @PF_NOT_FUll_AMT As Numeric(18,2)
+		Declare @PF_541 As Numeric(18,2)
+		
+		Set @PF_Max_Limit_From_GS = 0
+		Set @PF_541 = 0
+		SET @PF_NOT_FUll_AMT = 0
+		
+			
+		select Top 1	@PF_Pension_Age = isnull(PF_Pension_Age,0) , @PF_Max_Limit_From_GS = ISNULL(PF_LIMIT,0) from T0040_General_setting gs inner join     
+			T0050_General_Detail gd on gs.gen_Id =gd.gen_ID     
+			where gs.Cmp_Id=@cmp_Id 
+					--and Branch_ID = isnull(@Branch_ID,Branch_ID)    
+				and EXISTS (select Data from dbo.Split(isnull(@Branch_ID,Branch_ID), '#') B Where cast(B.data as numeric)=Isnull(Branch_ID,0))   --Added By Jaina 5-11-2015
+				and For_Date in (select max(For_Date) from T0040_General_setting  g inner join     
+				T0050_General_Detail d on g.gen_Id =d.gen_ID       
+			where g.Cmp_Id=@cmp_Id 
+			--and Branch_ID = isnull(@Branch_ID,Branch_ID)    
+			and EXISTS (select Data from dbo.Split(isnull(@Branch_ID,Branch_ID), '#') B Where cast(B.data as numeric)=Isnull(Branch_ID,0))   --Added By Jaina 5-11-2015
+		and For_Date <=@To_Date )  		
+		
+		
+/* Commented by Falak on 18102011 due to error in calculation 
+	UPDATE #EMP_SALARY SET PF_Limit = CASE
+          WHEN PF_SALARY_AMOUNT >6500  THEN 6500
+           WHEN PF_SALARY_AMOUNT < = 6500  THEN PF_SALARY_AMOUNT * 0.12         
+           END
+*/	
+	Set @PF_541 = round(@PF_Max_Limit_From_GS * 0.0833,0)
+	SET @PF_NOT_FUll_AMT = round(@PF_Limit * 12/100,0)
+		              
+	
+
+	update #EMP_SALARY
+	set	  PF_833 = round(PF_SALARY_AMOUNT * 0.0833,0)
+		 ,PF_367 = PF_Amount - round(PF_SALARY_AMOUNT * 0.0833,0)
+	where PF_SALARY_AMOUNT <= PF_Limit
+
+	
+	--Update #EMP_SALARY
+	--set PF_Diff_6500 = PF_SALARY_AMOUNT - PF_Limit
+	--	,PF_833 = round(PF_LIMIT * 0.0833,0) -- @PF_541 --541  --Commented by Hardik 19/05/2015 as PF Limit changed from Sept-2014
+	--	,PF_367 = PF_Amount - round(PF_LIMIT * 0.0833,0) --@PF_541--541
+	--where PF_SALARY_AMOUNT > PF_Limit 
+	
+	
+	
+	UPDATE #EMP_SALARY
+	SET PF_Diff_6500 = PF_SALARY_AMOUNT - PF_Limit
+		,PF_833 = ROUND(PF_LIMIT * 0.0833,0)
+		,PF_367 = PF_Amount - ROUND(PF_LIMIT * 0.0833,0)
+	WHERE PF_SALARY_AMOUNT > PF_Limit AND Arear_Month_Salary_exists = 0 --Arear_M_AD_Amount = 0 AND Arear_M_AD_Calculated_Amount = 0
+	
+	--select CASE WHEN (ISNULL(Arear_M_AD_Calculated_Amount,0) + (PF_SALARY_AMOUNT - SALARY_AMOUNT )) > PF_LIMIT THEN PF_LIMIT ELSE PF_SALARY_AMOUNT END,
+	--Arear_M_AD_Calculated_Amount,PF_SALARY_AMOUNT , SALARY_AMOUNT,PF_LIMIT
+	--,* from #EMP_SALARY
+	
+	---- Employee Has Arear Amount then Not Check Limit --Ankit 06042016
+	
+	UPDATE #EMP_SALARY
+	SET PF_Diff_6500 = PF_SALARY_AMOUNT - PF_Limit
+		,PF_833 = ROUND( (CASE WHEN (ISNULL(Arear_M_AD_Calculated_Amount,0) + (PF_SALARY_AMOUNT - SALARY_AMOUNT )) > PF_LIMIT THEN PF_LIMIT ELSE PF_SALARY_AMOUNT END) * 0.0833,0)
+		,PF_367 = PF_Amount - ROUND((CASE WHEN (ISNULL(Arear_M_AD_Calculated_Amount,0) + (PF_SALARY_AMOUNT - SALARY_AMOUNT )) > PF_LIMIT THEN PF_LIMIT ELSE PF_SALARY_AMOUNT END) * 0.0833,0)
+	WHERE PF_SALARY_AMOUNT > PF_Limit AND  Arear_Month_Salary_exists = 1--Arear_M_AD_Amount <> 0 AND Arear_M_AD_Calculated_Amount <> 0
+	
+	--select * from #EMP_SALARY
+	Update #EMP_SALARY    
+		set PF_833 = 0    
+			,PF_367 = PF_Amount  
+			,PF_LIMIT =0   
+		where Emp_Age >= @PF_PEnsion_Age and @PF_PEnsion_Age>0   
+		
+
+		
+	Update #EMP_SALARY 
+	  set PF_LIMIT = PF_SALARY_AMOUNT
+	 where PF_SALARY_AMOUNT < @PF_Max_Limit_From_GS
+
+	Update #EMP_SALARY    
+		set PF_833 =   0    
+		  ,PF_LIMIT =  0   
+		where PF_833 = 0
+				 
+	 Update #EMP_SALARY 
+		set EDLI_Wages = PF_SALARY_AMOUNT
+	 
+	 
+	 Update #EMP_SALARY 
+		set EDLI_Wages = @PF_Max_Limit_From_GS
+	 where PF_SALARY_AMOUNT > @PF_Max_Limit_From_GS  AND  Arear_Month_Salary_exists = 0
+
+     UPDATE #EMP_SALARY
+	 SET EDLI_Wages = ROUND( (CASE WHEN (ISNULL(Arear_M_AD_Calculated_Amount,0) + (PF_SALARY_AMOUNT - SALARY_AMOUNT )) > @PF_Max_Limit_From_GS THEN @PF_Max_Limit_From_GS ELSE PF_SALARY_AMOUNT END),0)
+		,PF_LIMIT =ROUND( (CASE WHEN (ISNULL(Arear_M_AD_Calculated_Amount,0) + (PF_SALARY_AMOUNT - SALARY_AMOUNT )) > @PF_Max_Limit_From_GS THEN @PF_Max_Limit_From_GS ELSE PF_SALARY_AMOUNT END),0)
+	WHERE PF_SALARY_AMOUNT > PF_Limit AND  Arear_Month_Salary_exists = 1
+	
+	
+	
+-------------------------------Company Contribution in PF limit-----------------------------------------Hasmukh 06082013
+	
+	
+
+	Update #EMP_SALARY		--PF 8.33 and 3.67 Calculate On actual PF Amount deduct ----Condition Add By Ankit After discuss with Hardikbhai 10082015
+	set PF_Diff_6500 = PF_SALARY_AMOUNT - PF_Limit
+		,PF_833 = PF_Amount - round((PF_SALARY_AMOUNT * 3.67)/100 ,0) 
+		,PF_367 = round((PF_SALARY_AMOUNT * 3.67)/100 ,0) 
+	where PF_SALARY_AMOUNT > PF_Limit and cmp_full_pf = 0 and PF_Limit > 0	
+	
+--	select *from #EMP_SALARY order by EMP_ID
+	
+	
+	Update #EMP_SALARY    
+	set PF_833 = 0    
+		,PF_367 = PF_AMOUNT -- round(PF_LIMIT * 12/100,0) --@PF_NOT_FUll_AMT  ---Set Actual PF Amount (Employee arear case)--Ankit 10082015
+		,PF_LIMIT =0   
+	where Emp_Age >= @PF_PEnsion_Age and @PF_PEnsion_Age > 0 and PF_Amount >  round(PF_LIMIT * 12/100,0)-- @PF_NOT_FUll_AMT 
+	and cmp_full_pf = 0 
+-------------------------------Company Contribution in PF limit-----------------------------------------Hasmukh 06082013
+
+
+  --Added by Hardik for Foreign Employee who pay full PF on 17/05/2012
+  Update #EMP_SALARY    
+  set   PF_833 = round(PF_SALARY_AMOUNT * 0.0833,0)    
+    ,PF_367 = PF_Amount - round(PF_SALARY_AMOUNT * 0.0833,0)
+    ,PF_DIFF_6500=0, PF_LIMIT = 0
+  where  Nationality not like 'India%' and Nationality <> ''
+  			
+	 Update #EMP_SALARY 
+		set PF_Amount = PF_Amount 
+		
+		-- Changed By Ali 23112013 EmpName_Alias
+		--SELECT EPF.*--, (SALARY_AMOUNT + ISNULL(OTHER_PF_SALARY,0) ) as SALARY_AMOUNT
+		--		,(PF_AMOUNT) PF_AMOUNT	,PF_PER,PF_Limit,EDLI_Wages , PF_SALARY_AMOUNT,PF_833,PF_367
+		--		,PF_Diff_6500,EMP_SECOND_NAME,ES.VPF,E.Basic_Salary,E.Emp_code,
+		--		ISNULL(EmpName_Alias_PF,Emp_Full_Name) as Emp_Full_Name,Grd_Name,Type_Name,dept_Name,Desig_Name,Cmp_Name,Cmp_Address,cm.PF_No as CPF_NO
+		--		--,@From_Date P_From_Date ,@To_Date P_To_Date,Father_Name,Le.Left_Date,Le.Left_Reason,MS.Absent_Days,ES.Sal_Cal_Day
+		--		,@From_Date P_From_Date ,@To_Date P_To_Date,Father_Name,Le.Left_Date,Le.Left_Reason,
+		--	--	[dbo].[F_Get_NCP_Days] (@From_Date,@To_Date,(case when Sal_Cal_Day>0 then (Ms.Basic_Salary/Sal_cal_Day) else 0 end)/DATEDIFF(d,@From_Date,@To_Date) + 1,PF_SALARY_AMOUNT,Ms.Sal_Cal_Days,@PF_LIMIT,ms.Absent_Days,Wages_Type,Weekoff_Days ) as Absent_Days
+		--		cast(Case When @IS_NCP_PRORATA = 1 Then CAST([dbo].[F_Get_NCP_Days] (@From_Date,@To_Date,Ms.Basic_Salary,Ms.Salary_Amount,Ms.Sal_Cal_Days,@PF_LIMIT,ms.Absent_Days,Wages_Type,Weekoff_Days) As Varchar(2)) Else CAST(Cast(Ms.Absent_Days as Numeric(18,0)) As varchar(2)) End as numeric(18,0)) as Absent_Days,ES.Sal_Cal_Day
+		--		,ES.arrear_days,ES.VPF_PER
+		--		,BM.Branch_Name,date_of_join
+		--		,date_of_birth,gender
+		
+		--select #EMP_PF_REPORT.CMP_ID from #EMP_PF_REPORT
+		--select #EMP_PF_REPORT.EMP_CODE from #EMP_PF_REPORT
+		----select #EMP_PF_REPORT.EMP_ID from #EMP_PF_REPORT
+		----select #EMP_PF_REPORT.MONTH from #EMP_PF_REPORT
+		----select #EMP_PF_REPORT.YEAR from #EMP_PF_REPORT
+		
+		/*
+		Select Ms.Absent_Days,Cast(Ms.Absent_Days As INT) 
+		FROM  #EMP_SALARY ES left outer join T0200_MONTHLY_SALARY MS on ES.EMP_ID=MS.Emp_ID and ES.MONTH=month(MS.Month_End_Date) and  
+						ES.YEAR =year(MS.Month_End_Date) AND MS.Absent_Days % 1 > 0
+
+		return;*/
+		SELECT EPF.*
+		--, (SALARY_AMOUNT + ISNULL(OTHER_PF_SALARY,0) ) as SALARY_AMOUNT
+				,(PF_AMOUNT) PF_AMOUNT	
+				,PF_PER,PF_Limit,EDLI_Wages, PF_SALARY_AMOUNT,PF_833
+				,PF_367
+				,PF_Diff_6500,EMP_SECOND_NAME,ES.VPF,E.Basic_Salary,E.Emp_code,
+				ISNULL(EmpName_Alias_PF,Emp_Full_Name) as Emp_Full_Name,Grd_Name,Type_Name,dept_Name,Desig_Name,Cmp_Name,Cmp_Address,cm.PF_No as CPF_NO
+				--,@From_Date P_From_Date ,@To_Date P_To_Date,Father_Name,Le.Left_Date,Le.Left_Reason,MS.Absent_Days,ES.Sal_Cal_Day
+				,@From_Date P_From_Date ,@To_Date P_To_Date,Father_Name,Le.Left_Date,Le.Left_Reason,
+			--[dbo].[F_Get_NCP_Days] (@From_Date,@To_Date,(case when Sal_Cal_Day>0 then (Ms.Basic_Salary/Sal_cal_Day) else 0 end)/DATEDIFF(d,@From_Date,@To_Date) + 1,PF_SALARY_AMOUNT,Ms.Sal_Cal_Days,@PF_LIMIT,ms.Absent_Days,Wages_Type,Weekoff_Days ) as Absent_Days
+				--cast(Case When @IS_NCP_PRORATA = 1 Then CAST([dbo].[F_Get_NCP_Days] (@From_Date,@To_Date,Ms.Basic_Salary,Ms.Salary_Amount,Ms.Sal_Cal_Days,@PF_LIMIT,ms.Absent_Days,Wages_Type,Weekoff_Days) As Varchar(2)) Else Cast(Cast(Ms.Absent_Days As Numeric) As Varchar(2)) End as numeric(18,0)) as Absent_Days,ES.Sal_Cal_Day
+				CAST(
+						(
+							CASE WHEN (@IS_NCP_PRORATA = 1) Then 
+								[dbo].[F_Get_NCP_Days] (/*@From_Date,@To_Date*/ MS.Month_St_Date ,MS.Month_End_Date,Ms.Basic_Salary,Ms.Salary_Amount,Ms.Sal_Cal_Days,@PF_LIMIT,ms.Absent_Days,Wages_Type,Weekoff_Days)
+								--[dbo].[F_Get_NCP_Days] (@From_Date,@To_Date,Ms.Basic_Salary,Ms.Salary_Amount,Ms.Sal_Cal_Days,@PF_LIMIT,ms.Absent_Days,Wages_Type,Weekoff_Days)
+							Else 
+								Ms.Absent_Days
+							End
+						) AS Numeric(18,2)) as Absent_Days,ES.Sal_Cal_Day --Modified by Nimesh 2015-06-22 (Absent_days was not displaying decimal values)
+				--cast(Case When @IS_NCP_PRORATA = 1 Then CAST([dbo].[F_Get_NCP_Days] (@From_Date,@To_Date,Ms.Basic_Salary,Ms.Salary_Amount,Ms.Sal_Cal_Days,@PF_LIMIT,ms.Absent_Days,Wages_Type,Weekoff_Days)as varchar(2)) End as numeric(18,0)) as Absent_Days,ES.Sal_Cal_Day     
+				,ES.arrear_days,ES.VPF_PER
+				,BM.Branch_Name,date_of_join
+				,E.Alpha_Emp_Code,E.Emp_First_Name  --added jimit 25052015
+				,dgm.Desig_Dis_No                   --added jimit 25092015
+				,isnull(E.Pf_Trust_No,'') as Pf_Trust_No -- Added by rohit on 11022016
+				,EDLI_Wages*@Edli_charge/100 as EDLI
+				,vs.Vertical_Name,sv.SubVertical_name --added jimit 02072016
+				,isnull(E.PF_Start_Date,E.Date_Of_Join) AS PF_Start_Date  --Added By Jaina 02-09-2016
+				,E.UAN_No,Cast(Round(Isnull(Ms.Gross_Salary,0) - Isnull(MS.Arear_Gross,0),0) as numeric) --Added By Ramiz on 13/01/2017
+		  FROM #EMP_PF_REPORT EPF INNER JOIN T0080_EMP_MASTER E  ON EPF.EMP_ID = E.EMP_ID left outer join
+		  T0100_left_emp LE on E.Emp_ID =Le.Emp_ID 
+		  LEFT OUTER JOIN 	#EMP_SALARY ES ON EPF.EMP_ID = ES.EMP_ID AND EPF.MONTH = ES.MONTH 
+						AND EPF.YEAR = ES.YEAR 	left outer join T0200_MONTHLY_SALARY MS on ES.EMP_ID=MS.Emp_ID and ES.MONTH=month(MS.Month_End_Date) and  
+						ES.YEAR =year(MS.Month_End_Date) INNER JOIN 
+						( SELECT I.Branch_ID,I.Grd_ID,I.Dept_ID,I.Desig_ID,I.Emp_ID,Type_ID,Wages_Type,I.Vertical_ID,I.SubVertical_ID FROM T0095_Increment I inner join 
+					( select max(Increment_ID) as Increment_ID , Emp_ID From T0095_Increment	-- Ankit 09092014 for Same Date Increment
+					where Increment_Effective_date <= @To_Date
+					and Cmp_ID = @Cmp_ID
+					group by emp_ID  ) Qry on
+					I.Emp_ID = Qry.Emp_ID	and I.Increment_ID = Qry.Increment_ID	)Q_I ON
+		E.EMP_ID = Q_I.EMP_ID INNER JOIN T0040_GRADE_MASTER GM ON Q_I.Grd_Id = gm.Grd_ID INNER JOIN 
+		T0030_BRANCH_MASTER BM ON Q_I.BRANCH_ID = BM.BRANCH_ID LEFT OUTER JOIN
+		T0040_DEPARTMENT_MASTER DM ON Q_I.DEPT_ID = DM.DEPT_ID LEFT OUTER JOIN 
+		T0040_DESIGNATION_MASTER DGM ON Q_I.DESIG_ID = DGM.DESIG_ID Left outer join 
+		T0040_Type_Master TM on Q_I.Type_ID = Tm.Type_Id  Inner join 
+		T0010_company_Master cm on e.cmp_ID = cm.cmp_Id  LEFT outer JOIN
+		T0040_Vertical_Segment vs on Q_I.Vertical_ID = vs.Vertical_ID LEFT OUTER JOIN
+		T0050_SubVertical sv on Q_I.SubVertical_ID = sv.SubVertical_ID
+		--Where ES.MONTH=MONTH(@To_Date) AND ES.YEAR=Year(@To_Date) --PF_Amount > 0
+		order by RIGHT(REPLICATE(N' ', 500) + EPF.PF_NO, 500)
+	
+		Drop Table #EMP_PF_REPORT--Nikunj
+		Drop Table #EMP_SALARY--Nikunj
+
+RETURN
+*/
+

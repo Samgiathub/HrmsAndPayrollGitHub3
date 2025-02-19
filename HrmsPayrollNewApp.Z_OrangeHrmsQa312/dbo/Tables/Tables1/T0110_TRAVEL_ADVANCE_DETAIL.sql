@@ -1,0 +1,13 @@
+﻿CREATE TABLE [dbo].[T0110_TRAVEL_ADVANCE_DETAIL] (
+    [Travel_Advance_Detail_ID] NUMERIC (18)    NOT NULL,
+    [Cmp_ID]                   NUMERIC (18)    NOT NULL,
+    [Travel_App_ID]            NUMERIC (18)    NOT NULL,
+    [Expence_Type]             VARCHAR (100)   NOT NULL,
+    [Amount]                   NUMERIC (18, 2) NOT NULL,
+    [Adv_Detail_Desc]          NVARCHAR (250)  NULL,
+    [Curr_ID]                  NUMERIC (18)    DEFAULT (NULL) NULL,
+    CONSTRAINT [PK_T0110_TRAVEL_ADVANCE_DETAIL] PRIMARY KEY CLUSTERED ([Travel_Advance_Detail_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0110_TRAVEL_ADVANCE_DETAIL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0110_TRAVEL_ADVANCE_DETAIL_T0100_TRAVEL_APPLICATION] FOREIGN KEY ([Travel_App_ID]) REFERENCES [dbo].[T0100_TRAVEL_APPLICATION] ([Travel_Application_ID])
+);
+

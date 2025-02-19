@@ -1,0 +1,34 @@
+﻿
+
+
+-- =============================================
+-- Author:		Shaikh Ramiz
+-- Create date: 24-Oct-2016
+-- Description:	To Delete the Records of Assigned Target
+---13/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+
+-- =============================================
+CREATE PROCEDURE [dbo].[P0050_SALES_ASSIGNED_TARGET_DELETE]
+	@CMP_ID			NUMERIC = 0,
+	@TARGET_TRAN_ID NUMERIC = 0
+AS
+
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+
+
+BEGIN
+	
+	--DECLARE @EMP_ID AS NUMERIC
+	--	SET @EMP_ID = 0
+	
+	--SELECT @EMP_ID = EMP_ID FROM T0040_SALES_ASSIGNED_TARGET WHERE TARGET_TRAN_ID = @TARGET_TRAN_ID AND CMP_ID = @CMP_ID
+	
+	DELETE FROM T0050_Sales_Assigned_Detail WHERE TARGET_TRAN_ID = @TARGET_TRAN_ID
+	
+	DELETE FROM T0040_Sales_Assigned_Target WHERE TARGET_TRAN_ID = @TARGET_TRAN_ID
+END
+
+
+

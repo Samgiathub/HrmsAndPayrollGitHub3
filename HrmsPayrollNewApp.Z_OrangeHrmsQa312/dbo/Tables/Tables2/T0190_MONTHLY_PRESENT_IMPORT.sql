@@ -1,0 +1,73 @@
+﻿CREATE TABLE [dbo].[T0190_MONTHLY_PRESENT_IMPORT] (
+    [Tran_ID]              NUMERIC (18)    IDENTITY (1, 1) NOT NULL,
+    [Emp_ID]               NUMERIC (18)    NOT NULL,
+    [Cmp_ID]               NUMERIC (18)    NOT NULL,
+    [Month]                INT             NOT NULL,
+    [Year]                 INT             NOT NULL,
+    [For_Date]             DATETIME        NOT NULL,
+    [P_Days]               NUMERIC (18, 2) NOT NULL,
+    [Extra_Days]           NUMERIC (5, 1)  NOT NULL,
+    [Extra_Day_Month]      NUMERIC (18)    CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Extra_Day_Month] DEFAULT ((0)) NOT NULL,
+    [Extra_Day_Year]       NUMERIC (18)    CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Extra_Day_Year] DEFAULT ((0)) NOT NULL,
+    [Cancel_Weekoff_Day]   NUMERIC (18)    CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Cancel_Weekoff_Day] DEFAULT ((0)) NOT NULL,
+    [Cancel_Holiday]       NUMERIC (18)    CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Cancel_Holiday] DEFAULT ((0)) NOT NULL,
+    [Over_Time]            NUMERIC (18, 2) CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Over_Time] DEFAULT ((0)) NOT NULL,
+    [Payble_Amount]        NUMERIC (18, 2) CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Payble_Amount] DEFAULT ((0)) NOT NULL,
+    [User_ID]              INT             NULL,
+    [Time_Stamp]           DATETIME        NULL,
+    [Backdated_Leave_Days] NUMERIC (18, 2) CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Backdated_Leave_Days] DEFAULT ((0)) NOT NULL,
+    [WO_OT_Hour]           NUMERIC (18, 2) CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_WO_OT_Hours] DEFAULT ((0)) NOT NULL,
+    [HO_OT_Hour]           NUMERIC (18, 2) CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_HO_OT_Hours] DEFAULT ((0)) NOT NULL,
+    [Present_on_holiday]   NUMERIC (18, 2) CONSTRAINT [DF_T0190_MONTHLY_PRESENT_IMPORT_Present_on_holiday] DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_T0190_MONTHLY_PRESENT_IMPORT] PRIMARY KEY CLUSTERED ([Tran_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0190_MONTHLY_PRESENT_IMPORT_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0190_MONTHLY_PRESENT_IMPORT_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0190_MONTHLY_PRESENT_IMPORT_7_1598797649__K3_K2_K4_K5_K14_K15_1_6_7_8_9_10_11_12_13_16]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Cmp_ID] ASC, [Emp_ID] ASC, [Month] ASC, [Year] ASC, [Payble_Amount] ASC, [User_ID] ASC)
+    INCLUDE([Tran_ID], [For_Date], [P_Days], [Extra_Days], [Extra_Day_Month], [Extra_Day_Year], [Cancel_Weekoff_Day], [Cancel_Holiday], [Over_Time], [Time_Stamp]) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_T0190_MONTHLY_PRESENT_IMPORT_M_Y_C_I]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Month] ASC, [Year] ASC, [Cmp_ID] ASC)
+    INCLUDE([Emp_ID], [P_Days], [Over_Time]) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1598797649_2_15_5_3_4]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Emp_ID], [User_ID], [Year], [Cmp_ID], [Month]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1598797649_4_2_5]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Month], [Emp_ID], [Year]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1598797649_5_3_4_14_2_15]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Year], [Cmp_ID], [Month], [Payble_Amount], [Emp_ID], [User_ID]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1598797649_14_2_4_5]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Payble_Amount], [Emp_ID], [Month], [Year]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_1598797649_2_15_4_5]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Emp_ID], [User_ID], [Month], [Year]);
+
+
+GO
+CREATE STATISTICS [IS_T0190_MONTHLY_PRESENT_IMPORT_Year_Cmp_ID]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Year], [Cmp_ID]);
+
+
+GO
+CREATE STATISTICS [IS_T0190_MONTHLY_PRESENT_IMPORT_C_N_Y]
+    ON [dbo].[T0190_MONTHLY_PRESENT_IMPORT]([Cmp_ID], [Month], [Year]);
+

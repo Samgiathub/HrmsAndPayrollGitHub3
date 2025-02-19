@@ -1,0 +1,28 @@
+﻿CREATE TABLE [dbo].[T0115_RC_Level_Approval] (
+    [Tran_ID]                  NUMERIC (18)    NOT NULL,
+    [Cmp_ID]                   NUMERIC (18)    NULL,
+    [RC_App_ID]                NUMERIC (18)    NULL,
+    [Emp_ID]                   NUMERIC (18)    NULL,
+    [RC_ID]                    NUMERIC (18)    NULL,
+    [Apr_Date]                 DATETIME        NULL,
+    [Apr_Amount]               NUMERIC (18, 2) NULL,
+    [Taxable_Exemption_Amount] NUMERIC (18, 2) NULL,
+    [APr_Comments]             NVARCHAR (MAX)  NULL,
+    [APR_Status]               TINYINT         NULL,
+    [RC_Apr_Effect_In_Salary]  NUMERIC (18)    NULL,
+    [RC_Apr_Cheque_No]         VARCHAR (10)    NULL,
+    [Payment_Mode]             VARCHAR (20)    NULL,
+    [CreateBy]                 INT             NOT NULL,
+    [DateCreated]              DATETIME        NOT NULL,
+    [ModifyBy]                 INT             NULL,
+    [ModifyDate]               DATETIME        NULL,
+    [S_emp_ID]                 NUMERIC (18)    NULL,
+    [Payment_date]             DATETIME        NULL,
+    [Rpt_Level]                TINYINT         NOT NULL,
+    [System_Date]              DATETIME        NOT NULL,
+    [Reim_Quar_ID]             NUMERIC (5)     DEFAULT ((0)) NOT NULL,
+    [Quarter_Name]             VARCHAR (50)    NULL,
+    CONSTRAINT [PK_T0115_RC_Level_Approval] PRIMARY KEY CLUSTERED ([Tran_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0115_RC_Level_Approval_T0115_RC_Level_Approval] FOREIGN KEY ([Tran_ID]) REFERENCES [dbo].[T0115_RC_Level_Approval] ([Tran_ID])
+);
+

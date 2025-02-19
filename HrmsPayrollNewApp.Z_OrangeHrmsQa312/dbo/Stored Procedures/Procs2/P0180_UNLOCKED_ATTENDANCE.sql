@@ -1,0 +1,56 @@
+﻿
+
+-- =============================================
+-- Author:		<Author,,Jimit>
+-- Create date: <Create Date,,05032019>
+-- Description:	<Description,,For deleting Attendance Lock Record>
+---27/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+-- =============================================
+CREATE PROCEDURE [dbo].[P0180_UNLOCKED_ATTENDANCE]
+	 @LOCK_ID		NUMERIC OUTPUT
+	,@CMP_ID		NUMERIC(18,0)
+	,@EMP_ID		NUMERIC(18,0)
+	,@MONTH			NUMERIC(18,0)		
+	,@YEAR			NUMERIC(18,0)	
+	,@CONSTRAINTS	VARCHAR(MAX) = ''
+	,@LOGIN_ID		NUMERIC(18,0)		
+AS
+
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+			
+		CREATE TABLE #UNLOCKED_ATTENDANCE
+			(
+				ROW_ID			NUMERIC IDENTITY,              
+				EMP_ID			NUMERIC,
+				CMP_ID			NUMERIC			             
+			) 
+							
+		INSERT  INTO #UNLOCKED_ATTENDANCE
+        SELECT  [PART],@CMP_ID
+        FROM    DBO.SPLITSTRING2(@CONSTRAINTS,'#')	
+						
+		--IF NOT EXISTS(
+		--				SELECT	1 
+		--				FROM	T0200_MONTHLY_SALARY MS INNER JOIN	
+		--						#UNLOCKED_ATTENDANCE UA ON UA.EMP_ID = MS.EMP_ID AND 
+		--						MONTH(MONTH_END_DATE) = @MONTH AND YEAR(MONTH_END_DATE) = @YEAR	
+		--				WHERE	MS.CMP_ID = @CMP_ID AND MONTH(MONTH_END_DATE) = @MONTH AND YEAR(MONTH_END_DATE) = @YEAR
+		--				)
+				BEGIN	
+						DELETE  LA
+						FROM	T0180_LOCKED_ATTENDANCE LA INNER JOIN
+								#UnLocked_Attendance UA ON UA.EMP_ID = LA.EMP_ID AND 
+								[MONTH] = @MONTH AND [YEAR] = @YEAR
+						WHERE	[MONTH] = @MONTH AND [YEAR] = @YEAR AND LA.CMP_ID = @CMP_ID
+				END
+		--ELSE 
+		--	BEGIN
+		--			RAISERROR('@@THIS MONTHS SALARY EXISTS@@',18,2)
+		--			RETURN -1
+		--	END
+															
+		DROP TABLE #UNLOCKED_ATTENDANCE
+RETURN
+

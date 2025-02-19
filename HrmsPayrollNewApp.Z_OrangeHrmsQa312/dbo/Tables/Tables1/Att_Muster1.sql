@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[Att_Muster1] (
+    [Emp_Id]         NUMERIC (18)   NULL,
+    [Cmp_ID]         NUMERIC (18)   NULL,
+    [For_Date]       DATETIME       NULL,
+    [Status]         VARCHAR (10)   NULL,
+    [Leave_Count]    NUMERIC (5, 1) NULL,
+    [WO_HO]          VARCHAR (2)    NULL,
+    [Status_2]       VARCHAR (10)   NULL,
+    [Row_ID]         NUMERIC (18)   NULL,
+    [WO_HO_Day]      NUMERIC (3, 1) NULL,
+    [P_days]         NUMERIC (5, 1) NULL,
+    [A_days]         NUMERIC (5, 1) NULL,
+    [Emp_code]       NUMERIC (18)   NOT NULL,
+    [Emp_Full_Name]  VARCHAR (283)  NULL,
+    [Branch_Address] VARCHAR (250)  NULL,
+    [comp_name]      VARCHAR (50)   NULL,
+    [Branch_Name]    VARCHAR (100)  NULL,
+    [Dept_Name]      VARCHAR (100)  NULL,
+    [Grd_Name]       VARCHAR (100)  NOT NULL,
+    [Desig_Name]     VARCHAR (100)  NULL,
+    [P_From_date]    DATETIME       NULL,
+    [P_To_Date]      DATETIME       NULL,
+    [BRANCH_ID]      NUMERIC (18)   NOT NULL
+);
+

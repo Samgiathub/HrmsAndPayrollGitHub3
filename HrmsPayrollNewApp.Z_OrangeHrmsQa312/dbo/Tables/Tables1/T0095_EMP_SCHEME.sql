@@ -1,0 +1,66 @@
+﻿CREATE TABLE [dbo].[T0095_EMP_SCHEME] (
+    [Tran_ID]        NUMERIC (18)  NOT NULL,
+    [Cmp_ID]         NUMERIC (18)  NOT NULL,
+    [Emp_ID]         NUMERIC (18)  NOT NULL,
+    [Scheme_ID]      NUMERIC (18)  NOT NULL,
+    [Type]           VARCHAR (100) NOT NULL,
+    [Effective_Date] DATETIME      NOT NULL,
+    [IsMakerChecker] BIT           DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_T0095_EMP_SCHEME] PRIMARY KEY CLUSTERED ([Tran_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0095_EMP_SCHEME_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0095_EMP_SCHEME_T0040_Scheme_Master] FOREIGN KEY ([Scheme_ID]) REFERENCES [dbo].[T0040_Scheme_Master] ([Scheme_Id]),
+    CONSTRAINT [FK_T0095_EMP_SCHEME_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0095_EMP_SCHEME_11_509348979__K6_K3]
+    ON [dbo].[T0095_EMP_SCHEME]([Effective_Date] ASC, [Emp_ID] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0095_EMP_SCHEME_10_509348979__K5_K3_K6]
+    ON [dbo].[T0095_EMP_SCHEME]([Type] ASC, [Emp_ID] ASC, [Effective_Date] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0095_EMP_SCHEME_9_509348979__K3_K5_K6]
+    ON [dbo].[T0095_EMP_SCHEME]([Emp_ID] ASC, [Type] ASC, [Effective_Date] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [_dta_index_T0095_EMP_SCHEME_9_509348979__K4_K5_K6_K3_K1]
+    ON [dbo].[T0095_EMP_SCHEME]([Scheme_ID] ASC, [Type] ASC, [Effective_Date] ASC, [Emp_ID] ASC, [Tran_ID] ASC) WITH (FILLFACTOR = 80);
+
+
+GO
+CREATE NONCLUSTERED INDEX [ix_T0095_EMP_SCHEME_TypeEffective_Date]
+    ON [dbo].[T0095_EMP_SCHEME]([Type] ASC, [Effective_Date] ASC)
+    INCLUDE([Emp_ID], [Scheme_ID]) WITH (FILLFACTOR = 90);
+
+
+GO
+CREATE NONCLUSTERED INDEX [ix_T0095_EMP_SCHEME_Cmp_ID_TypeEffective_Date]
+    ON [dbo].[T0095_EMP_SCHEME]([Cmp_ID] ASC, [Type] ASC, [Effective_Date] ASC)
+    INCLUDE([Emp_ID]) WITH (FILLFACTOR = 90);
+
+
+GO
+CREATE STATISTICS [_dta_stat_509348979_5_6]
+    ON [dbo].[T0095_EMP_SCHEME]([Type], [Effective_Date]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_509348979_3_6_4]
+    ON [dbo].[T0095_EMP_SCHEME]([Emp_ID], [Effective_Date], [Scheme_ID]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_509348979_4_5_3]
+    ON [dbo].[T0095_EMP_SCHEME]([Scheme_ID], [Type], [Emp_ID]);
+
+
+GO
+CREATE STATISTICS [_dta_stat_509348979_1_6_4_5]
+    ON [dbo].[T0095_EMP_SCHEME]([Tran_ID], [Effective_Date], [Scheme_ID], [Type]);
+

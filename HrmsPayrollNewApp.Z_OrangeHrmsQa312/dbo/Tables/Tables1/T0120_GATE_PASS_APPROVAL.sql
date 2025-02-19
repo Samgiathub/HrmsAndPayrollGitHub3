@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T0120_GATE_PASS_APPROVAL] (
+    [Apr_ID]                  NUMERIC (18)  NOT NULL,
+    [App_ID]                  NUMERIC (18)  NOT NULL,
+    [Cmp_ID]                  NUMERIC (18)  NOT NULL,
+    [Emp_ID]                  NUMERIC (18)  NOT NULL,
+    [Apr_Date]                DATETIME      NOT NULL,
+    [S_Emp_ID]                NUMERIC (18)  NULL,
+    [For_Date]                DATETIME      NOT NULL,
+    [From_Time]               DATETIME      NOT NULL,
+    [To_Time]                 DATETIME      NOT NULL,
+    [Duration]                VARCHAR (10)  NOT NULL,
+    [Reason_ID]               NUMERIC (18)  NOT NULL,
+    [Manager_Remarks]         VARCHAR (250) NULL,
+    [Apr_System_Datetime]     DATETIME      NULL,
+    [Apr_Status]              CHAR (1)      NOT NULL,
+    [Apr_User_ID]             NUMERIC (18)  NULL,
+    [Security_OutTime_UserID] NUMERIC (18)  NULL,
+    [Security_InTime_UserID]  NUMERIC (18)  NULL,
+    [Actual_Out_Time]         DATETIME      NULL,
+    [Actual_In_Time]          DATETIME      NULL,
+    [Actual_Duration]         VARCHAR (10)  NULL,
+    CONSTRAINT [PK_T0120_GATE_PASS_APPROVAL] PRIMARY KEY CLUSTERED ([Apr_ID] ASC),
+    CONSTRAINT [FK_T0120_GATE_PASS_APPROVAL_T0100_GATE_PASS_APPLICATION] FOREIGN KEY ([App_ID]) REFERENCES [dbo].[T0100_GATE_PASS_APPLICATION] ([App_ID])
+);
+

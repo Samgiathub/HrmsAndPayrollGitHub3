@@ -1,0 +1,249 @@
+﻿
+---28/1/2021 (EDIT BY MEHUL ) (SP WITH NOLOCK)---
+CREATE PROCEDURE [dbo].[AX_ERP_REPORT_REIM]
+	  @Cmp_Id	numeric output
+	 ,@From_Date  datetime	 
+	 ,@To_Date  datetime
+	 ,@Flag varchar(10) = 'R'
+	 ,@AD_id_Pass Numeric = 0
+AS
+SET NOCOUNT ON 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET ARITHABORT ON
+	
+	Declare @AX Table
+	(
+	
+	DOCDT	Datetime,
+	COCODE	varchar(50),
+	EMPNAME	varchar(500),
+	VOUDT	Datetime,
+	BUSIUNIT varchar(50),	
+	COSTCENT varchar(50),		
+	DEPTCODE varchar(50),		
+	BANKCODE varchar(50),		
+	JOURTYPE varchar(50),		
+	JOURNAME varchar(50),		
+	OFFSETAC varchar(50),			
+	ACCODE1	 varchar(50),			
+	ACCTTYPE varchar(50),				
+	ACCDDR	varchar(50)	,		
+	PAYREFNO varchar(50),				
+	PAYREFDT varchar(50),				
+	AMOUNT	numeric(18,2),
+	Transaction_Text nvarchar(500)	,
+	CURRENCY varchar(50),					
+	CUREXGRT varchar(50),						
+	RECTNAME varchar(50),						
+	VOUMONTH varchar(50),						
+	EMPIND varchar(50),
+	Cmp_id numeric(18,0),
+	ad_id numeric(18,0),
+	Dept_id numeric(18,0),
+	cc_id numeric(18,0),
+	ad_flag char(1),
+	loan_id numeric(18,0),
+	voucher_Flag Char(1),
+	vender_Code Varchar(50),
+	Sorting_No numeric(18,0),
+	Bank_id numeric(18,0),
+	Other_Account Varchar(100),
+	Claim_Id numeric(18,0)
+)
+
+Declare @vou_DT	datetime
+Declare @Doc_DT	datetime
+set @vou_DT	= DATEADD(dd,-(DAY(@To_Date)),@To_Date)
+set @Doc_DT = @To_Date
+
+	If @AD_id_Pass = 0
+		BEGIN
+			
+				INSERT INTO @AX
+				SELECT @DOC_DT ,AX_HEAD.CMP_CODE,'',@VOU_DT, GROUP1.SEGMENT_CODE,GROUP1.CENTER_CODE,'','','0','','0',AX_HEAD.ACCOUNT,'0',CMP_ACCOUNT_NO,'','',0,AX_HEAD.[TRANSACTION TEXT],'INR','100.00','','','D',
+					@CMP_ID,AX_HEAD.AD_ID,0,GROUP1.CENTER_ID,AX_HEAD.AD_FLAG,AX_HEAD.LOAN_ID,'',AX_HEAD.VENDER_CODE, AX_HEAD.SORTING_NO , AX_HEAD.BANK_ID , AX_HEAD.OTHER_ACCOUNT , AX_HEAD.Claim_ID
+				FROM
+					(
+						SELECT   AX.AD_ID, SORTING_NO, ACCOUNT, 
+							(
+								CASE WHEN MONTH_YEAR =1 THEN NARRATION + ' FOR THE MONTH OF '  + UPPER(CAST(DATENAME(MONTH,@TO_DATE) AS VARCHAR(3))) + '.,' + CAST(YEAR(@TO_DATE) AS VARCHAR(5))
+									WHEN MONTH_YEAR =0 THEN HEAD_NAME 
+								END
+							) AS [TRANSACTION TEXT],
+							 CASE WHEN AD.ALLOWANCE_TYPE = 'R' AND AD.AD_FLAG = 'I' THEN 'R' ELSE AD.AD_FLAG END AS AD_FLAG
+							 ,AX.LOAN_ID,ISNULL(VENDER_CODE,'') AS VENDER_CODE,CM.CMP_ACCOUNT_NO , CM.CMP_CODE , AX.BANK_ID , AX.OTHER_ACCOUNT , AX.Claim_ID
+					FROM         T9999_AX_MAPPING AX WITH (NOLOCK)
+				LEFT JOIN T0050_AD_MASTER AD WITH (NOLOCK) ON AD.AD_ID = AX.AD_ID
+				LEFT JOIN T0010_COMPANY_MASTER CM WITH (NOLOCK) ON AX.CMP_ID = CM.CMP_ID WHERE AX.CMP_ID = @CMP_ID and AD.AD_DEF_ID <> 8) AS AX_HEAD
+
+				CROSS JOIN  
+
+				(
+					SELECT   DISTINCT CCM.CENTER_CODE ,CCM.COST_ELEMENT , ISNULL(CCM.CENTER_ID,0) AS CENTER_ID , ISNULL(BS.SEGMENT_CODE , '') as SEGMENT_CODE  FROM T0080_EMP_MASTER EM WITH (NOLOCK)
+						INNER JOIN 
+							(
+								SELECT I.EMP_ID,I.CENTER_ID , I.SEGMENT_ID FROM T0095_INCREMENT I WITH (NOLOCK) INNER JOIN T0080_EMP_MASTER E WITH (NOLOCK) ON I.EMP_ID = E.EMP_ID INNER JOIN 
+												(	
+													SELECT MAX(INCREMENT_ID) AS INCREMENT_ID, EMP_ID FROM T0095_INCREMENT WITH (NOLOCK)
+													WHERE INCREMENT_EFFECTIVE_DATE <= @TO_DATE
+													AND CMP_ID = @CMP_ID
+													GROUP BY EMP_ID
+												) QRY ON
+								I.EMP_ID = QRY.EMP_ID	AND I.INCREMENT_ID = QRY.INCREMENT_ID
+							) AS INC ON INC.EMP_ID = EM.EMP_ID						
+						LEFT OUTER JOIN T0040_COST_CENTER_MASTER CCM WITH (NOLOCK) ON CCM.CENTER_ID = INC.CENTER_ID
+						LEFT OUTER JOIN T0040_BUSINESS_SEGMENT BS WITH (NOLOCK) ON BS.SEGMENT_ID = INC.SEGMENT_ID
+					WHERE  EM.CMP_ID = @CMP_ID 
+					GROUP BY CCM.CENTER_CODE,CCM.COST_ELEMENT , CCM.CENTER_ID , BS.SEGMENT_ID , BS.SEGMENT_CODE
+				) AS GROUP1
+				ORDER BY  GROUP1.CENTER_CODE, AX_HEAD.SORTING_NO
+				
+		END	
+		
+
+	DECLARE @CUR_CMP_ID AS NUMERIC(18,0)
+	DECLARE @CUR_DEPT_ID AS NUMERIC(18,0)  
+	DECLARE @CUR_CENTER_ID AS NVARCHAR(50)
+	DECLARE @CUR_AD_ID AS NUMERIC(18,0)
+	DECLARE @CUR_AD_FLAG AS CHAR(1)
+	DECLARE @CUR_LOAN_ID AS NUMERIC(18,0)
+	DECLARE @CUR_BUS_AREA AS NVARCHAR(50)
+	DECLARE @AD_DEF_ID AS NUMERIC(18,0)
+	DECLARE @ALPHA_EMP_CODE AS NVARCHAR(200)
+	DECLARE @BANK_ID AS NUMERIC(18,0)
+	DECLARE @VENDOR_CODE AS VARCHAR(50)
+
+	
+	DECLARE CUR_AX CURSOR FOR
+		SELECT CMP_ID,CC_ID,AD_ID,AD_FLAG,LOAN_ID,BUSIUNIT ,BANK_ID , VENDER_CODE FROM @AX 
+		WHERE SORTING_NO > 100 --AND COSTCENT = 201100
+	OPEN CUR_AX
+	FETCH NEXT FROM CUR_AX INTO @CUR_CMP_ID, @CUR_CENTER_ID,@CUR_AD_ID,@CUR_AD_FLAG,@CUR_LOAN_ID,@CUR_BUS_AREA , @Bank_id , @VENDOR_CODE
+	WHILE @@FETCH_STATUS = 0
+		BEGIN
+			
+			DECLARE @SUM_AMT AS NUMERIC(18,2) 
+			DECLARE @SUM_AMT_SETT AS NUMERIC(18,2)
+			
+			SET @SUM_AMT = 0
+			SET @SUM_AMT_SETT=0
+				
+			 IF @CUR_AD_FLAG = 'R'	--This will give you all Re-Imbursement
+				BEGIN
+		
+					SELECT @SUM_AMT = isnull(SUM(MAD.M_AD_AMOUNT),0) + isnull(SUM(MAD.M_AREAR_AMOUNT),0) FROM T0210_MONTHLY_AD_DETAIL MAD WITH (NOLOCK)
+						INNER JOIN T0200_MONTHLY_SALARY MS WITH (NOLOCK) on mad.Sal_Tran_ID = MS.Sal_Tran_ID
+						INNER JOIN (
+									SELECT I.EMP_ID,I.CENTER_ID ,E.Dealer_Code,I.SEGMENT_ID FROM T0095_INCREMENT I WITH (NOLOCK)
+									INNER JOIN T0080_EMP_MASTER E WITH (NOLOCK) ON I.EMP_ID = E.EMP_ID 
+									INNER JOIN 
+										( 
+											SELECT MAX(Increment_Id) AS Increment_Id , EMP_ID --, Center_ID 
+											FROM T0095_INCREMENT WITH (NOLOCK)
+											WHERE INCREMENT_EFFECTIVE_DATE <= @TO_DATE
+											AND CMP_ID = @CMP_ID 
+											GROUP BY EMP_ID --, Center_ID
+										) QRY ON I.EMP_ID = QRY.EMP_ID	AND I.Increment_Id = QRY.Increment_Id --AND I.Center_ID = QRY.Center_ID 
+									) AS INC ON INC.EMP_ID = MS.EMP_ID
+						INNER JOIN T0080_EMP_MASTER EM WITH (NOLOCK) ON ms.emp_id = EM.Emp_ID
+						LEFT JOIN T0050_AD_MASTER Am WITH (NOLOCK) on  MAD.AD_ID = Am.AD_ID 
+						LEFT JOIN T0040_Business_Segment BS WITH (NOLOCK) ON INC.Segment_ID=BS.Segment_ID
+						where inc.Center_ID = @CUR_CENTER_ID
+							AND ISNULL(BS.Segment_Code,'') = @CUR_BUS_AREA
+						and MONTH(month_end_date) = MONTH(@To_Date)  and YEAR(month_end_date) = YEAR(@To_Date) and mad.AD_ID = @CUR_AD_id 
+						and isnull(ms.is_FNF,0)  = 0 
+						and AM.AD_NOT_EFFECT_SALARY  = 1
+						
+					SET @SUM_AMT_SETT = 0
+					
+					SELECT @SUM_AMT_SETT = ISNULL(SUM(M_AD_AMOUNT),0) FROM T0210_MONTHLY_AD_DETAIL MAD 
+						INNER JOIN T0201_MONTHLY_SALARY_SETT MSS WITH (NOLOCK) ON MAD.SAL_TRAN_ID=MSS.SAL_TRAN_ID 
+						INNER JOIN T0050_AD_MASTER WITH (NOLOCK) ON MAD.AD_ID = T0050_AD_MASTER.AD_ID
+						INNER JOIN 
+								(
+									SELECT I.EMP_ID,I.CENTER_ID ,E.DEALER_CODE,I.SEGMENT_ID FROM T0095_INCREMENT I  WITH (NOLOCK)
+									INNER JOIN T0080_EMP_MASTER E WITH (NOLOCK) ON I.EMP_ID = E.EMP_ID 
+									INNER JOIN 
+										(
+											SELECT MAX(INCREMENT_ID) AS INCREMENT_ID , EMP_ID FROM T0095_INCREMENT WITH (NOLOCK)
+											WHERE INCREMENT_EFFECTIVE_DATE <= @TO_DATE
+											AND CMP_ID = @CMP_ID 
+											GROUP BY EMP_ID
+										) QRY ON I.EMP_ID = QRY.EMP_ID	AND I.INCREMENT_ID = QRY.INCREMENT_ID 
+								) AS INC ON INC.EMP_ID = MAD.EMP_ID
+						
+						AND MAD.CMP_ID = T0050_AD_MASTER.CMP_ID
+						INNER JOIN T0080_EMP_MASTER EM WITH (NOLOCK) ON MAD.EMP_ID = EM.EMP_ID
+						LEFT JOIN T0040_Business_Segment BS WITH (NOLOCK) ON INC.Segment_ID=BS.Segment_ID
+					WHERE MAD.CMP_ID = @CMP_ID AND MONTH(MSS.S_EFF_DATE) =  MONTH(@TO_DATE ) AND YEAR(MSS.S_EFF_DATE) = YEAR(@TO_DATE ) AND
+					AD_ACTIVE = 1 AND SAL_TYPE = 1 AND MAD.AD_ID = @CUR_AD_ID AND INC.CENTER_ID = @CUR_CENTER_ID AND ISNULL(BS.Segment_Code,'') = @CUR_BUS_AREA
+					AND T0050_AD_MASTER.AD_NOT_EFFECT_SALARY = 1
+				
+					SET @SUM_AMT = @SUM_AMT + @SUM_AMT_SETT	
+				
+						
+					UPDATE @AX SET AMOUNT = @SUM_AMT  
+					WHERE AD_ID = @CUR_AD_ID  AND CC_ID = @CUR_CENTER_ID and LOAN_ID = 0 AND BANK_ID = 0 AND VENDER_CODE = '' and AD_FLAG = 'R' AND ISNULL(BUSIUNIT,'') = @CUR_BUS_AREA
+	
+				END
+				
+			FETCH NEXT FROM CUR_AX INTO @CUR_CMP_ID, @CUR_CENTER_ID,@CUR_AD_ID,@CUR_AD_FLAG,@CUR_LOAN_ID,@CUR_BUS_AREA , @Bank_id , @VENDOR_CODE
+		END 
+	CLOSE CUR_AX
+	DEALLOCATE CUR_AX
+
+IF @Flag = 'R'
+	BEGIN
+	
+		SELECT	'' as Vendor ,
+				Replace(Convert(Varchar(20),DOCDT,105),'-','.') as [Invoice Date] , 
+				Replace(Convert(Varchar(20),GETDATE(),105),'-','.') as Reference,
+				Replace(Convert(Varchar(20),GETDATE(),105),'-','.') as [Posting Date],
+				AMOUNT as Amount, '' as [Calculate Tax],
+				COCODE as [Bus. Place], COCODE as Sectn,
+				'ACTUAL REIM.OF EXPS.FOR MONTH ' + Upper(dbo.F_GET_MONTH_NAME(MONTH(DOCDT))) + '-' + Cast(YEAR(DOCDT) as varchar(4)) AS [Text],
+				ACCODE1 as [G/L acct],
+				AMOUNT as [Amount in doc.curr],
+				78 AS [Tax Code] ,
+				'ACTUAL REIM.OF EXPS.FOR MONTH ' + Upper(dbo.F_GET_MONTH_NAME(MONTH(DOCDT))) + '-' + Cast(YEAR(DOCDT) as varchar(4)) AS [Text],
+				BUSIUNIT as [Business area],
+				COSTCENT as [Cost Center]
+				
+			FROM @AX 
+		WHERE SORTING_NO > 100 AND AMOUNT > 0 ANd COSTCENT is NOT NULL
+		ORDER BY ACCODE1
+	END
+ELSE IF @Flag = 'R1'
+	BEGIN
+		SELECT	REPLACE(CONVERT(VARCHAR(20),DOCDT,105),'-','.') AS [INVOICE DATE] ,
+			'SA' AS [DOCUMENT TYPE],
+			COCODE AS [COMPANY CODE],
+			REPLACE(CONVERT(VARCHAR(20),GETDATE(),105),'-','.') AS [POSTING DATE],
+			'INR' as [Currency Key],
+			40 as [Posting Key],
+			ACCODE1 as [G/L acct],
+			AMOUNT as [Amount in doc.curr],
+			COCODE as [Bus. Place],
+			'EXPS. LINE ITEM FOR THE MONTH OF ' + Upper(dbo.F_GET_MONTH_NAME(MONTH(DOCDT))) + '-' + Cast(YEAR(DOCDT) as varchar(4)) AS [Text],
+			'' as BLANK,
+			BUSIUNIT as [Business area],
+			--AMOUNT as Amount, '' as [Calculate Tax],
+			--COCODE as Sectn,
+			COSTCENT as [Cost Center],
+			50 as [New Posting Key],
+			Other_Account as [Additional G/L Account],
+			AMOUNT as [Amount in doc.curr_1],
+			COCODE as [Bus. Place_1],
+			'EXPS. LINE ITEM FOR THE MONTH OF ' + Upper(dbo.F_GET_MONTH_NAME(MONTH(DOCDT))) + '-' + Cast(YEAR(DOCDT) as varchar(4)) AS [Text],
+			'' as BLANK,
+			BUSIUNIT as [Business area]			
+		FROM @AX 
+	WHERE SORTING_NO > 100 AND AMOUNT > 0 ANd COSTCENT is NOT NULL
+	ORDER BY ACCODE1
+	END
+
+	
+
+RETURN
+
+

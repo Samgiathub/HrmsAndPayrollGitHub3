@@ -1,0 +1,166 @@
+﻿CREATE TABLE [dbo].[T0120_BOND_APPROVAL] (
+    [Bond_Apr_Id]                 NUMERIC (18)    NOT NULL,
+    [Cmp_Id]                      NUMERIC (18)    NOT NULL,
+    [Emp_Id]                      NUMERIC (18)    NOT NULL,
+    [Bond_Id]                     NUMERIC (18)    NOT NULL,
+    [Bond_Apr_Date]               DATETIME        NOT NULL,
+    [Bond_Apr_Code]               VARCHAR (20)    NOT NULL,
+    [Bond_Apr_Amount]             NUMERIC (18, 2) NOT NULL,
+    [Bond_Apr_No_Of_Installment]  NUMERIC (18)    NOT NULL,
+    [Bond_Apr_Installment_Amount] NUMERIC (18, 2) NOT NULL,
+    [Bond_Apr_Deduct_From_Sal]    NUMERIC (18)    NOT NULL,
+    [Deduction_Type]              VARCHAR (20)    NULL,
+    [Installment_Start_Date]      DATETIME        NULL,
+    [Bond_Paid_Amount]            NUMERIC (18, 2) NOT NULL,
+    [No_Of_Installment_Paid]      NUMERIC (18)    NOT NULL,
+    [Bond_Apr_Pending_Amount]     NUMERIC (18, 2) NULL,
+    [Bond_Approval_Remarks]       VARCHAR (250)   NULL,
+    [Attachment_Path]             NVARCHAR (MAX)  NULL,
+    [Bond_Return_Mode]            CHAR (1)        DEFAULT ('S') NOT NULL,
+    [Bond_Return_Month]           INT             NULL,
+    [Bond_Return_Year]            INT             NULL,
+    [Bond_Return_Status]          VARCHAR (5)     NULL,
+    [Bond_Return_Date]            DATETIME        NULL,
+    [Payment_Process_ID]          NUMERIC (18)    NULL,
+    CONSTRAINT [PK_T0120_BOND_APPROVAL] PRIMARY KEY CLUSTERED ([Bond_Apr_Id] ASC),
+    CONSTRAINT [FK_T0120_BOND_APPROVAL_T0040_BOND_MASTER] FOREIGN KEY ([Bond_Id]) REFERENCES [dbo].[T0040_BOND_MASTER] ([Bond_ID])
+);
+
+
+GO
+
+
+
+
+CREATE TRIGGER [DBO].[Tri_T0120_BOND_APPROVAL]
+ON [dbo].[T0120_BOND_APPROVAL] 
+FOR INSERT,DELETE
+AS
+
+	DECLARE @CMP_ID				NUMERIC
+	DECLARE @FOR_DATE			DATETIME
+	DECLARE @EMP_ID				NUMERIC
+	DECLARE @COUNT				NUMERIC
+	DECLARE @BOND_TRAN_ID		NUMERIC
+	DECLARE @BOND_ID			NUMERIC
+	DECLARE @BOND_ISSUE			NUMERIC(18,2)
+	DECLARE @LAST_CLOSING		NUMERIC(18,2)
+	DECLARE @BOND_RETURN_AMOUNT NUMERIC(18,2)
+	DECLARE @BOND_RETURN_MODE	VARCHAR(1)
+		
+	SELECT @BOND_TRAN_ID = ISNULL(MAX(BOND_TRAN_ID),0)  +1 FROM T0140_BOND_TRANSACTION
+	
+
+	IF  UPDATE(BOND_APR_ID) 
+		BEGIN
+			
+			SELECT	@CMP_ID = CMP_ID,@EMP_ID = EMP_ID ,@BOND_ID = INS.BOND_ID ,@BOND_ISSUE = INS.BOND_APR_AMOUNT,
+					@FOR_DATE = BOND_APR_DATE,@BOND_RETURN_MODE = ISNULL(BOND_RETURN_MODE,'S'),@BOND_RETURN_AMOUNT = ISNULL(BOND_PAID_AMOUNT,0)
+					FROM INSERTED INS	
+
+			if @BOND_RETURN_MODE  IN ('S','P')
+				Begin
+					IF EXISTS(SELECT 1  FROM T0140_BOND_TRANSACTION WHERE FOR_DATE = @FOR_DATE AND BOND_ID = @BOND_ID  
+										AND CMP_ID = @CMP_ID AND EMP_ID = @EMP_ID)
+						BEGIN
+								UPDATE T0140_BOND_TRANSACTION 
+								SET		BOND_ISSUE = BOND_ISSUE + @BOND_ISSUE,
+										BOND_CLOSING = BOND_CLOSING + (@BOND_ISSUE - @BOND_RETURN_AMOUNT), --@BOND_ISSUE,	
+										BOND_RETURN = @BOND_RETURN_AMOUNT
+								WHERE	BOND_ID = @BOND_ID AND FOR_DATE = @FOR_DATE AND CMP_ID = @CMP_ID
+										AND EMP_ID = @EMP_ID
+								
+								UPDATE T0140_BOND_TRANSACTION 
+								SET		BOND_OPENING = BOND_OPENING + @BOND_ISSUE,
+										BOND_CLOSING = BOND_CLOSING + (@BOND_ISSUE - @BOND_RETURN_AMOUNT), --@BOND_ISSUE	
+										BOND_RETURN = @BOND_RETURN_AMOUNT
+								WHERE	BOND_ID = @BOND_ID AND FOR_DATE > @FOR_DATE AND CMP_ID = @CMP_ID
+										AND EMP_ID = @EMP_ID
+										
+						END
+					ELSE
+						BEGIN	    
+						
+    							SELECT @LAST_CLOSING = ISNULL(BOND_CLOSING,0) FROM T0140_BOND_TRANSACTION
+    							WHERE FOR_DATE = 
+    										(
+    											SELECT MAX(FOR_DATE) FROM T0140_BOND_TRANSACTION 
+    											WHERE FOR_DATE < @FOR_DATE
+    											AND BOND_ID = @BOND_ID AND CMP_ID = @CMP_ID AND EMP_ID = @EMP_ID 
+    										) 
+    										AND CMP_ID = @CMP_ID
+    										AND BOND_ID = @BOND_ID  AND EMP_ID = @EMP_ID
+						
+								IF @LAST_CLOSING IS NULL 
+									SET  @LAST_CLOSING = 0
+								
+								INSERT T0140_BOND_TRANSACTION
+									(
+										BOND_TRAN_ID,
+										CMP_ID,
+										BOND_ID,
+										EMP_ID,
+										FOR_DATE,
+										BOND_OPENING,
+										BOND_ISSUE,
+										BOND_CLOSING,
+										BOND_RETURN
+									)
+									VALUES
+									(
+										@BOND_TRAN_ID,
+										@CMP_ID,
+										@BOND_ID,
+										@EMP_ID,
+										@FOR_DATE,
+										@LAST_CLOSING,
+										@BOND_ISSUE,
+										@LAST_CLOSING + (@BOND_ISSUE - @BOND_RETURN_AMOUNT),
+										@BOND_RETURN_AMOUNT
+									)												    		
+							
+							
+								UPDATE	T0140_BOND_TRANSACTION 
+										SET BOND_OPENING = BOND_OPENING + @BOND_ISSUE,
+										BOND_CLOSING = BOND_CLOSING + @BOND_ISSUE	
+								WHERE	BOND_ID = @BOND_ID AND FOR_DATE > @FOR_DATE AND CMP_ID = @CMP_ID
+										AND EMP_ID = @EMP_ID
+
+    					END	
+	    		END	    	
+	    End
+	ELSE
+		BEGIN
+
+		 	DECLARE CURDEL CURSOR FOR
+			
+			SELECT  DEL.CMP_ID ,DEL.EMP_ID ,
+					DEL.BOND_ID,DEL.BOND_APR_AMOUNT,
+					BOND_APR_DATE,ISNULL(BOND_RETURN_MODE,'A'),ISNULL(BOND_PAID_AMOUNT,0) FROM DELETED DEL
+					
+			OPEN CURDEL
+			FETCH NEXT FROM CURDEL INTO @CMP_ID,@EMP_ID,@BOND_ID,@BOND_ISSUE,@FOR_DATE,@BOND_RETURN_MODE,@BOND_RETURN_AMOUNT
+			WHILE @@FETCH_STATUS = 0
+			BEGIN 
+				IF @BOND_RETURN_MODE IN ('S','P')
+					BEGIN
+					
+						UPDATE	T0140_BOND_TRANSACTION 
+							SET BOND_ISSUE = BOND_ISSUE - @BOND_ISSUE,
+								BOND_CLOSING = BOND_CLOSING - @BOND_ISSUE + @BOND_RETURN_AMOUNT,
+								BOND_RETURN = BOND_RETURN - @BOND_RETURN_AMOUNT
+						WHERE	BOND_ID = @BOND_ID AND EMP_ID = @EMP_ID AND FOR_DATE = @FOR_DATE AND CMP_ID = @CMP_ID	
+								
+						UPDATE	T0140_BOND_TRANSACTION 
+							SET BOND_OPENING = BOND_OPENING - @BOND_ISSUE,
+								BOND_CLOSING = BOND_CLOSING - @BOND_ISSUE + @BOND_RETURN_AMOUNT,
+								BOND_RETURN = BOND_RETURN - @BOND_RETURN_AMOUNT
+						WHERE	BOND_ID = @BOND_ID AND EMP_ID = @EMP_ID AND FOR_DATE > @FOR_DATE AND CMP_ID = @CMP_ID	
+						
+					END
+				FETCH NEXT FROM CURDEL INTO @CMP_ID, @EMP_ID,@BOND_ID , @BOND_ISSUE ,@FOR_DATE ,@BOND_RETURN_MODE,@BOND_RETURN_AMOUNT
+			END				
+			CLOSE CURDEL
+			DEALLOCATE CURDEL
+		END
+

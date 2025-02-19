@@ -1,0 +1,17 @@
+﻿CREATE TABLE [dbo].[T0100_EMP_COMPANY_TRANSFER_SALARY_DETAIL] (
+    [Row_id]           NUMERIC (18)    NOT NULL,
+    [Tran_Id]          NUMERIC (18)    NOT NULL,
+    [Old_Cmp_Id]       NUMERIC (18)    NOT NULL,
+    [Old_Emp_Id]       NUMERIC (18)    NOT NULL,
+    [Old_Basic_Salary] NUMERIC (18, 2) NOT NULL,
+    [Old_Gross_Salary] NUMERIC (18, 2) NOT NULL,
+    [Old_CTC]          NUMERIC (18, 2) NOT NULL,
+    [New_Cmp_Id]       NUMERIC (18)    NOT NULL,
+    [New_Emp_Id]       NUMERIC (18)    NOT NULL,
+    [New_Basic_Salary] NUMERIC (18, 2) NOT NULL,
+    [New_Gross_Salary] NUMERIC (18, 2) NOT NULL,
+    [New_CTC]          NUMERIC (18, 2) NOT NULL,
+    CONSTRAINT [PK_T0100_EMP_COMPANY_TRANSFER_SALARY_DETAIL] PRIMARY KEY CLUSTERED ([Row_id] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0100_EMP_COMPANY_TRANSFER_SALARY_DETAIL_T0095_EMP_COMPANY_TRANSFER] FOREIGN KEY ([Tran_Id]) REFERENCES [dbo].[T0095_EMP_COMPANY_TRANSFER] ([Tran_Id])
+);
+

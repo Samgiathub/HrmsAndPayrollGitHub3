@@ -1,0 +1,54 @@
+﻿CREATE  PROCEDURE [dbo].[P_GET_NEXT_EMP_PF_NO]	
+
+	@Cmp_ID		NUMERIC(18,0),
+
+	@NEXT_PF_NO	VARCHAR(100) = '' OUTPUT
+
+AS
+
+	SET NOCOUNT ON 
+
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+	SET ARITHABORT ON 
+
+	
+
+	DECLARE @LAST_PF_NO VARCHAR(32);
+
+	--Added by ronakk 04082022
+	declare @TempTab as table( PF_No NUMERIC(24,0) )
+
+
+	insert into @TempTab
+	SELECT	  SSN_No
+	FROM	T0080_EMP_MASTER WITH (NOLOCK) 
+	WHERE	ISNUMERIC(SSN_No)=1 AND Cmp_ID=@Cmp_ID
+
+	select top 1 @LAST_PF_NO = PF_No from @TempTab order by PF_No desc
+
+	--ORDER BY CAST(isnull(SSN_No,0) AS NUMERIC(24,0)) DESC
+
+	
+
+	IF @LAST_PF_NO IS NULL OR @LAST_PF_NO = '0'
+
+		SET @LAST_PF_NO = '1'
+
+
+
+	SET @NEXT_PF_NO = CAST(@LAST_PF_NO AS NUMERIC(24,0))  + 1;
+
+
+
+	
+
+	SET  @NEXT_PF_NO = RIGHT(REPLICATE('0', LEN(@NEXT_PF_NO)) + @NEXT_PF_NO, LEN(@NEXT_PF_NO))
+
+
+
+	--SELECT @NEXT_PF_NO AS NEXT_PF_NO --Comment by ronakk 04082022
+
+
+
+	RETURN

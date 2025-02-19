@@ -1,0 +1,12 @@
+﻿
+
+
+
+CREATE VIEW [dbo].[V0190_MACHINE_MONTHLY_ALLOWANCE]
+AS
+SELECT	MMA.Allow_Tran_ID,MMA.Cmp_ID,MM.Machine_ID,MMA.Salary_Month,MMA.Salary_Year,MMA.For_Date,MMA.Allow_amount,MMA.Comments,
+		MM.Machine_Name
+FROM T0190_MACHINE_MONTHLY_ALLOWANCE MMA WITH (NOLOCK)
+	INNER JOIN T0040_Machine_Master MM WITH (NOLOCK) ON MMA.Machine_ID = MM.Machine_ID
+
+

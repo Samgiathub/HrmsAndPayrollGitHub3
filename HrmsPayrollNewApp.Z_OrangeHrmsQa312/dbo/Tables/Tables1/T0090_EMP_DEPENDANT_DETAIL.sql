@@ -1,0 +1,19 @@
+﻿CREATE TABLE [dbo].[T0090_EMP_DEPENDANT_DETAIL] (
+    [Emp_ID]        NUMERIC (18)    NOT NULL,
+    [Row_ID]        NUMERIC (18)    NOT NULL,
+    [Cmp_ID]        NUMERIC (18)    NOT NULL,
+    [Name]          VARCHAR (100)   NOT NULL,
+    [RelationShip]  VARCHAR (20)    NOT NULL,
+    [BirthDate]     DATETIME        NULL,
+    [D_Age]         NUMERIC (18, 1) NULL,
+    [Address]       VARCHAR (1000)  NULL,
+    [Share]         NUMERIC (18, 2) NULL,
+    [Is_Resi]       NUMERIC (1)     NULL,
+    [NomineeFor]    VARCHAR (30)    NULL,
+    [Pan_Card_No]   VARCHAR (20)    NULL,
+    [Adhar_Card_No] VARCHAR (20)    NULL,
+    CONSTRAINT [PK_T0090_EMP_DEPENDANT_DETAIL] PRIMARY KEY CLUSTERED ([Emp_ID] ASC, [Row_ID] ASC) WITH (FILLFACTOR = 80),
+    CONSTRAINT [FK_T0090_EMP_DEPENDANT_DETAIL_T0010_COMPANY_MASTER] FOREIGN KEY ([Cmp_ID]) REFERENCES [dbo].[T0010_COMPANY_MASTER] ([Cmp_Id]),
+    CONSTRAINT [FK_T0090_EMP_DEPENDANT_DETAIL_T0080_EMP_MASTER] FOREIGN KEY ([Emp_ID]) REFERENCES [dbo].[T0080_EMP_MASTER] ([Emp_ID])
+);
+

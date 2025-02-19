@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T9999_Ax_Mapping] (
+    [Tran_Id]       NUMERIC (18)   NOT NULL,
+    [Cmp_id]        NUMERIC (18)   NOT NULL,
+    [Head_Name]     NVARCHAR (100) NOT NULL,
+    [Account]       NVARCHAR (50)  NOT NULL,
+    [Narration]     NVARCHAR (150) NOT NULL,
+    [Month_Year]    TINYINT        CONSTRAINT [DF_T9999_Ax_Mapping_Month_Year] DEFAULT ((1)) NOT NULL,
+    [lastUpdated]   DATETIME       NULL,
+    [Ad_id]         NUMERIC (18)   CONSTRAINT [DF_T9999_Ax_Mapping_Ad_id] DEFAULT ((0)) NOT NULL,
+    [Sorting_no]    NUMERIC (18)   CONSTRAINT [DF_T9999_Ax_Mapping_Sorting_no] DEFAULT ((0)) NOT NULL,
+    [Type]          NVARCHAR (50)  CONSTRAINT [DF_T9999_Ax_Mapping_Type] DEFAULT ('') NOT NULL,
+    [Loan_id]       NUMERIC (18)   CONSTRAINT [DF_T9999_Ax_Mapping_Loan_id] DEFAULT ((0)) NOT NULL,
+    [Vender_Code]   VARCHAR (100)  NULL,
+    [Bank_Id]       NUMERIC (18)   DEFAULT ((0)) NOT NULL,
+    [Other_Account] VARCHAR (100)  DEFAULT ('') NOT NULL,
+    [Claim_ID]      NUMERIC (18)   DEFAULT ((0)) NOT NULL,
+    [Is_Highlight]  TINYINT        DEFAULT ((0)) NOT NULL,
+    [BackColor]     NVARCHAR (20)  NULL,
+    [ForeColor]     NVARCHAR (20)  NULL,
+    [Center_ID]     NUMERIC (18)   NULL,
+    [Segment_ID]    NUMERIC (18)   NULL,
+    [Band_ID]       NUMERIC (18)   DEFAULT ((0)) NOT NULL,
+    CONSTRAINT [PK_T9999_Ax_Mapping] PRIMARY KEY CLUSTERED ([Tran_Id] ASC) WITH (FILLFACTOR = 80)
+);
+

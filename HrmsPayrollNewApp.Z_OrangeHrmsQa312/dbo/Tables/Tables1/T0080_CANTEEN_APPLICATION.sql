@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[T0080_CANTEEN_APPLICATION] (
+    [App_Id]        NUMERIC (18)   IDENTITY (1, 1) NOT NULL,
+    [Cmp_Id]        NUMERIC (18)   NULL,
+    [Receive_Date]  DATETIME       NULL,
+    [Emp_Id]        NUMERIC (18)   NULL,
+    [Emp_Name]      VARCHAR (MAX)  NULL,
+    [Designation]   VARCHAR (200)  NULL,
+    [Department]    VARCHAR (200)  NULL,
+    [Cnt_Id]        VARCHAR (20)   NULL,
+    [Duration]      INT            NULL,
+    [From_Date]     DATETIME       NULL,
+    [To_Date]       DATETIME       NULL,
+    [Canteen_Name]  VARCHAR (255)  NULL,
+    [App_No]        NVARCHAR (20)  NULL,
+    [User_ID]       INT            NULL,
+    [Desig_Id]      NUMERIC (18)   NULL,
+    [Dept_Id]       NUMERIC (18)   NULL,
+    [Description]   VARCHAR (MAX)  NULL,
+    [App_Type]      NVARCHAR (50)  NULL,
+    [Guest_Type_Id] INT            NULL,
+    [Guest_Name]    NVARCHAR (200) NULL,
+    [Guest_Count]   INT            NULL,
+    PRIMARY KEY CLUSTERED ([App_Id] ASC) WITH (FILLFACTOR = 95)
+);
+

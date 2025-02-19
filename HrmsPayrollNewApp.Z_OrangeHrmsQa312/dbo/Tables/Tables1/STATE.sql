@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[STATE] (
+    [CITY]  VARCHAR (50)  NULL,
+    [STATE] VARCHAR (500) NULL
+);
+
